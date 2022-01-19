@@ -19,6 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import org.jetbrains.kotlin.gradle.tasks.*
+
 plugins {
     groovy
     `kotlin-dsl`
@@ -48,8 +50,14 @@ gradlePlugin {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+    }
 }
 
 repositories {
