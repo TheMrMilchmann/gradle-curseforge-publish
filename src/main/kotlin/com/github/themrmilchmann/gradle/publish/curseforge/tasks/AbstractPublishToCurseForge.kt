@@ -31,7 +31,6 @@ import java.util.concurrent.*
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 public abstract class AbstractPublishToCurseForge : DefaultTask() {
 
-    @Internal
     private var _publication: CurseForgePublicationInternal? = null
 
     @get:Internal
