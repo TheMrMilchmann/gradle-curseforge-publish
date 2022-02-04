@@ -56,6 +56,12 @@ public class CurseForgePublishPlugin @Inject constructor(
         CurseForgePublishPlugin.gradle = gradle
 
         extensions.configure<PublishingExtension> {
+            repositories {
+                this as ExtensionAware
+
+                extensions.create("curseForge", CurseForgeRepositoryExtension::class, repositories)
+            }
+
             publications.registerFactory(CurseForgePublication::class.java, CurseForgePublicationFactory(fileResolver))
             realizePublishingTasksLater(target)
         }
