@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
     groovy
+    `java-test-fixtures`
     `kotlin-dsl`
     `maven-publish`
     signing
@@ -108,7 +109,6 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:1.6.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
-    testImplementation(gradleTestKit())
-    testImplementation(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
-    testImplementation("org.spockframework:spock-core")
+    testFixturesApi(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
+    testFixturesApi("org.spockframework:spock-core")
 }
