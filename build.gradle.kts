@@ -19,13 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import com.github.themrmilchmann.build.*
+import com.github.themrmilchmann.build.BuildType
 import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
     groovy
     `kotlin-dsl`
+    `maven-publish`
+    signing
     kotlin("plugin.serialization") version "1.5.31"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.gradle.plugin-publish") version "0.20.0"
 }
 
 group = "com.github.themrmilchmann.gradle.curseforge.publish"
@@ -45,6 +50,9 @@ gradlePlugin {
     plugins {
         create("curseForgePublish") {
             id = "com.github.themrmilchmann.curseforge-publish"
+            displayName = "curseforge-publish"
+            description = "Publish artifact to CurseForge"
+
             implementationClass = "com.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
         }
     }
@@ -58,6 +66,31 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
     }
+}
+
+publishing {
+    repositories {
+        maven {
+            url = uri(deployment.repo)
+
+            credentials {
+                username = deployment.user
+                password = deployment.password
+            }
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/TheMrMilchmann/gradle-curseforge-publish"
+    vcsUrl = "https://github.com/TheMrMilchmann/gradle-curseforge-publish.git"
+
+    tags = listOf("publishing")
+}
+
+signing {
+    isRequired = (deployment.type === BuildType.RELEASE)
+    sign(publishing.publications)
 }
 
 repositories {
