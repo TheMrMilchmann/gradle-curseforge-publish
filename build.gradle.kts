@@ -29,9 +29,9 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     signing
-    kotlin("plugin.serialization") version "1.5.31"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("com.gradle.plugin-publish") version "0.20.0"
+    alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.gradle.shadow)
+    alias(libs.plugins.plugin.publish)
 }
 
 group = "com.github.themrmilchmann.gradle.curseforge.publish"
@@ -105,10 +105,10 @@ dependencies {
     shadow(localGroovy())
     shadow(gradleApi())
 
-    implementation("io.ktor:ktor-client-apache:1.6.7")
-    implementation("io.ktor:ktor-client-serialization:1.6.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.ktor.client.apache)
+    implementation(libs.ktor.client.serialization)
 
-    testFixturesApi(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
-    testFixturesApi("org.spockframework:spock-core")
+    testFixturesApi(platform(libs.spock.bom))
+    testFixturesApi(libs.spock.core)
 }
