@@ -50,4 +50,4 @@ jobs:
          version: '17'
 
     - name: Gradle Publish (Dry-Run)
-      run: find samples/ -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 -n1 bash -c 'cd "$0" && ./gradlew publish --dry-run --include-build ../../'
+      run: find samples/ -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 -n1 bash -c 'cd "$0" && echo $PWD && ./gradlew publish --dry-run --include-build ../../'
