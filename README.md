@@ -1,6 +1,98 @@
 # CurseForge Gradle Publish
 
+[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square&label=License)](https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.themrmilchmann.gradle.publish.curseforge/curseforge-publish.svg?style=flat-square&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/com.github.themrmilchmann.gradle.publish.curseforge/curseforge-publish)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?style=flat-square&&label=Gradle%20Plugin%20Portal&logo=Gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fcom%2Fgithub%2Fthemrmilchmann%2Fgradle%2Fpublish%2Fcurseforge%2Fcom.github.themrmilchmann.curseforge-publish%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/com.github.themrmilchmann.curseforge-publish)
+![Gradle](https://img.shields.io/badge/Gradle-7.4-green.svg?style=flat-square&color=1ba8cb&logo=Gradle)
+![Java](https://img.shields.io/badge/Java-8-green.svg?style=flat-square&color=b07219&logo=Java)
 
+Provides the ability to publish build artifacts to [CurseForge](https://www.curseforge.com/).
+
+
+## Usage
+
+Learn how to set up basic publishing. While all concepts apply to both DSLs,
+code snippets are for [Gradle's Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html).
+Use the [samples](samples) for reference when working with the Groovy DSL.
+
+
+### Applying the Plugin
+
+To use the plugin, include the following in your build script:
+
+```kotlin
+plugins {
+    id("foo") version "0.1.0"
+}
+```
+
+The plugin uses an extension on the project named `publishing` of type [PublishingExtension](https://docs.gradle.org/current/dsl/org.gradle.api.publish.PublishingExtension.html).
+This extension provides a container of named publications and a container of
+named repositories. The CurseForge Publish Plugin work with
+`CurseForgePublication` publications and `CurseForgeArtifactRepository`
+repositories.
+
+Once the plugin has been applied, repositories and publications can be defined
+
+
+### Publications
+
+This plugin provides [publications](https://docs.gradle.org/current/userguide/dependency_management_terminology.html#sub:terminology_publication)
+of type `CurseForgePublication`. 
+
+```kotlin
+publishing {
+    publications {
+        create<CurseForgePublication>("curseForge") {
+            projectID.set(123456) // The CurseForge project ID (required)
+
+            // Specify which game and version the mod/plugin targets (required)
+            includeGameVersions { type, version -> type == "minecraft-1-16" && version == "minecraft-1-16-5" }
+
+            artifact {
+                changelog = Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)
+                releaseType = ReleaseType.RELEASE // The release type (required)
+
+                displayName = "Example Project" // A user-friendly name for the project (optional)
+            }
+        }
+    }
+}
+```
+
+
+### Repositories
+
+This plugin provides [repositories](https://docs.gradle.org/current/userguide/dependency_management_terminology.html#sub:terminology_repository)
+of type `CurseForgeArtifactRepository`.
+
+Here's a simple example of defining a publishing repository.
+
+```kotlin
+publishing {
+    repositories {
+        curseForge {
+            /*
+             * In a real application, it is recommended to store the API key
+             * outside the build script.
+             * 
+             * // Store the key in "~/.gradle/gradle.properties"
+             * apiKey.set(extra["cfApiKey"] as String)
+             */
+            apiKey.set("123e4567-e89b-12d3-a456-426614174000")
+        }
+    }
+}
+```
+
+**Make sure not to check in your API key (or other secrets) in Git.**
+
+
+## Compatibility Map
+
+| Gradle | Minimal plugin version |
+|--------|------------------------|
+| 7.4    | 0.1.0                  |
 
 
 ## Building from source
