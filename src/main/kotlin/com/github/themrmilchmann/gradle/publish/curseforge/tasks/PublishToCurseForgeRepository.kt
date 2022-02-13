@@ -33,7 +33,6 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.utils.*
 import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
@@ -113,21 +112,16 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
 
         val apiKey = apiKey.get()
 
-        val httpResponse = submitFormWithBinaryData<HttpResponse> {
-            url("$url/api/projects/${projectID}/upload-file")
+        val metadata = Json.decodeFromString<UploadMetadata>(File("${artifact.file.absolutePath}.metadata.json").readText())
+            .copy(parentFileID = parentFileID, gameVersions = gameVersionIDs)
 
-            header("X-Api-Token", apiKey)
-
-            val metadata = Json.decodeFromString<UploadMetadata>(File("${artifact.file.absolutePath}.metadata.json").readText())
-                .copy(parentFileID = parentFileID, gameVersions = gameVersionIDs)
-
-            formData {
+        val httpResponse = submitFormWithBinaryData<HttpResponse>(
+            url = "${this@PublishToCurseForgeRepository.url}/api/projects/${projectID}/upload-file",
+            formData = formData {
                 append(
                     "metadata",
                     Json.encodeToString(metadata),
-                    buildHeaders {
-                        append(HttpHeaders.ContentType, "application/json")
-                    }
+                    headersOf(HttpHeaders.ContentType, "application/json")
                 )
 
                 append(
@@ -136,6 +130,8 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
                     headersOf(HttpHeaders.ContentDisposition, "filename=${artifact.file.name}")
                 )
             }
+        ) {
+            header("X-Api-Token", apiKey)
         }
 
         if (httpResponse.status.isSuccess()) {
