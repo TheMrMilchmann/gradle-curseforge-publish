@@ -19,10 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.themrmilchmann.build.*
 import com.github.themrmilchmann.build.BuildType
-import org.gradle.api.publish.maven.internal.artifact.ArchiveTaskBasedMavenArtifact
 import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
@@ -32,7 +30,6 @@ plugins {
     `maven-publish`
     signing
     alias(libs.plugins.kotlin.plugin.serialization)
-    alias(libs.plugins.gradle.shadow)
     alias(libs.plugins.plugin.publish)
 }
 
@@ -76,31 +73,6 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
     }
-
-    jar {
-        enabled = false
-
-        archiveClassifier.set("invalid_removeme")
-    }
-
-    val relocateShadowJar = create<ConfigureShadowRelocation>("relocateShadowJar") {
-        target = shadowJar.get()
-        prefix = "io.github.themrmilchmann.gradle.publish.curseforge.internal.deps"
-    }
-
-    shadowJar {
-        dependsOn(relocateShadowJar)
-
-        archiveClassifier.set(null as String?)
-    }
-
-    publishPlugins {
-        dependsOn(shadowJar)
-    }
-}
-
-configurations.archives.get().apply {
-    artifacts.remove(artifacts.find { it.classifier == "invalid_removeme" })
 }
 
 publishing {
@@ -133,33 +105,9 @@ repositories {
 }
 
 dependencies {
-    // needed to prevent inclusion of gradle-api into shadow JAR
-    configurations.api.get().dependencies.remove(gradleApi())
-
-    shadow(gradleApi())
-    shadow(kotlin("stdlib-jdk8"))
-    shadow(localGroovy())
-
-    implementation(libs.kotlinx.serialization.json) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-    }
-    implementation(libs.ktor.client.apache) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-    }
-    implementation(libs.ktor.client.serialization) {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-    }
-
-    testFixturesApi(gradleApi())
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.ktor.client.apache)
+    implementation(libs.ktor.client.serialization)
 
     testFixturesApi(platform(libs.spock.bom))
     testFixturesApi(libs.spock.core)
