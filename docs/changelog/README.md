@@ -4,6 +4,7 @@
 
 ### Version History
 
+* ????-??-?? [0.2.0](0.2.0.md) (TBD; work in progress)
 * 2022-02-13 [0.1.0](0.1.0.md) (latest)
 
 

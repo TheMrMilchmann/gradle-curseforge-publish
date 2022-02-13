@@ -34,7 +34,7 @@ plugins {
 }
 
 group = "io.github.themrmilchmann.gradle.publish.curseforge"
-val nextVersion = "0.1.0"
+val nextVersion = "0.2.0"
 version = when (deployment.type) {
     BuildType.SNAPSHOT -> "$nextVersion-SNAPSHOT"
     else -> nextVersion
