@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import com.github.themrmilchmann.gradle.publish.curseforge.*
+import io.github.themrmilchmann.gradle.publish.curseforge.*
 
 plugins {
     java
-    id("com.github.themrmilchmann.curseforge-publish") version "0.1.0"
+    id("io.github.themrmilchmann.curseforge-publish") version "0.1.0"
 }
 
 version = "0.1.0"

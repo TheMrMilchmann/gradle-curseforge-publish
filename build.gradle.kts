@@ -34,8 +34,12 @@ plugins {
     alias(libs.plugins.plugin.publish)
 }
 
-group = "com.github.themrmilchmann.gradle.publish.curseforge"
+group = "io.github.themrmilchmann.gradle.publish.curseforge"
 val nextVersion = "0.1.0"
+version = when (deployment.type) {
+    BuildType.SNAPSHOT -> "$nextVersion-SNAPSHOT"
+    else -> nextVersion
+}
 
 java {
     toolchain {
@@ -50,11 +54,11 @@ kotlin {
 gradlePlugin {
     plugins {
         create("curseForgePublish") {
-            id = "com.github.themrmilchmann.curseforge-publish"
+            id = "io.github.themrmilchmann.curseforge-publish"
             displayName = "curseforge-publish"
             description = "Publish artifact to CurseForge"
 
-            implementationClass = "com.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
+            implementationClass = "io.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
         }
     }
 }
