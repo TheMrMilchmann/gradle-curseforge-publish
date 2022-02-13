@@ -34,13 +34,13 @@ val Project.deployment: Deployment
             (when {
                 hasProperty("release") -> Deployment(
                     BuildType.RELEASE,
-                    "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
+                    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/",
                     getProperty("sonatypeUsername"),
                     getProperty("sonatypePassword")
                 )
                 hasProperty("snapshot") -> Deployment(
                     BuildType.SNAPSHOT,
-                    "https://oss.sonatype.org/content/repositories/snapshots/",
+                    "https://s01.oss.sonatype.org/content/repositories/snapshots/",
                     getProperty("sonatypeUsername"),
                     getProperty("sonatypePassword")
                 )
