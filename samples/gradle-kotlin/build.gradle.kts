@@ -23,7 +23,7 @@ import com.github.themrmilchmann.gradle.publish.curseforge.*
 
 plugins {
     java
-    id("com.github.themrmilchmann.curseforge-publish")
+    id("com.github.themrmilchmann.curseforge-publish") version "0.1.0"
 }
 
 version = "0.1.0"
