@@ -86,6 +86,39 @@ publishing {
             }
         }
     }
+    publications.withType<MavenPublication> {
+        pom {
+            name.set("CurseForge Gradle Publish")
+            description.set(" A Gradle plugin for publishing to CurseForge")
+            packaging = "jar"
+            url.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish")
+
+            licenses {
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE")
+                        distribution.set("repo")
+                    }
+                }
+            }
+
+            developers {
+                developer {
+                    id.set("TheMrMilchmann")
+                    name.set("Leon Linhart")
+                    email.set("themrmilchmann@gmail.com")
+                    url.set("https://github.com/TheMrMilchmann")
+                }
+            }
+
+            scm {
+                connection.set("scm:git:git://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
+                developerConnection.set("scm:git:git://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
+                url.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
+            }
+        }
+    }
 }
 
 pluginBundle {
