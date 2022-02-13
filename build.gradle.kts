@@ -75,6 +75,11 @@ tasks {
     }
 }
 
+val emptyJar = tasks.create<Jar>("emptyJar") {
+    destinationDirectory.set(buildDir.resolve("emptyJar"))
+    archiveBaseName.set("io.github.themrmilchmann.curseforge-publish.gradle.plugin")
+}
+
 publishing {
     repositories {
         maven {
@@ -87,6 +92,12 @@ publishing {
         }
     }
     publications.withType<MavenPublication> {
+        if (name == "curseForgePublishPluginMarkerMaven") {
+            artifact(emptyJar)
+            artifact(emptyJar) { classifier = "javadoc" }
+            artifact(emptyJar) { classifier = "sources" }
+        }
+
         pom {
             name.set("CurseForge Gradle Publish")
             description.set(" A Gradle plugin for publishing to CurseForge")
