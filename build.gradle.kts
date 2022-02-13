@@ -34,7 +34,7 @@ plugins {
     alias(libs.plugins.plugin.publish)
 }
 
-group = "com.github.themrmilchmann.gradle.curseforge.publish"
+group = "com.github.themrmilchmann.gradle.publish.curseforge"
 val nextVersion = "0.1.0"
 
 java {
