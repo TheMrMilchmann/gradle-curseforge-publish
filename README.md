@@ -1,8 +1,8 @@
 # CurseForge Gradle Publish
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square&label=License)](https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.themrmilchmann.gradle.publish.curseforge/curseforge-publish.svg?style=flat-square&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/com.github.themrmilchmann.gradle.publish.curseforge/curseforge-publish)
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?style=flat-square&&label=Gradle%20Plugin%20Portal&logo=Gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fcom%2Fgithub%2Fthemrmilchmann%2Fgradle%2Fpublish%2Fcurseforge%2Fcom.github.themrmilchmann.curseforge-publish%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/com.github.themrmilchmann.curseforge-publish)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish.svg?style=flat-square&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?style=flat-square&&label=Gradle%20Plugin%20Portal&logo=Gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fthemrmilchmann%2Fgradle%2Fpublish%2Fcurseforge%2Fcom.github.themrmilchmann.curseforge-publish%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/io.github.themrmilchmann.curseforge-publish)
 ![Gradle](https://img.shields.io/badge/Gradle-7.4-green.svg?style=flat-square&color=1ba8cb&logo=Gradle)
 ![Java](https://img.shields.io/badge/Java-8-green.svg?style=flat-square&color=b07219&logo=Java)
 
