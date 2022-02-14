@@ -75,7 +75,7 @@ public class CurseForgePublishPlugin @Inject constructor(
         val tasks = project.tasks
 
         val publishLifecycleTask = tasks.named(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME)
-        val repositories = repositories.withType<io.github.themrmilchmann.gradle.publish.curseforge.CurseForgeArtifactRepository>()
+        val repositories = repositories.withType<CurseForgeArtifactRepository>()
 
         repositories.all repository@{
             tasks.register(publishAllToSingleRepoTaskName(this@repository)) {
@@ -90,7 +90,7 @@ public class CurseForgePublishPlugin @Inject constructor(
         }
     }
 
-    private fun publishAllToSingleRepoTaskName(repository: io.github.themrmilchmann.gradle.publish.curseforge.CurseForgeArtifactRepository): String =
+    private fun publishAllToSingleRepoTaskName(repository: CurseForgeArtifactRepository): String =
         "publishAllPublicationsTo${repository.name.capitalize(Locale.ROOT)}Repository"
 
     private fun createGenerateMetadataTask(
@@ -111,7 +111,7 @@ public class CurseForgePublishPlugin @Inject constructor(
         tasks: TaskContainer,
         publishLifecycleTask: TaskProvider<Task>,
         publication: CurseForgePublicationInternal,
-        repositories: NamedDomainObjectCollection<io.github.themrmilchmann.gradle.publish.curseforge.CurseForgeArtifactRepository>
+        repositories: NamedDomainObjectCollection<CurseForgeArtifactRepository>
     ) {
         val publicationName = publication.name
 

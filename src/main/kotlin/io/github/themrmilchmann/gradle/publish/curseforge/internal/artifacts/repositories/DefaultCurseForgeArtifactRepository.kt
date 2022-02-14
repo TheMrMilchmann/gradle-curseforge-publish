@@ -32,7 +32,7 @@ import javax.inject.*
 internal open class DefaultCurseForgeArtifactRepository @Inject constructor(
     val url: String,
     objectFactory: ObjectFactory
-) : io.github.themrmilchmann.gradle.publish.curseforge.CurseForgeArtifactRepository {
+) : CurseForgeArtifactRepository {
 
     override val apiKey: Property<String> = objectFactory.property()
 
