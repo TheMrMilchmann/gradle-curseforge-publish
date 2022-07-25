@@ -3,7 +3,7 @@ on: push
 
 jobs:
   build:
-    name: OpenJDK 17 (Ubuntu)
+    name: OpenJDK 18 (Ubuntu)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,7 +13,7 @@ jobs:
 
       - uses: AdoptOpenJDK/install-jdk@v1
         with:
-          version: '17'
+          version: '18'
 
       - name: Cache Gradle packages
         uses: actions/cache@v2
