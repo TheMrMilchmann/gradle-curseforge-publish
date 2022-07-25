@@ -23,7 +23,7 @@ import io.github.themrmilchmann.gradle.publish.curseforge.*
 
 plugins {
     java
-    id("net.minecraftforge.gradle") version "5.1.0"
+    id("net.minecraftforge.gradle") version "5.1.52"
     id("io.github.themrmilchmann.curseforge-publish") version "0.1.0"
 }
 
