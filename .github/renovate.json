@@ -2,5 +2,9 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "commitMessagePrefix": "build:",
   "enabledManagers": [ "gradle" ],
-  "labels": [ "dependencies" ]
+  "labels": [ "dependencies" ],
+  "ignoreDeps": [
+    "net.minecraftforge:forge",
+    "net.minecraftforge.gradle"
+  ]
 }
