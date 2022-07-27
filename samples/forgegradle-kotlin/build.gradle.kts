@@ -68,5 +68,5 @@ publishing {
 }
 
 dependencies {
-    minecraft("net.minecraftforge:forge:1.16.5-36.2.2")
+    minecraft("net.minecraftforge:forge:1.19-41.1.0")
 }
