@@ -1,5 +1,4 @@
 [versions]
-gradle-shadow = "7.1.2"
 gradle-toolchain-switches = "0.2.0"
 kotlin = "1.5.32"
 kotlinx-serialization = "1.3.2"
@@ -20,9 +19,6 @@ spock-bom = { module = "org.spockframework:spock-bom", version.ref = "spock" }
 spock-core = { module = "org.spockframework:spock-core", version.ref = "spock" }
 
 [plugins]
-# com.github.johnrengelman.shadow - Gradle Shadow
-gradle-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradle-shadow" }
-
 # com.gradle.plugin-publish - plugin-publish
 plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "plugin-publish" }
 
