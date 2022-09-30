@@ -107,8 +107,7 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
         parentFileID: Int? = null,
         gameVersionIDs: List<Int>? = null
     ): Int {
-        if (parentFileID == null && gameVersionIDs == null) error("")
-        if (parentFileID != null && gameVersionIDs != null) error("")
+        require((parentFileID != null) xor (gameVersionIDs != null)) { "Exactly one of the parameter must be set: parentFileID, gameVersionIDs" }
 
         val apiKey = apiKey.get()
 

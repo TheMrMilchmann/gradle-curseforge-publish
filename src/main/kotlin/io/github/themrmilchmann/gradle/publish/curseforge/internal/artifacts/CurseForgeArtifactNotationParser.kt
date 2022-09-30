@@ -36,10 +36,7 @@ internal class CurseForgeArtifactNotationParser(
         is AbstractArchiveTask -> parseArchiveTaskNotation(any)
         is Provider<*> -> parseProviderNotation(any)
         is PublishArtifact -> parsePublishArtifactNotation(any)
-        else -> {
-            parseFileNotation(any)
-                ?: error("")
-        }
+        else -> parseFileNotation(any) ?: error("Failed to parse artifact notation: $any")
     }
 
     private fun parseArchiveTaskNotation(archiveTask: AbstractArchiveTask): AbstractCurseForgeArtifact =
