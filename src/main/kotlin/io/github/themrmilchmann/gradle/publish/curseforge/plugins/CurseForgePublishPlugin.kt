@@ -35,6 +35,7 @@ import org.gradle.api.plugins.*
 import org.gradle.api.publish.*
 import org.gradle.api.publish.plugins.*
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import java.util.*
 import javax.inject.*
@@ -172,16 +173,21 @@ public class CurseForgePublishPlugin @Inject constructor(
     private fun Project.configureJavaIntegration() {
         pluginManager.withPlugin("java") {
             extensions.configure<PublishingExtension> {
-                publications.withType<CurseForgePublication> {
+                publications.withType<CurseForgePublication>().configureEach {
                     val jar = tasks.named(JavaPlugin.JAR_TASK_NAME)
                     artifact(jar)
 
-                    afterEvaluate {
-                        val java = project.extensions.getByType(JavaPluginExtension::class)
-                        val targetVersion = java.targetCompatibility.majorVersion
+                    val compileJava = tasks.named<JavaCompile>(JavaPlugin.COMPILE_JAVA_TASK_NAME).get()
+                    val targetVersionProvider = compileJava.options.release.map(Int::toString)
+                        .orElse(compileJava.targetCompatibility)
+                        .map {
+                            // Normalize (e.g 1.8 => 8)
+                            val majorVersion = JavaVersion.toVersion(it).majorVersion
+                            LOGGER.debug("Inferred CurseForge Java dependency: version='java-$majorVersion'")
+                            majorVersion
+                        }
 
-                        includeGameVersions { type, version -> type == "java" && version == "java-$targetVersion" }
-                    }
+                    javaVersion(targetVersionProvider)
                 }
             }
         }

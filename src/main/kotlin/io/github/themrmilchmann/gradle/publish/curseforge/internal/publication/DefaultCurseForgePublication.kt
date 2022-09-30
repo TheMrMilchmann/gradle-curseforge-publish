@@ -35,6 +35,7 @@ import org.gradle.api.internal.component.*
 import org.gradle.api.internal.file.*
 import org.gradle.api.model.*
 import org.gradle.api.provider.*
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.internal.*
 import org.gradle.api.publish.internal.PublicationInternal.PublishedFile
 import org.gradle.api.publish.internal.versionmapping.*
@@ -91,7 +92,30 @@ internal open class DefaultCurseForgePublication @Inject constructor(
     }
 
     override fun isGameVersionIncluded(dependency: GameDependency, version: GameVersion): Boolean =
-        gameVersionFilters.any { filter -> filter(dependency.slug, version.slug) }
+        gameVersionFilters.any { filter ->
+            if (dependency.slug == "java" && javaVersions.any { "java-${if (it is Provider<*>) it.get() else it}" == version.slug }) return true
+            filter(dependency.slug, version.slug)
+        }
+
+    private val _javaVersions = mutableSetOf<Any>()
+    override var javaVersions: Set<Any>
+        get() = _javaVersions
+        set(value) {
+            _javaVersions.clear()
+            _javaVersions.addAll(value)
+        }
+
+    override fun javaVersion(version: Provider<String>) {
+        _javaVersions += version
+    }
+
+    override fun javaVersion(version: String) {
+        _javaVersions += version
+    }
+
+    override fun javaVersions(vararg versions: String) {
+        _javaVersions.addAll(versions)
+    }
 
     override lateinit var publicationMetadataGenerator: TaskProvider<out Task>
 

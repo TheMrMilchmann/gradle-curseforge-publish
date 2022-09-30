@@ -49,6 +49,10 @@ publishing {
             // Specify which game and version the mod/plugin targets (optional)
             // When using the ForgeGradle plugin, this information is usually inferred and set automatically.
             includeGameVersions { type, version -> type == "minecraft-1-16" && version == "1-16-5" }
+            
+            // Specify which Java version is supported (optional)
+            // When using the ForgeGradle plugin, this information is usually inferred and set automatically.
+            javaVersion("18")
 
             artifact {
                 changelog = Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)
