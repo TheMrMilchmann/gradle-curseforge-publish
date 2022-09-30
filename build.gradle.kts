@@ -29,6 +29,7 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     signing
+    alias(libs.plugins.gradle.toolchain.switches)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.plugin.publish)
 }

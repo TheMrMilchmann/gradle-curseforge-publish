@@ -1,5 +1,6 @@
 [versions]
 gradle-shadow = "7.1.2"
+gradle-toolchain-switches = "0.2.0"
 kotlin = "1.5.32"
 kotlinx-serialization = "1.3.2"
 ktor = "1.6.8"
@@ -24,6 +25,9 @@ gradle-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradle-
 
 # com.gradle.plugin-publish - plugin-publish
 plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "plugin-publish" }
+
+# io.github.themrmilchmann.gradle.toolchainswitches:gradle-toolchain-switches - Gradle Toolchain Switches Plugin
+gradle-toolchain-switches = { id = "io.github.themrmilchmann.toolchain-switches", version.ref = "gradle-toolchain-switches" }
 
 # org.jetbrains.kotlin - Kotlin
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
