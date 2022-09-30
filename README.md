@@ -6,7 +6,8 @@
 ![Gradle](https://img.shields.io/badge/Gradle-7.4-green.svg?style=flat-square&color=1ba8cb&logo=Gradle)
 ![Java](https://img.shields.io/badge/Java-8-green.svg?style=flat-square&color=b07219&logo=Java)
 
-Provides the ability to publish build artifacts to [CurseForge](https://www.curseforge.com/).
+_CurseForge Gradle Publish_ provides the ability to publish build artifacts to
+[CurseForge](https://www.curseforge.com/).
 
 
 ## Usage
@@ -32,7 +33,7 @@ named repositories. The CurseForge Publish Plugin work with
 `CurseForgePublication` publications and `CurseForgeArtifactRepository`
 repositories.
 
-Once the plugin has been applied, repositories and publications can be defined
+Once the plugin has been applied, repositories and publications can be defined.
 
 
 ### Publications
