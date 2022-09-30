@@ -7,7 +7,8 @@ on:
 
 env:
   JDK_VERSION: "18"
-
+  WORKSPACE_ARCHIVE: workspace.tar
+  WORKSPACE_ARTIFACT: build-results
 
 jobs:
   build:
@@ -27,7 +28,38 @@ jobs:
       - name: Gradle Build
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build -Psnapshot --info -S --show-version
+          arguments: assemble -Psnapshot --info -S --show-version
+          gradle-home-cache-cleanup: true
+
+
+  check:
+    name: Check
+    strategy:
+      matrix:
+        jdk: [ 8, 11, 17, 19 ]
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.WORKSPACE_ARTIFACT }}
+          path: .
+
+      - name: Untar
+        run: |
+          tar -xvf ${{ env.WORKSPACE_ARCHIVE }}
+          rm ${{ env.WORKSPACE_ARCHIVE }}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JDK_VERSION }}
+
+      - name: Gradle Check
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: check -Psnapshot --info -S --show-version -Ptoolchain.test.version=${{ matrix.jdk }}
           gradle-home-cache-cleanup: true
 
 
@@ -36,7 +68,16 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.WORKSPACE_ARTIFACT }}
+          path: .
+
+      - name: Untar
+        run: |
+          tar -xvf ${{ env.WORKSPACE_ARCHIVE }}
+          rm ${{ env.WORKSPACE_ARCHIVE }}
 
       - uses: actions/setup-java@v3
         with:
@@ -45,3 +86,27 @@ jobs:
 
       - name: Gradle Publish (Dry-Run)
         run: find samples/ -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 -n1 bash -c 'cd "$0" && echo $PWD && ./gradlew publish --dry-run --include-build ../../'
+
+
+  # So, what's happening here?
+  #
+  # Basically, restoring the workspace state between jobs is incredibly annoying.
+  # We can get reasonable support by using the upload-/download-artifact
+  # actions, but they suffer from a severe limitation:
+  # GH Actions has a storage limit and the minimum retention is 24 hours...
+  #
+  # Since the storage quota is limited, we have to make sure that the artifact
+  # is removed. Unfortunately, there is no official way to do this, so we resort
+  # to a third party action for now.
+  #
+  # See also: https://github.com/actions/upload-artifact/issues/290
+  cleanup:
+    name: Cleanup
+    if: ${{ always() }}
+    needs: ["check", "samples"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup
+        uses: GeekyEggo/delete-artifact@56e063d7d8bf9972ac54aca4454d3a6675917f44
+        with:
+          name: ${{ env.WORKSPACE_ARTIFACT }}
