@@ -142,7 +142,7 @@ public class CurseForgePublishPlugin @Inject constructor(
 
                     afterEvaluate {
                         val mcVersion = this@configureForgeGradleIntegration.extensions.extraProperties["MC_VERSION"] as String
-                        val matchGroups = """^([0-9]+)\.([0-9]+)(\.[0-9]+)?""".toRegex().matchEntire(mcVersion)?.groupValues ?: error("")
+                        val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(mcVersion)?.groupValues ?: error("")
 
                         val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
                         val mcVersionSlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
