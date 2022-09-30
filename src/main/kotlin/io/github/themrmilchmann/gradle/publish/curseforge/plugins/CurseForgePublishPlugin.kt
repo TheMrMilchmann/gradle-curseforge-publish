@@ -26,6 +26,7 @@ import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.publication.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import io.github.themrmilchmann.gradle.publish.curseforge.tasks.*
+import org.apache.log4j.LogManager
 import org.gradle.api.*
 import org.gradle.api.internal.file.*
 import org.gradle.api.invocation.*
@@ -44,6 +45,8 @@ public class CurseForgePublishPlugin @Inject constructor(
 ) : Plugin<Project> {
 
     internal companion object {
+
+        private val LOGGER = LogManager.getLogger(CurseForgePublishPlugin::class.java)
 
         lateinit var gradle: Gradle
             private set
@@ -142,11 +145,17 @@ public class CurseForgePublishPlugin @Inject constructor(
 
                     afterEvaluate {
                         val mcVersion = this@configureForgeGradleIntegration.extensions.extraProperties["MC_VERSION"] as String
-                        val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(mcVersion)?.groupValues ?: error("")
+                        val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(mcVersion)?.groupValues
+
+                        if (matchGroups == null) {
+                            LOGGER.warn("Failed to parse Minecraft version string '$mcVersion'. The CurseForge publication cannot infer the required Minecraft version.")
+                            return@afterEvaluate
+                        }
 
                         val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
                         val mcVersionSlug = "${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
 
+                        LOGGER.debug("Inferred CurseForge Minecraft dependency: type='$mcDependencySlug', version='$mcVersionSlug'")
                         includeGameVersions { type, version -> type == mcDependencySlug && version == mcVersionSlug }
                     }
                 }
