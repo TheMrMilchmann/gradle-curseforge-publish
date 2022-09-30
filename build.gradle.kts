@@ -58,8 +58,8 @@ gradlePlugin {
     plugins {
         create("curseForgePublish") {
             id = "io.github.themrmilchmann.curseforge-publish"
-            displayName = "curseforge-publish"
-            description = "Publish artifact to CurseForge"
+            displayName = "CurseForge Gradle Publish Plugin"
+            description = "A Gradle plugin for publishing to CurseForge"
 
             implementationClass = "io.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
         }
@@ -101,7 +101,7 @@ publishing {
 
         pom {
             name.set("CurseForge Gradle Publish")
-            description.set(" A Gradle plugin for publishing to CurseForge")
+            description.set("A Gradle plugin for publishing to CurseForge")
             packaging = "jar"
             url.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish")
 

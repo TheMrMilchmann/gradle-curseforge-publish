@@ -1,4 +1,4 @@
-# CurseForge Gradle Publish
+# CurseForge Gradle Publish Plugin
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square&label=License)](https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish.svg?style=flat-square&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish)
@@ -6,8 +6,7 @@
 ![Gradle](https://img.shields.io/badge/Gradle-7.4-green.svg?style=flat-square&color=1ba8cb&logo=Gradle)
 ![Java](https://img.shields.io/badge/Java-8-green.svg?style=flat-square&color=b07219&logo=Java)
 
-_CurseForge Gradle Publish_ provides the ability to publish build artifacts to
-[CurseForge](https://www.curseforge.com/).
+A gradle plugin that adds support for publishing artifacts to [CurseForge](https://www.curseforge.com/).
 
 
 ## Usage
