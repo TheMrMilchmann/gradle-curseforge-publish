@@ -29,12 +29,14 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.file.*
 import org.gradle.api.internal.*
+import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
 import org.gradle.api.internal.attributes.*
 import org.gradle.api.internal.component.*
 import org.gradle.api.internal.file.*
 import org.gradle.api.model.*
 import org.gradle.api.provider.*
 import org.gradle.api.publish.internal.*
+import org.gradle.api.publish.internal.PublicationInternal.PublishedFile
 import org.gradle.api.publish.internal.versionmapping.*
 import org.gradle.api.tasks.*
 import org.gradle.internal.*
@@ -104,17 +106,19 @@ internal open class DefaultCurseForgePublication @Inject constructor(
     override fun withBuildIdentifier() { withBuildIdentifier = true }
 
 
-    override fun getDisplayName(): DisplayName {
-        TODO("Not yet implemented")
-    }
+    override fun getDisplayName(): DisplayName =
+        Describables.withTypeAndName("CurseForge publication", name)
 
     override fun getCoordinates(): ModuleVersionIdentifier {
-        TODO("Not yet implemented")
+        return DefaultModuleVersionIdentifier.newId("com.example", "stub", "0") // TODO Can we figure out a way to properly derive this?
     }
 
-    override fun <T : Any?> getCoordinates(type: Class<T>?): T? {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any?> getCoordinates(type: Class<T>): T? =
+        if (type.isAssignableFrom(ModuleVersionIdentifier::class.java)) {
+            type.cast(coordinates)
+        } else {
+            null
+        }
 
     override fun getComponent(): SoftwareComponentInternal? = null
     override fun isLegacy(): Boolean = false
@@ -138,8 +142,11 @@ internal open class DefaultCurseForgePublication @Inject constructor(
         derivedArtifacts.remove(artifact)
     }
 
-    override fun getPublishedFile(source: PublishArtifact?): PublicationInternal.PublishedFile {
-        TODO("Not yet implemented")
+    override fun getPublishedFile(source: PublishArtifact?): PublishedFile {
+        return object : PublishedFile {
+            override fun getName(): String = mainArtifact.file.name
+            override fun getUri(): String = "" // TODO Can we figure out a way to properly derive this?
+        }
     }
 
     override fun getVersionMappingStrategy(): VersionMappingStrategyInternal? = null
