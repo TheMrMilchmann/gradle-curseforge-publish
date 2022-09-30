@@ -145,7 +145,7 @@ public class CurseForgePublishPlugin @Inject constructor(
                         val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(mcVersion)?.groupValues ?: error("")
 
                         val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
-                        val mcVersionSlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
+                        val mcVersionSlug = "${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
 
                         includeGameVersions { type, version -> type == mcDependencySlug && version == mcVersionSlug }
                     }

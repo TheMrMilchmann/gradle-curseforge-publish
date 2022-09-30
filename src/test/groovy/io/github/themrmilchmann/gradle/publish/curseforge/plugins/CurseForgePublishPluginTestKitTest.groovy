@@ -83,8 +83,9 @@ class CurseForgePublishPluginTestKitTest extends Specification {
                     curseForge(CurseForgePublication) {
                         projectID = 123456 // The CurseForge project ID (required)
             
-                        // Specify which game and version the mod/plugin targets (required)
-                        includeGameVersions { type, version -> type == "minecraft-1-16" && version == "minecraft-1-16-5" }
+                        // Specify which game and version the mod/plugin targets (optional)
+                        // When using the ForgeGradle plugin, this information is usually inferred and set automatically.
+                        includeGameVersions { type, version -> type == "minecraft-1-16" && version == "1-16-5" }
             
                         artifact {
                             changelog = new Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)
