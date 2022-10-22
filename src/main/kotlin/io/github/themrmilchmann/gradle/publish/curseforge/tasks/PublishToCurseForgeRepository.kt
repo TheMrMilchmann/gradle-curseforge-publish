@@ -30,6 +30,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.HttpResponse
@@ -45,6 +46,12 @@ import java.io.*
 
 @DisableCachingByDefault(because = "Not worth caching")
 public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() {
+
+    private companion object {
+        val json = Json {
+            ignoreUnknownKeys = true
+        }
+    }
 
     private var _repository: CurseForgeArtifactRepository? = null
 
@@ -66,7 +73,9 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
         val apiKey = apiKey.finalizeAndGetOrNull() ?: error("CurseForge API key has not been provided for repository: ${_repository!!.name}")
 
         val httpClient = HttpClient(Apache) {
-            install(JsonFeature)
+            install(JsonFeature) {
+                serializer = KotlinxSerializer(json)
+            }
         }
 
         val publication = publicationInternal!!
@@ -111,7 +120,7 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
 
         val apiKey = apiKey.get()
 
-        val metadata = Json.decodeFromString<UploadMetadata>(File("${artifact.file.absolutePath}.metadata.json").readText())
+        val metadata = json.decodeFromString<UploadMetadata>(File("${artifact.file.absolutePath}.metadata.json").readText())
             .copy(parentFileID = parentFileID, gameVersions = gameVersionIDs)
 
         val httpResponse = submitFormWithBinaryData<HttpResponse>(
