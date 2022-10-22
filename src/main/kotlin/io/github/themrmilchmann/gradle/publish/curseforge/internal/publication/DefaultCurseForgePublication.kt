@@ -27,7 +27,6 @@ import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.Gam
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.GameVersion
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
-import org.gradle.api.file.*
 import org.gradle.api.internal.*
 import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
 import org.gradle.api.internal.attributes.*
@@ -41,12 +40,14 @@ import org.gradle.api.publish.internal.PublicationInternal.PublishedFile
 import org.gradle.api.publish.internal.versionmapping.*
 import org.gradle.api.tasks.*
 import org.gradle.internal.*
+import org.gradle.internal.reflect.Instantiator
 import org.gradle.kotlin.dsl.*
 import javax.inject.*
 
 internal open class DefaultCurseForgePublication @Inject constructor(
     private val name: String,
     private val artifactFactory: CurseForgeArtifactNotationParser,
+    instantiator: Instantiator,
     fileCollectionFactory: FileCollectionFactory,
     objects: ObjectFactory,
     collectionCallbackActionDecorator: CollectionCallbackActionDecorator
@@ -54,14 +55,10 @@ internal open class DefaultCurseForgePublication @Inject constructor(
 
     override val projectID: Property<Int> = objects.property()
 
-    private val mainArtifactFileCollection = objects.fileCollection()
-    private val mainArtifactDomainObjectSet = objects.domainObjectSet(CurseForgeArtifact::class)
-
     private var _mainArtifact: AbstractCurseForgeArtifact? = null
         set(value) {
-            mainArtifactFileCollection.setFrom(value)
             mainArtifactDomainObjectSet.clear()
-            mainArtifactDomainObjectSet.add(value)
+            mainArtifactDomainObjectSet.add(value!!)
 
             field = value
         }
@@ -148,8 +145,9 @@ internal open class DefaultCurseForgePublication @Inject constructor(
     override fun isLegacy(): Boolean = false
     override fun getAttributes(): ImmutableAttributes = ImmutableAttributes.EMPTY
 
+    private val mainArtifactDomainObjectSet = instantiator.newInstance(CurseForgeArtifactSet::class.java, name, fileCollectionFactory, collectionCallbackActionDecorator)
     private val derivedArtifacts = DefaultPublicationArtifactSet(CurseForgeArtifact::class.java, "derived artifacts for $name", fileCollectionFactory, collectionCallbackActionDecorator)
-    private val publishableArtifacts = CompositePublicationArtifactSet(CurseForgeArtifact::class.java, MainArtifactSetWrapper(), derivedArtifacts)
+    private val publishableArtifacts = CompositePublicationArtifactSet(CurseForgeArtifact::class.java, mainArtifactDomainObjectSet, derivedArtifacts)
 
     override fun getPublishableArtifacts(): PublicationArtifactSet<CurseForgeArtifact> = publishableArtifacts
     override fun allPublishableArtifacts(action: Action<in CurseForgeArtifact>) { publishableArtifacts.all(action) }
@@ -175,11 +173,5 @@ internal open class DefaultCurseForgePublication @Inject constructor(
 
     override fun getVersionMappingStrategy(): VersionMappingStrategyInternal? = null
     override fun isPublishBuildId(): Boolean = false
-
-    private inner class MainArtifactSetWrapper : DelegatingDomainObjectSet<CurseForgeArtifact>(
-        CompositeDomainObjectSet.create(CurseForgeArtifact::class.java, mainArtifactDomainObjectSet)
-    ), PublicationArtifactSet<CurseForgeArtifact> {
-        override fun getFiles(): FileCollection = mainArtifactFileCollection
-    }
 
 }
