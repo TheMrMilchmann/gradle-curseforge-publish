@@ -1,3 +1,17 @@
+### 0.3.0
+
+_Released 2022 Oct 22_
+
+#### Fixes
+
+- Fixed how publishable files are exposed to Gradle. [[GH-17](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/17)]
+    - This should also fix the dependencies of the publishing tasks.
+- Improved resilience to CurseForge changes by ignoring unknown keys in
+  JSON responses. [[GH-18](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/18)]
+
+
+---
+
 ### 0.2.0
 
 _Released 2022 Oct 17_

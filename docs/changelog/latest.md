@@ -1,18 +1,10 @@
-### 0.2.0
+### 0.3.0
 
-_Released 2022 Oct 17_
-
-#### Improvements
-
-- Improved error messages across the board.
-- Improved reliability of Java version inference.
-    - The inference now uses the `compileJava` task's properties instead of the
-      project-wide toolchain.
-    - The inferred Java version can now be overwritten and additional versions can
-      be added using the `javaVersion` and `javaVersions` functions.
+_Released 2022 Oct 22_
 
 #### Fixes
 
-- Fixed a bug that prevented the plugin from automatically deriving the
-  Minecraft dependency from the ForgeGradle plugin (if available).
-- Fixed a bug that could cause Gradle to issue confusing warnings.
+- Fixed how publishable files are exposed to Gradle. [[GH-17](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/17)]
+    - This should also fix the dependencies of the publishing tasks.
+- Improved resilience to CurseForge changes by ignoring unknown keys in
+  JSON responses. [[GH-18](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/18)]
