@@ -58,9 +58,8 @@ kotlin {
 val shade = configurations.create("shade") {
     exclude(group = "org.jetbrains.kotlin")
 }
-configurations.compileOnly.configure {
-    extendsFrom(shade)
-}
+configurations.compileOnly.configure { extendsFrom(shade) }
+configurations.testRuntimeOnly.configure { extendsFrom(shade) }
 
 gradlePlugin {
     plugins {
@@ -83,6 +82,10 @@ tasks {
         target = shadowJar.get()
     }
 
+    jar {
+        archiveClassifier.set("plain")
+    }
+
     shadowJar {
         dependsOn(relocateShadowJar)
 
@@ -91,7 +94,13 @@ tasks {
     }
 
     withType<Test> {
+        dependsOn(shadowJar)
+
         useJUnitPlatform()
+
+        doFirst {
+            systemProperty("PLUGIN_CLASSPATH", shadowJar.get().outputs.files.asPath)
+        }
     }
 
     validatePlugins {

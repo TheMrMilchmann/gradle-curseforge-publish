@@ -112,6 +112,9 @@ class CurseForgePublishPluginTestKitTest extends Specification {
     }
 
     private runGradle(String version, String... args) {
+        String classpathPropertyValue = System.properties["PLUGIN_CLASSPATH"]
+        List<File> classpath = classpathPropertyValue.tokenize(File.pathSeparator).collect { it -> new File(it) }
+
         def arguments = []
         arguments.addAll(args)
         arguments.add("-s")
@@ -120,7 +123,7 @@ class CurseForgePublishPluginTestKitTest extends Specification {
                 .withGradleVersion(version)
                 .withProjectDir(projectDir)
                 .withArguments(arguments)
-                .withPluginClasspath()
+                .withPluginClasspath(classpath)
                 .build()
     }
 
