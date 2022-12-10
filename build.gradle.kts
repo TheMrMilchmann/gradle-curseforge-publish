@@ -174,7 +174,7 @@ pluginBundle {
     website = "https://github.com/TheMrMilchmann/gradle-curseforge-publish"
     vcsUrl = "https://github.com/TheMrMilchmann/gradle-curseforge-publish.git"
 
-    tags = listOf("publishing")
+    tags = listOf("curseforge", "minecraft", "publishing")
 }
 
 signing {
