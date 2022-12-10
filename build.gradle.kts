@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.themrmilchmann.build.*
 import com.github.themrmilchmann.build.BuildType
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -28,6 +29,7 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     signing
+    alias(libs.plugins.gradle.shadow)
     alias(libs.plugins.gradle.toolchain.switches)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.plugin.publish)
@@ -53,6 +55,13 @@ kotlin {
     explicitApi()
 }
 
+val shade = configurations.create("shade") {
+    exclude(group = "org.jetbrains.kotlin")
+}
+configurations.compileOnly.configure {
+    extendsFrom(shade)
+}
+
 gradlePlugin {
     plugins {
         create("curseForgePublish") {
@@ -70,9 +79,25 @@ tasks {
         kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
     }
 
+    val relocateShadowJar = create<ConfigureShadowRelocation>("relocateShadowJar") {
+        target = shadowJar.get()
+    }
+
+    shadowJar {
+        dependsOn(relocateShadowJar)
+
+        archiveClassifier.set(null as String?)
+        configurations = listOf(shade)
+    }
+
     withType<Test> {
         useJUnitPlatform()
     }
+}
+
+artifacts {
+    runtimeOnly(tasks.shadowJar)
+    archives(tasks.shadowJar)
 }
 
 val emptyJar = tasks.create<Jar>("emptyJar") {
@@ -149,9 +174,9 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.ktor.client.apache)
-    implementation(libs.ktor.client.serialization)
+    shade(libs.kotlinx.serialization.json)
+    shade(libs.ktor.client.apache)
+    shade(libs.ktor.client.serialization)
 
     testImplementation(platform(libs.spock.bom))
     testImplementation(libs.spock.core)
