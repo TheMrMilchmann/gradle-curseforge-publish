@@ -141,7 +141,7 @@ public class CurseForgePublishPlugin @Inject constructor(
     private fun Project.configureForgeGradleIntegration() {
         pluginManager.withPlugin("net.minecraftforge.gradle") {
             extensions.configure<PublishingExtension> {
-                publications.withType<CurseForgePublication> {
+                publications.withType<CurseForgePublication>().configureEach {
                     includeGameVersions { type, version -> type == "modloader" && version == "forge" }
 
                     afterEvaluate {
