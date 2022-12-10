@@ -70,6 +70,7 @@ public class CurseForgePublishPlugin @Inject constructor(
             realizePublishingTasksLater(target)
         }
 
+        configureFabricLoomIntegration()
         configureForgeGradleIntegration()
         configureJavaIntegration()
     }
@@ -138,6 +139,38 @@ public class CurseForgePublishPlugin @Inject constructor(
         }
     }
 
+    private fun Project.configureFabricLoomIntegration() {
+        pluginManager.withPlugin("fabric-loom") {
+            extensions.configure<PublishingExtension> {
+                publications.withType<CurseForgePublication>().configureEach {
+                    includeGameVersions { type, version -> type == "modloader" && version == "fabric" }
+
+                    afterEvaluate {
+                        val minecraftConfiguration = configurations.findByName("minecraft")
+                        if (minecraftConfiguration == null) {
+                            LOGGER.warn("Fabric Loom Gradle Plugin was detected but 'minecraft' configuration cannot be found.")
+                            return@afterEvaluate
+                        }
+
+                        val dependency = minecraftConfiguration.dependencies.find { it.group == "com.mojang" && it.name == "minecraft" }
+                        if (dependency == null) {
+                            LOGGER.warn("Cannot find Minecraft dependency: ('com.mojang:minecraft')'")
+                            return@afterEvaluate
+                        }
+
+                        val mcVersion = dependency.version
+                        if (mcVersion == null) {
+                            LOGGER.warn("Minecraft dependency does not have version information")
+                            return@afterEvaluate
+                        }
+
+                        configureInferredMinecraftVersion(mcVersion)
+                    }
+                }
+            }
+        }
+    }
+
     private fun Project.configureForgeGradleIntegration() {
         pluginManager.withPlugin("net.minecraftforge.gradle") {
             extensions.configure<PublishingExtension> {
@@ -146,24 +179,13 @@ public class CurseForgePublishPlugin @Inject constructor(
 
                     afterEvaluate {
                         val mcVersion = this@configureForgeGradleIntegration.extensions.extraProperties["MC_VERSION"] as String
-                        val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(mcVersion)?.groupValues
-
-                        if (matchGroups == null) {
-                            LOGGER.warn("Failed to parse Minecraft version string '$mcVersion'. The CurseForge publication cannot infer the required Minecraft version.")
-                            return@afterEvaluate
-                        }
-
-                        val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
-                        val mcVersionSlug = "${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
-
-                        LOGGER.debug("Inferred CurseForge Minecraft dependency: type='$mcDependencySlug', version='$mcVersionSlug'")
-                        includeGameVersions { type, version -> type == mcDependencySlug && version == mcVersionSlug }
+                        configureInferredMinecraftVersion(mcVersion)
                     }
                 }
             }
 
             afterEvaluate {
-                tasks.withType<AbstractPublishToCurseForge> {
+                tasks.withType<AbstractPublishToCurseForge>().configureEach {
                     dependsOn(tasks["reobfJar"])
                 }
             }
@@ -191,6 +213,21 @@ public class CurseForgePublishPlugin @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun CurseForgePublication.configureInferredMinecraftVersion(version: String) {
+        val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues
+
+        if (matchGroups == null) {
+            LOGGER.warn("Failed to parse Minecraft version string '$version'. The CurseForge publication cannot infer the required Minecraft version.")
+            return
+        }
+
+        val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
+        val mcVersionSlug = "${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
+
+        LOGGER.debug("Inferred CurseForge Minecraft dependency: type='$mcDependencySlug', version='$mcVersionSlug'")
+        includeGameVersions { type, v -> type == mcDependencySlug && v == mcVersionSlug }
     }
 
     private inner class CurseForgePublicationFactory(
