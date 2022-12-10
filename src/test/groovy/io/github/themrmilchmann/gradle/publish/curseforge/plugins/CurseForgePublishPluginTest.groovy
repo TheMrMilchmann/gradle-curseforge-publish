@@ -25,7 +25,6 @@ import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublication
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.publication.DefaultCurseForgePublication
 import io.github.themrmilchmann.gradle.publish.curseforge.tasks.GeneratePublicationMetadata
 import io.github.themrmilchmann.gradle.publish.curseforge.tasks.PublishToCurseForgeRepository
-import io.github.themrmilchmann.gradle.publish.curseforge.test.fixtures.AbstractProjectBuilderSpec
 import org.gradle.api.publish.PublishingExtension
 
 class CurseForgePublishPluginTest extends AbstractProjectBuilderSpec {

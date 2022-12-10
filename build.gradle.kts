@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
     groovy
-    `java-test-fixtures`
     `kotlin-dsl`
     `maven-publish`
     signing
@@ -154,6 +153,6 @@ dependencies {
     implementation(libs.ktor.client.apache)
     implementation(libs.ktor.client.serialization)
 
-    testFixturesApi(platform(libs.spock.bom))
-    testFixturesApi(libs.spock.core)
+    testImplementation(platform(libs.spock.bom))
+    testImplementation(libs.spock.core)
 }
