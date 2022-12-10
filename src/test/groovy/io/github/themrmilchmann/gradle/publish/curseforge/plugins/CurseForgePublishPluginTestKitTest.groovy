@@ -34,7 +34,8 @@ class CurseForgePublishPluginTestKitTest extends Specification {
         "7.4.1",
         "7.4.2",
         "7.5",
-        "7.5.1"
+        "7.5.1",
+        "7.6"
     ]
 
     @TempDir
