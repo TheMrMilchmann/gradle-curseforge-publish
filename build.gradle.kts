@@ -93,6 +93,10 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
     }
+
+    validatePlugins {
+        enableStricterValidation.set(true)
+    }
 }
 
 artifacts {
