@@ -83,7 +83,7 @@ tasks {
     }
 
     jar {
-        archiveClassifier.set("plain")
+        enabled = false
     }
 
     shadowJar {
