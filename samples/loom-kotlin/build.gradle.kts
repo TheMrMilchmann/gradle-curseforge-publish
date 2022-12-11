@@ -24,7 +24,7 @@ import io.github.themrmilchmann.gradle.publish.curseforge.*
 plugins {
     java
     id("fabric-loom") version "1.0.12"
-    id("io.github.themrmilchmann.curseforge-publish") version "0.3.0"
+    id("io.github.themrmilchmann.curseforge-publish") version "0.4.0"
 }
 
 version = "0.1.0"
