@@ -47,11 +47,10 @@ publishing {
             projectID.set(123456) // The CurseForge project ID (required)
 
             // Specify which game and version the mod/plugin targets (optional)
-            // When using the ForgeGradle plugin, this information is usually inferred and set automatically.
+            // This information is inferred when using the Fabric Loom or ForgeGradle plugin.
             includeGameVersions { type, version -> type == "minecraft-1-16" && version == "1-16-5" }
             
             // Specify which Java version is supported (optional)
-            // When using the ForgeGradle plugin, this information is usually inferred and set automatically.
             javaVersion("18")
 
             artifact {

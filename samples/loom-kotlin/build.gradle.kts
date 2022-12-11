@@ -51,7 +51,7 @@ publishing {
         create<CurseForgePublication>("curseForge") {
             projectID.set(123456) // The CurseForge project ID (required)
 
-            // Game Dependencies are inferred when ForgeGradle is detected
+            // Game Dependencies are inferred when Fabric Loom is detected
 
             artifact {
                 changelog = Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)
