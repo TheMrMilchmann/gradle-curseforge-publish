@@ -6,9 +6,10 @@ on:
 
 
 env:
-  JDK_VERSION: "18"
+  JDK_VERSION: "19"
   WORKSPACE_ARCHIVE: workspace.tar
   WORKSPACE_ARTIFACT: build-results
+
 
 jobs:
   build:
