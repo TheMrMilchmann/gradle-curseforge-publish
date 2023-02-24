@@ -32,6 +32,7 @@ import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
 import org.gradle.api.internal.attributes.*
 import org.gradle.api.internal.component.*
 import org.gradle.api.internal.file.*
+import org.gradle.api.internal.tasks.TaskDependencyFactory
 import org.gradle.api.model.*
 import org.gradle.api.provider.*
 import org.gradle.api.provider.Provider
@@ -50,7 +51,8 @@ internal open class DefaultCurseForgePublication @Inject constructor(
     instantiator: Instantiator,
     fileCollectionFactory: FileCollectionFactory,
     objects: ObjectFactory,
-    collectionCallbackActionDecorator: CollectionCallbackActionDecorator
+    collectionCallbackActionDecorator: CollectionCallbackActionDecorator,
+    private val taskDependencyFactory: TaskDependencyFactory
 ) : CurseForgePublicationInternal {
 
     override val projectID: Property<Int> = objects.property()
@@ -147,14 +149,14 @@ internal open class DefaultCurseForgePublication @Inject constructor(
 
     private val mainArtifactDomainObjectSet = instantiator.newInstance(CurseForgeArtifactSet::class.java, name, fileCollectionFactory, collectionCallbackActionDecorator)
     private val derivedArtifacts = DefaultPublicationArtifactSet(CurseForgeArtifact::class.java, "derived artifacts for $name", fileCollectionFactory, collectionCallbackActionDecorator)
-    private val publishableArtifacts = CompositePublicationArtifactSet(CurseForgeArtifact::class.java, mainArtifactDomainObjectSet, derivedArtifacts)
+    private val publishableArtifacts = CompositePublicationArtifactSet(taskDependencyFactory, CurseForgeArtifact::class.java, mainArtifactDomainObjectSet, derivedArtifacts)
 
     override fun getPublishableArtifacts(): PublicationArtifactSet<CurseForgeArtifact> = publishableArtifacts
     override fun allPublishableArtifacts(action: Action<in CurseForgeArtifact>) { publishableArtifacts.all(action) }
     override fun whenPublishableArtifactRemoved(action: Action<in CurseForgeArtifact>) { publishableArtifacts.whenObjectRemoved { action.execute(this) } }
 
     override fun addDerivedArtifact(originalArtifact: CurseForgeArtifact, file: PublicationInternal.DerivedArtifact): CurseForgeArtifact {
-        val artifact = DerivedCurseForgeArtifact(originalArtifact as AbstractCurseForgeArtifact, file)
+        val artifact = DerivedCurseForgeArtifact(originalArtifact as AbstractCurseForgeArtifact, file, taskDependencyFactory)
         derivedArtifacts.add(artifact)
 
         return artifact

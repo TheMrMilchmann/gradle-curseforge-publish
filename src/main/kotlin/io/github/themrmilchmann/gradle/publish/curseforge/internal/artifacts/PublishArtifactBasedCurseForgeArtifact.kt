@@ -22,12 +22,14 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
 import org.gradle.api.artifacts.*
+import org.gradle.api.internal.tasks.TaskDependencyFactory
 import org.gradle.api.tasks.*
 import java.io.*
 
 internal class PublishArtifactBasedCurseForgeArtifact(
-    private val publishArtifact: PublishArtifact
-) : AbstractCurseForgeArtifact() {
+    private val publishArtifact: PublishArtifact,
+    taskDependencyFactory: TaskDependencyFactory
+) : AbstractCurseForgeArtifact(taskDependencyFactory) {
 
     override fun getDefaultBuildDependencies(): TaskDependency = publishArtifact.buildDependencies
     override fun getFile(): File = publishArtifact.file

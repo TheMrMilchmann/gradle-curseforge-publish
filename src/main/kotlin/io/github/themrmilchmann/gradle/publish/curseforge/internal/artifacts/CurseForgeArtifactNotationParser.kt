@@ -29,7 +29,8 @@ import org.gradle.api.provider.*
 import org.gradle.api.tasks.bundling.*
 
 internal class CurseForgeArtifactNotationParser(
-    private val fileResolver: FileResolver
+    private val fileResolver: FileResolver,
+    private val taskDependencyFactory: TaskDependencyFactory
 ) {
 
     fun parse(any: Any): AbstractCurseForgeArtifact = when (any) {
@@ -40,11 +41,11 @@ internal class CurseForgeArtifactNotationParser(
     }
 
     private fun parseArchiveTaskNotation(archiveTask: AbstractArchiveTask): AbstractCurseForgeArtifact =
-        ArchiveTaskBasedCurseForgeArtifact(archiveTask)
+        ArchiveTaskBasedCurseForgeArtifact(archiveTask, taskDependencyFactory)
 
     private fun parseFileNotation(notation: Any): AbstractCurseForgeArtifact? {
         val file = runCatching { fileResolver.asNotationParser().parseNotation(notation) }.getOrNull() ?: return null
-        val artifact = FileBasedCurseForgeArtifact(file)
+        val artifact = FileBasedCurseForgeArtifact(file, taskDependencyFactory)
 
         if (notation is TaskDependencyContainer) {
             artifact.builtBy(
@@ -59,9 +60,9 @@ internal class CurseForgeArtifactNotationParser(
     }
 
     private fun parseProviderNotation(provider: Provider<*>): AbstractCurseForgeArtifact =
-        PublishArtifactBasedCurseForgeArtifact(LazyPublishArtifact(provider, fileResolver))
+        PublishArtifactBasedCurseForgeArtifact(LazyPublishArtifact(provider, fileResolver, taskDependencyFactory), taskDependencyFactory)
 
     private fun parsePublishArtifactNotation(publishArtifact: PublishArtifact): AbstractCurseForgeArtifact =
-        PublishArtifactBasedCurseForgeArtifact(publishArtifact)
+        PublishArtifactBasedCurseForgeArtifact(publishArtifact, taskDependencyFactory)
 
 }

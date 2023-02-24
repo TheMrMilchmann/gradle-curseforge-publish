@@ -26,8 +26,9 @@ import org.gradle.api.tasks.*
 import java.io.*
 
 internal class FileBasedCurseForgeArtifact(
-    private val file: File
-) : AbstractCurseForgeArtifact() {
+    private val file: File,
+    taskDependencyFactory: TaskDependencyFactory
+) : AbstractCurseForgeArtifact(taskDependencyFactory) {
 
     override fun getDefaultBuildDependencies(): TaskDependency = TaskDependencyInternal.EMPTY
     override fun getFile(): File = file
