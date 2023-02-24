@@ -20,26 +20,16 @@
  * SOFTWARE.
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-import com.github.themrmilchmann.build.*
-import com.github.themrmilchmann.build.BuildType
 import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
     groovy
     `kotlin-dsl`
-    `maven-publish`
-    signing
     alias(libs.plugins.gradle.shadow)
     alias(libs.plugins.gradle.toolchain.switches)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.plugin.publish)
-}
-
-group = "io.github.themrmilchmann.gradle.publish.curseforge"
-val nextVersion = "0.5.0"
-version = when (deployment.type) {
-    BuildType.SNAPSHOT -> "$nextVersion-SNAPSHOT"
-    else -> nextVersion
+    id("io.github.themrmilchmann.maven-publish-conventions")
 }
 
 java {
@@ -62,11 +52,15 @@ configurations.compileOnly.configure { extendsFrom(shade) }
 configurations.testRuntimeOnly.configure { extendsFrom(shade) }
 
 gradlePlugin {
+    website.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish")
+    vcsUrl.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
+
     plugins {
         create("curseForgePublish") {
             id = "io.github.themrmilchmann.curseforge-publish"
             displayName = "CurseForge Gradle Publish Plugin"
             description = "A Gradle plugin for publishing to CurseForge"
+            tags.addAll("curseforge", "minecraft", "publishing")
 
             implementationClass = "io.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
         }
@@ -119,16 +113,6 @@ val emptyJar = tasks.create<Jar>("emptyJar") {
 }
 
 publishing {
-    repositories {
-        maven {
-            url = uri(deployment.repo)
-
-            credentials {
-                username = deployment.user
-                password = deployment.password
-            }
-        }
-    }
     publications.withType<MavenPublication> {
         if (name == "curseForgePublishPluginMarkerMaven") {
             artifact(emptyJar)
@@ -139,51 +123,10 @@ publishing {
         pom {
             name.set("CurseForge Gradle Publish")
             description.set("A Gradle plugin for publishing to CurseForge")
+
             packaging = "jar"
-            url.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish")
-
-            licenses {
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE")
-                        distribution.set("repo")
-                    }
-                }
-            }
-
-            developers {
-                developer {
-                    id.set("TheMrMilchmann")
-                    name.set("Leon Linhart")
-                    email.set("themrmilchmann@gmail.com")
-                    url.set("https://github.com/TheMrMilchmann")
-                }
-            }
-
-            scm {
-                connection.set("scm:git:git://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
-                developerConnection.set("scm:git:git://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
-                url.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
-            }
         }
     }
-}
-
-pluginBundle {
-    website = "https://github.com/TheMrMilchmann/gradle-curseforge-publish"
-    vcsUrl = "https://github.com/TheMrMilchmann/gradle-curseforge-publish.git"
-
-    tags = listOf("curseforge", "minecraft", "publishing")
-}
-
-signing {
-    isRequired = (deployment.type === BuildType.RELEASE)
-    sign(publishing.publications)
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {

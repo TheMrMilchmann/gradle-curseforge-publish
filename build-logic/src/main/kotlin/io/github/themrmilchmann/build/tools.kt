@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Leon Linhart
+ * Copyright (c) 2022-2023 Leon Linhart
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,12 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.themrmilchmann.build
+package io.github.themrmilchmann.build
 
 import org.gradle.api.*
 import org.gradle.kotlin.dsl.*
 
-private const val DEPLOYMENT_KEY = "com.github.themrmilchmann.build.Deployment"
+private const val DEPLOYMENT_KEY = "io.github.themrmilchmann.build.Deployment"
 
 val Project.deployment: Deployment
     get() =

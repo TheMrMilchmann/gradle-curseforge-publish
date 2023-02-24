@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Leon Linhart
+ * Copyright (c) 2022-2023 Leon Linhart
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,16 +19,4 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-pluginManagement {
-    plugins {
-        id("org.gradle.toolchains.foojay-resolver-convention") version("0.4.0")
-    }
-
-    includeBuild("build-logic")
-}
-
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention")
-}
-
-rootProject.name = "gradle-curseforge-publish"
+rootProject.name = "build-logic"
