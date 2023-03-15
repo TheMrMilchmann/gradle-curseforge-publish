@@ -32,3 +32,5 @@ plugins {
 }
 
 rootProject.name = "gradle-curseforge-publish"
+
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
