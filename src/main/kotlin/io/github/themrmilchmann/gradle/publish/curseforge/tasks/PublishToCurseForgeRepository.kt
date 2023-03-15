@@ -55,7 +55,7 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
 
     private var _repository: CurseForgeArtifactRepository? = null
 
-    private val apiKey: Property<String> = project.objects.property()
+    private val apiKey: Property<String> = project.objects.property(String::class.java)
 
     @get:Internal
     public var repository: CurseForgeArtifactRepository?

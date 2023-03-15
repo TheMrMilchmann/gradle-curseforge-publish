@@ -43,7 +43,7 @@ public open class GeneratePublicationMetadata @Inject constructor(
 ) : DefaultTask() {
 
     @get:Internal
-    public val publication: Property<CurseForgePublication> = objects.property()
+    public val publication: Property<CurseForgePublication> = objects.property(CurseForgePublication::class.java)
 
     @TaskAction
     public fun generate() {

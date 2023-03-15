@@ -30,12 +30,7 @@ import spock.lang.Unroll
 class CurseForgePublishPluginTestKitTest extends Specification {
 
     private static def GRADLE_VERSIONS = [
-        "7.4",
-        "7.4.1",
-        "7.4.2",
-        "7.5",
-        "7.5.1",
-        "7.6"
+        "8.0.1"
     ]
 
     @TempDir

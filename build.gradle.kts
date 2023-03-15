@@ -20,14 +20,17 @@
  * SOFTWARE.
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.*
 
 @Suppress("DSL_SCOPE_VIOLATION") // See https://github.com/gradle/gradle/issues/22797
 plugins {
     groovy
-    `kotlin-dsl`
     alias(libs.plugins.gradle.shadow)
     alias(libs.plugins.gradle.toolchain.switches)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.plugin.samwithreceiver)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.plugin.publish)
     id("io.github.themrmilchmann.maven-publish-conventions")
@@ -42,8 +45,24 @@ java {
     withSourcesJar()
 }
 
+
 kotlin {
     explicitApi()
+
+    target {
+        compilations.all {
+            compilerOptions.configure {
+                apiVersion.set(KotlinVersion.KOTLIN_1_8)
+                languageVersion.set(KotlinVersion.KOTLIN_1_8)
+            }
+        }
+
+        compilations.named("main").configure {
+            compilerOptions.configure {
+                apiVersion.set(KotlinVersion.KOTLIN_1_4)
+            }
+        }
+    }
 }
 
 val shade = configurations.create("shade") {
@@ -68,9 +87,19 @@ gradlePlugin {
     }
 }
 
+samWithReceiver {
+    annotation("org.gradle.api.HasImplicitReceiver")
+}
+
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    withType<JavaCompile>().configureEach {
+        options.release.set(8)
+    }
+
+    withType<KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
 
     val relocateShadowJar = create<ConfigureShadowRelocation>("relocateShadowJar") {

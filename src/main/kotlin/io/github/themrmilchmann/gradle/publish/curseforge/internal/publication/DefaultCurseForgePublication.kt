@@ -55,7 +55,7 @@ internal open class DefaultCurseForgePublication @Inject constructor(
     private val taskDependencyFactory: TaskDependencyFactory
 ) : CurseForgePublicationInternal {
 
-    override val projectID: Property<Int> = objects.property()
+    override val projectID: Property<Int> = objects.property(Int::class.java)
 
     private var _mainArtifact: AbstractCurseForgeArtifact? = null
         set(value) {

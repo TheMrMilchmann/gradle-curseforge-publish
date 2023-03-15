@@ -57,15 +57,15 @@ public class CurseForgePublishPlugin @Inject constructor(
     }
 
     override fun apply(target: Project): Unit = applyTo(target) {
-        pluginManager.apply(PublishingPlugin::class)
+        pluginManager.apply(PublishingPlugin::class.java)
 
         CurseForgePublishPlugin.gradle = gradle
 
-        extensions.configure<PublishingExtension> {
+        extensions.configure(PublishingExtension::class.java) {
             repositories {
                 this as ExtensionAware
 
-                extensions.create("curseForge", CurseForgeRepositoryExtension::class, repositories)
+                extensions.create("curseForge", CurseForgeRepositoryExtension::class.java, repositories)
             }
 
             publications.registerFactory(CurseForgePublication::class.java, CurseForgePublicationFactory(fileResolver, taskDependencyFactory))
@@ -78,11 +78,11 @@ public class CurseForgePublishPlugin @Inject constructor(
     }
 
     private fun PublishingExtension.realizePublishingTasksLater(project: Project) {
-        val curseForgePublications = publications.withType<CurseForgePublicationInternal>()
+        val curseForgePublications = publications.withType(CurseForgePublicationInternal::class.java)
         val tasks = project.tasks
 
         val publishLifecycleTask = tasks.named(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME)
-        val repositories = repositories.withType<CurseForgeArtifactRepository>()
+        val repositories = repositories.withType(CurseForgeArtifactRepository::class.java)
 
         repositories.all repository@{
             tasks.register(publishAllToSingleRepoTaskName(this@repository)) {
@@ -104,7 +104,7 @@ public class CurseForgePublishPlugin @Inject constructor(
         tasks: TaskContainer,
         publication: CurseForgePublicationInternal
     ) {
-        val generatorTask = tasks.register<GeneratePublicationMetadata>("generateMetadataFilesFor${publication.name.capitalize(Locale.ROOT)}Publication") {
+        val generatorTask = tasks.register("generateMetadataFilesFor${publication.name.capitalize(Locale.ROOT)}Publication", GeneratePublicationMetadata::class.java) {
             description = "Generates CurseForge metadata for publication '${publication.name}'."
             group = PublishingPlugin.PUBLISH_TASK_GROUP
 
@@ -126,7 +126,7 @@ public class CurseForgePublishPlugin @Inject constructor(
             val repositoryName = name
             val publishTaskName = "publish${publicationName.capitalize(Locale.ROOT)}PublicationTo${repositoryName.capitalize(Locale.ROOT)}Repository"
 
-            tasks.register<PublishToCurseForgeRepository>(publishTaskName) {
+            tasks.register(publishTaskName, PublishToCurseForgeRepository::class.java) {
                 dependsOn(publication.publicationMetadataGenerator)
 
                 description = "Publishes CurseForge publication '$publicationName' to CurseForge repository '$repositoryName'"
@@ -143,8 +143,8 @@ public class CurseForgePublishPlugin @Inject constructor(
 
     private fun Project.configureFabricLoomIntegration() {
         pluginManager.withPlugin("fabric-loom") {
-            extensions.configure<PublishingExtension> {
-                publications.withType<CurseForgePublication>().configureEach {
+            extensions.configure(PublishingExtension::class.java) {
+                publications.withType(CurseForgePublication::class.java).configureEach {
                     includeGameVersions { type, version -> type == "modloader" && version == "fabric" }
 
                     afterEvaluate {
@@ -175,8 +175,8 @@ public class CurseForgePublishPlugin @Inject constructor(
 
     private fun Project.configureForgeGradleIntegration() {
         pluginManager.withPlugin("net.minecraftforge.gradle") {
-            extensions.configure<PublishingExtension> {
-                publications.withType<CurseForgePublication>().configureEach {
+            extensions.configure(PublishingExtension::class.java) {
+                publications.withType(CurseForgePublication::class.java).configureEach {
                     includeGameVersions { type, version -> type == "modloader" && version == "forge" }
 
                     afterEvaluate {
@@ -187,8 +187,8 @@ public class CurseForgePublishPlugin @Inject constructor(
             }
 
             afterEvaluate {
-                tasks.withType<AbstractPublishToCurseForge>().configureEach {
-                    dependsOn(tasks["reobfJar"])
+                tasks.withType(AbstractPublishToCurseForge::class.java).configureEach {
+                    dependsOn(tasks.named("reobfJar"))
                 }
             }
         }
@@ -196,12 +196,12 @@ public class CurseForgePublishPlugin @Inject constructor(
 
     private fun Project.configureJavaIntegration() {
         pluginManager.withPlugin("java") {
-            extensions.configure<PublishingExtension> {
-                publications.withType<CurseForgePublication>().configureEach {
+            extensions.configure(PublishingExtension::class.java) {
+                publications.withType(CurseForgePublication::class.java).configureEach {
                     val jar = tasks.named(JavaPlugin.JAR_TASK_NAME)
                     artifact(jar)
 
-                    val compileJava = tasks.named<JavaCompile>(JavaPlugin.COMPILE_JAVA_TASK_NAME).get()
+                    val compileJava = tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaCompile::class.java).get()
                     val targetVersionProvider = compileJava.options.release.map(Int::toString)
                         .orElse(compileJava.targetCompatibility)
                         .map {
@@ -238,7 +238,7 @@ public class CurseForgePublishPlugin @Inject constructor(
     ) : NamedDomainObjectFactory<CurseForgePublication> {
 
         override fun create(name: String): CurseForgePublication {
-            return objectFactory.newInstance<DefaultCurseForgePublication>(name, CurseForgeArtifactNotationParser(fileResolver, taskDependencyFactory))
+            return objectFactory.newInstance(DefaultCurseForgePublication::class.java, name, CurseForgeArtifactNotationParser(fileResolver, taskDependencyFactory))
         }
 
     }

@@ -34,7 +34,7 @@ internal open class DefaultCurseForgeArtifactRepository @Inject constructor(
     objectFactory: ObjectFactory
 ) : CurseForgeArtifactRepository {
 
-    override val apiKey: Property<String> = objectFactory.property()
+    override val apiKey: Property<String> = objectFactory.property(String::class.java)
 
     private var name: String = "CurseForge"
     override fun getName(): String = name
