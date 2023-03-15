@@ -102,16 +102,13 @@ tasks {
         }
     }
 
-    val relocateShadowJar = create<ConfigureShadowRelocation>("relocateShadowJar") {
-        target = shadowJar.get()
-    }
-
     jar {
         enabled = false
     }
 
     shadowJar {
-        dependsOn(relocateShadowJar)
+        isEnableRelocation = true
+        relocationPrefix = "io.github.themrmilchmann.gradle.publish.curseforge.internal.shadow"
 
         archiveClassifier.set(null as String?)
         configurations = listOf(shade)
