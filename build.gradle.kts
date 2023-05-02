@@ -157,10 +157,13 @@ publishing {
 }
 
 dependencies {
+    compileOnlyApi(kotlin("stdlib"))
+
     shade(libs.kotlinx.serialization.json)
     shade(libs.ktor.client.apache)
     shade(libs.ktor.client.serialization)
 
+    testImplementation(kotlin("stdlib"))
     testImplementation(platform(libs.spock.bom))
     testImplementation(libs.spock.core)
 }
