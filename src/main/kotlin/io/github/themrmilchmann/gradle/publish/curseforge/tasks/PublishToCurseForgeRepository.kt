@@ -29,18 +29,16 @@ import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.*
 import org.gradle.work.*
 import java.io.*
 
@@ -73,8 +71,8 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
         val apiKey = apiKey.finalizeAndGetOrNull() ?: error("CurseForge API key has not been provided for repository: ${_repository!!.name}")
 
         val httpClient = HttpClient(Apache) {
-            install(JsonFeature) {
-                serializer = KotlinxSerializer(json)
+            install(ContentNegotiation) {
+                json()
             }
         }
 
@@ -123,7 +121,7 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
         val metadata = json.decodeFromString<UploadMetadata>(File("${artifact.file.absolutePath}.metadata.json").readText())
             .copy(parentFileID = parentFileID, gameVersions = gameVersionIDs)
 
-        val httpResponse = submitFormWithBinaryData<HttpResponse>(
+        val httpResponse = submitFormWithBinaryData(
             url = "${this@PublishToCurseForgeRepository.url}/api/projects/${projectID}/upload-file",
             formData = formData {
                 append(
@@ -143,22 +141,22 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
         }
 
         if (httpResponse.status.isSuccess()) {
-            return httpResponse.receive<UploadResponse>().id
+            return httpResponse.body<UploadResponse>().id
         } else if (httpResponse.contentType() == ContentType.Application.Json) {
-            error(httpResponse.receive<String>())
+            error(httpResponse.body<String>())
         } else {
             error("Publishing CurseForge publication '${publication!!.name}' to ${repository!!.name} failed with status code: ${httpResponse.status}")
         }
     }
 
     private suspend fun HttpClient.resolveGameDependencies(apiKey: String) =
-        get<List<GameDependency>>("$url/api/game/version-types") {
+        get("$url/api/game/version-types") {
             header("X-Api-Token", apiKey)
-        }
+        }.body<List<GameDependency>>()
 
     private suspend fun HttpClient.resolveGameVersions(apiKey: String) =
-        get<List<GameVersion>>("$url/api/game/versions") {
+        get("$url/api/game/versions") {
             header("X-Api-Token", apiKey)
-        }
+        }.body<List<GameVersion>>()
 
 }
