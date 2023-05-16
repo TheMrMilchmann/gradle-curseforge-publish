@@ -19,14 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import io.github.themrmilchmann.gradle.toolchainswitches.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.*
 
-@Suppress("DSL_SCOPE_VIOLATION") // See https://github.com/gradle/gradle/issues/22797
 plugins {
-    groovy
+    alias(libs.plugins.binary.compatibility.validator)
+    alias(libs.plugins.gradle.plugin.functional.test)
+    alias(libs.plugins.gradle.plugin.unit.test)
     alias(libs.plugins.gradle.shadow)
     alias(libs.plugins.gradle.toolchain.switches)
     alias(libs.plugins.kotlin.jvm)
@@ -44,7 +45,6 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
-
 
 kotlin {
     explicitApi()
@@ -66,18 +66,16 @@ kotlin {
     }
 }
 
-val shade = configurations.create("shade") {
-    exclude(group = "org.jetbrains.kotlin")
-}
-configurations.compileOnly.configure { extendsFrom(shade) }
-configurations.testRuntimeOnly.configure { extendsFrom(shade) }
-
 gradlePlugin {
+    compatibility {
+        minimumGradleVersion.set("7.4")
+    }
+
     website.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish")
     vcsUrl.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
 
     plugins {
-        create("curseForgePublish") {
+        register("curseForgePublish") {
             id = "io.github.themrmilchmann.curseforge-publish"
             displayName = "CurseForge Gradle Publish Plugin"
             description = "A Gradle plugin for publishing to CurseForge"
@@ -112,17 +110,17 @@ tasks {
         relocationPrefix = "io.github.themrmilchmann.gradle.publish.curseforge.internal.shadow"
 
         archiveClassifier.set(null as String?)
-        configurations = listOf(shade)
     }
 
-    withType<Test> {
+    withType<Test>().configureEach {
         dependsOn(shadowJar)
 
         useJUnitPlatform()
 
-        doFirst {
-            systemProperty("PLUGIN_CLASSPATH", shadowJar.get().outputs.files.asPath)
-        }
+        @OptIn(ExperimentalToolchainSwitchesApi::class)
+        javaLauncher.set(inferLauncher(default = project.javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(8))
+        }))
     }
 
     validatePlugins {
@@ -157,14 +155,38 @@ publishing {
     }
 }
 
+// TODO Figure out a clean way to do this
+afterEvaluate {
+    configurations.named(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME) {
+        dependencies.remove(project.dependencies.gradleApi())
+    }
+}
+
 dependencies {
     compileOnlyApi(kotlin("stdlib"))
 
-    shade(libs.kotlinx.serialization.json)
-    shade(libs.ktor.client.apache)
-    shade(libs.ktor.client.serialization)
+    implementation(libs.kotlinx.serialization.json) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation(libs.ktor.client.apache) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation(libs.ktor.client.content.negotiation) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    implementation(libs.ktor.serialization.kotlinx.json) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
 
     testImplementation(kotlin("stdlib"))
-    testImplementation(platform(libs.spock.bom))
-    testImplementation(libs.spock.core)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
+    functionalTestImplementation(kotlin("stdlib"))
+    functionalTestImplementation(platform(libs.junit.bom))
+    functionalTestImplementation(libs.junit.jupiter.api)
+    functionalTestImplementation(libs.junit.jupiter.params)
+    functionalTestRuntimeOnly(libs.junit.jupiter.engine)
 }
