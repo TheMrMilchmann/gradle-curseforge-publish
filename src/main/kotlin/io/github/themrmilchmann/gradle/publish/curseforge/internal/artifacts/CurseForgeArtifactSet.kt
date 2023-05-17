@@ -31,7 +31,6 @@ import org.gradle.api.internal.tasks.AbstractTaskDependency
 import org.gradle.api.internal.tasks.TaskDependencyResolveContext
 import org.gradle.api.publish.internal.PublicationArtifactSet
 import java.io.File
-import java.util.function.Consumer
 
 internal open class CurseForgeArtifactSet(
     private val publicationName: String,
@@ -42,10 +41,7 @@ internal open class CurseForgeArtifactSet(
     collectionCallbackActionDecorator
 ), PublicationArtifactSet<CurseForgeArtifact> {
 
-    private val files = fileCollectionFactory.create(ArtifactsFileCollection()) { context ->
-        this@CurseForgeArtifactSet.forEach(context::add)
-    }
-
+    private val files = fileCollectionFactory.create(ArtifactsTaskDependency(), ArtifactsFileCollection())
     override fun getFiles(): FileCollection = files
 
     private inner class ArtifactsFileCollection : MinimalFileSet {
@@ -55,6 +51,14 @@ internal open class CurseForgeArtifactSet(
 
         override fun getFiles(): MutableSet<File> =
             this@CurseForgeArtifactSet.map { it.file }.toCollection(LinkedHashSet())
+
+    }
+
+    private inner class ArtifactsTaskDependency : AbstractTaskDependency() {
+
+        override fun visitDependencies(context: TaskDependencyResolveContext) {
+            this@CurseForgeArtifactSet.forEach(context::add)
+        }
 
     }
 

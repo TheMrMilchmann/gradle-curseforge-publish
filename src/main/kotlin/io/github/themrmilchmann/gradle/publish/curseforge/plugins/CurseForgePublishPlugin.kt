@@ -29,7 +29,6 @@ import io.github.themrmilchmann.gradle.publish.curseforge.tasks.*
 import org.apache.log4j.LogManager
 import org.gradle.api.*
 import org.gradle.api.internal.file.*
-import org.gradle.api.internal.tasks.TaskDependencyFactory
 import org.gradle.api.invocation.*
 import org.gradle.api.model.*
 import org.gradle.api.plugins.*
@@ -43,8 +42,7 @@ import javax.inject.*
 
 public class CurseForgePublishPlugin @Inject constructor(
     private val objectFactory: ObjectFactory,
-    private val fileResolver: FileResolver,
-    private val taskDependencyFactory: TaskDependencyFactory
+    private val fileResolver: FileResolver
 ) : Plugin<Project> {
 
     internal companion object {
@@ -68,7 +66,7 @@ public class CurseForgePublishPlugin @Inject constructor(
                 extensions.create("curseForge", CurseForgeRepositoryExtension::class.java, repositories)
             }
 
-            publications.registerFactory(CurseForgePublication::class.java, CurseForgePublicationFactory(fileResolver, taskDependencyFactory))
+            publications.registerFactory(CurseForgePublication::class.java, CurseForgePublicationFactory(fileResolver))
             realizePublishingTasksLater(target)
         }
 
@@ -233,12 +231,11 @@ public class CurseForgePublishPlugin @Inject constructor(
     }
 
     private inner class CurseForgePublicationFactory(
-        private val fileResolver: FileResolver,
-        private val taskDependencyFactory: TaskDependencyFactory
+        private val fileResolver: FileResolver
     ) : NamedDomainObjectFactory<CurseForgePublication> {
 
         override fun create(name: String): CurseForgePublication {
-            return objectFactory.newInstance(DefaultCurseForgePublication::class.java, name, CurseForgeArtifactNotationParser(fileResolver, taskDependencyFactory))
+            return objectFactory.newInstance(DefaultCurseForgePublication::class.java, name, CurseForgeArtifactNotationParser(fileResolver))
         }
 
     }

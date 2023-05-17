@@ -29,23 +29,23 @@ import org.gradle.api.provider.*
 import org.gradle.api.tasks.bundling.*
 
 internal class CurseForgeArtifactNotationParser(
-    private val fileResolver: FileResolver,
-    private val taskDependencyFactory: TaskDependencyFactory
+    private val fileResolver: FileResolver
 ) {
 
+    @Suppress("UNCHECKED_CAST")
     fun parse(any: Any): AbstractCurseForgeArtifact = when (any) {
         is AbstractArchiveTask -> parseArchiveTaskNotation(any)
-        is Provider<*> -> parseProviderNotation(any)
+        is Provider<*> -> parseProviderNotation(any as Provider<out AbstractArchiveTask>)
         is PublishArtifact -> parsePublishArtifactNotation(any)
         else -> parseFileNotation(any) ?: error("Failed to parse artifact notation: $any")
     }
 
     private fun parseArchiveTaskNotation(archiveTask: AbstractArchiveTask): AbstractCurseForgeArtifact =
-        ArchiveTaskBasedCurseForgeArtifact(archiveTask, taskDependencyFactory)
+        ArchiveTaskBasedCurseForgeArtifact(archiveTask)
 
     private fun parseFileNotation(notation: Any): AbstractCurseForgeArtifact? {
         val file = runCatching { fileResolver.asNotationParser().parseNotation(notation) }.getOrNull() ?: return null
-        val artifact = FileBasedCurseForgeArtifact(file, taskDependencyFactory)
+        val artifact = FileBasedCurseForgeArtifact(file)
 
         if (notation is TaskDependencyContainer) {
             artifact.builtBy(
@@ -59,10 +59,10 @@ internal class CurseForgeArtifactNotationParser(
         return artifact
     }
 
-    private fun parseProviderNotation(provider: Provider<*>): AbstractCurseForgeArtifact =
-        PublishArtifactBasedCurseForgeArtifact(LazyPublishArtifact(provider, fileResolver, taskDependencyFactory), taskDependencyFactory)
+    private fun parseProviderNotation(provider: Provider<out AbstractArchiveTask>): AbstractCurseForgeArtifact =
+        PublishArtifactBasedCurseForgeArtifact(LazyPublishArtifact(provider, fileResolver))
 
     private fun parsePublishArtifactNotation(publishArtifact: PublishArtifact): AbstractCurseForgeArtifact =
-        PublishArtifactBasedCurseForgeArtifact(publishArtifact, taskDependencyFactory)
+        PublishArtifactBasedCurseForgeArtifact(publishArtifact)
 
 }

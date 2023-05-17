@@ -29,9 +29,8 @@ import java.io.*
 
 internal class DerivedCurseForgeArtifact(
     original: AbstractCurseForgeArtifact,
-    private val derivedFile: PublicationInternal.DerivedArtifact,
-    taskDependencyFactory: TaskDependencyFactory
-) : AbstractCurseForgeArtifact(taskDependencyFactory) {
+    private val derivedFile: PublicationInternal.DerivedArtifact
+) : AbstractCurseForgeArtifact() {
 
     override var changelog: Changelog = original.changelog
     override var displayName: String? = original.displayName

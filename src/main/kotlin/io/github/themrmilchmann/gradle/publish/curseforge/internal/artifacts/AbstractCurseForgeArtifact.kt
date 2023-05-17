@@ -25,13 +25,10 @@ import io.github.themrmilchmann.gradle.publish.curseforge.*
 import org.gradle.api.internal.tasks.*
 import org.gradle.api.tasks.*
 
-internal abstract class AbstractCurseForgeArtifact(taskDependencyFactory: TaskDependencyFactory) : CurseForgeArtifact {
+internal abstract class AbstractCurseForgeArtifact : CurseForgeArtifact {
 
     private val additionalBuildDependencies = DefaultTaskDependency()
-    private val allBuildDependencies = taskDependencyFactory.visitingDependencies { context ->
-        context.add(getDefaultBuildDependencies())
-        additionalBuildDependencies.visitDependencies(context)
-    }
+    private val allBuildDependencies = CompositeTaskDependency()
 
     override lateinit var changelog: Changelog
     override var displayName: String? = null
@@ -45,5 +42,14 @@ internal abstract class AbstractCurseForgeArtifact(taskDependencyFactory: TaskDe
         allBuildDependencies
 
     abstract fun getDefaultBuildDependencies(): TaskDependency
+
+    private inner class CompositeTaskDependency : AbstractTaskDependency() {
+
+        override fun visitDependencies(context: TaskDependencyResolveContext) {
+            context.add(getDefaultBuildDependencies())
+            additionalBuildDependencies.visitDependencies(context)
+        }
+
+    }
 
 }
