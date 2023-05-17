@@ -41,7 +41,6 @@ import org.gradle.api.publish.internal.versionmapping.*
 import org.gradle.api.tasks.*
 import org.gradle.internal.*
 import org.gradle.internal.reflect.Instantiator
-import org.gradle.kotlin.dsl.*
 import javax.inject.*
 
 internal open class DefaultCurseForgePublication @Inject constructor(

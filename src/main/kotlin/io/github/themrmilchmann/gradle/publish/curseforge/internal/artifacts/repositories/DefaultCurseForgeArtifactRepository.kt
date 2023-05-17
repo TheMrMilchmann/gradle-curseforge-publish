@@ -26,7 +26,6 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.repositories.*
 import org.gradle.api.model.*
 import org.gradle.api.provider.*
-import org.gradle.kotlin.dsl.*
 import javax.inject.*
 
 internal open class DefaultCurseForgeArtifactRepository @Inject constructor(

@@ -36,7 +36,6 @@ import org.gradle.api.publish.*
 import org.gradle.api.publish.plugins.*
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.*
 import java.util.*
 import javax.inject.*
 
