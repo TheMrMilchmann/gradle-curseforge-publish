@@ -43,7 +43,7 @@ of type `CurseForgePublication`.
 ```kotlin
 publishing {
     publications {
-        create<CurseForgePublication>("curseForge") {
+        register<CurseForgePublication>("curseForge") {
             projectID.set(123456) // The CurseForge project ID (required)
 
             // Specify which game and version the mod/plugin targets (optional)
