@@ -61,6 +61,13 @@ kotlin {
             compilerOptions.configure {
                 @Suppress("DEPRECATION")
                 apiVersion.set(KotlinVersion.KOTLIN_1_4)
+
+                /*
+                 * 1.4 is deprecated, but we need it to stay compatible with old
+                 * Gradle versions anyway. Thus, we suppress the compiler's
+                 * warning.
+                 */
+                freeCompilerArgs.add("-Xsuppress-version-warnings")
             }
         }
     }
