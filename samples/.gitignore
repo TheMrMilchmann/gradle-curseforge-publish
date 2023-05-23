@@ -1,7 +1,9 @@
 /*/.gradle
+
 !/*/.idea
 /*/.idea/*
 !/*/.idea/copyright
 !/*/.idea/scopes
+
 /*/build
 /*/out
