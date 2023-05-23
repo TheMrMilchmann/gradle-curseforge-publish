@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Leon Linhart
+ * Copyright (c) 2022-2023 Leon Linhart
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@ import io.github.themrmilchmann.gradle.publish.curseforge.*
 
 plugins {
     java
-    id("net.minecraftforge.gradle") version "5.1.0"
+    id("net.minecraftforge.gradle") version "5.1.73"
     id("io.github.themrmilchmann.curseforge-publish") version "0.4.0"
 }
 
