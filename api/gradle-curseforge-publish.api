@@ -1,0 +1,138 @@
+public final class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation {
+	public fun <init> (Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public final fun copy (Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;)Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation;
+	public static synthetic fun copy$default (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation;Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;ILjava/lang/Object;)Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSlug ()Ljava/lang/String;
+	public final fun getType ()Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type : java/lang/Enum {
+	public static final field EmbeddedLibrary Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public static final field Incompatible Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public static final field OptionalDependency Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public static final field RequiredDependency Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public static final field Tool Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler {
+	public abstract fun add (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;Ljava/lang/String;)V
+	public abstract fun embeddedLibrary (Ljava/lang/String;)V
+	public abstract fun incompatible (Ljava/lang/String;)V
+	public abstract fun optionalDependency (Ljava/lang/String;)V
+	public abstract fun requiredDependency (Ljava/lang/String;)V
+	public abstract fun tool (Ljava/lang/String;)V
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler$DefaultImpls {
+	public static fun embeddedLibrary (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler;Ljava/lang/String;)V
+	public static fun incompatible (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler;Ljava/lang/String;)V
+	public static fun optionalDependency (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler;Ljava/lang/String;)V
+	public static fun requiredDependency (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler;Ljava/lang/String;)V
+	public static fun tool (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler;Ljava/lang/String;)V
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelations : java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
+	public abstract fun add (Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelation$Type;Ljava/lang/String;)V
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/Changelog {
+	public fun <init> (Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+	public final fun copy (Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;)Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
+	public static synthetic fun copy$default (Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;ILjava/lang/Object;)Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContent ()Ljava/lang/String;
+	public final fun getType ()Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/ChangelogType : java/lang/Enum {
+	public static final field HTML Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+	public static final field MARKDOWN Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+	public static final field TEXT Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifact : org/gradle/api/publish/PublicationArtifact {
+	public abstract fun getChangelog ()Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
+	public abstract fun getDisplayName ()Ljava/lang/String;
+	public abstract fun getRelations ()Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelations;
+	public abstract fun getReleaseType ()Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
+	public abstract fun setChangelog (Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;)V
+	public abstract fun setDisplayName (Ljava/lang/String;)V
+	public abstract fun setReleaseType (Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;)V
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactExtensionsKt {
+	public static final fun relations (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifact;Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository : org/gradle/api/artifacts/repositories/ArtifactRepository {
+	public abstract fun getApiKey ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication : org/gradle/api/publish/Publication {
+	public abstract fun artifact (Ljava/lang/Object;)V
+	public abstract fun artifact (Ljava/lang/Object;Lorg/gradle/api/Action;)V
+	public abstract fun artifact (Lorg/gradle/api/Action;)V
+	public abstract fun getJavaVersions ()Ljava/util/Set;
+	public abstract fun getProjectID ()Lorg/gradle/api/provider/Property;
+	public abstract fun includeGameVersions (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun javaVersion (Ljava/lang/String;)V
+	public abstract fun javaVersion (Lorg/gradle/api/provider/Provider;)V
+	public abstract fun javaVersions ([Ljava/lang/String;)V
+	public abstract fun setJavaVersions (Ljava/util/Set;)V
+}
+
+public abstract class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeRepositoryExtension {
+	public fun <init> (Lorg/gradle/api/artifacts/dsl/RepositoryHandler;)V
+	public final fun repository (Ljava/lang/String;Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
+	public final fun repository (Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/ReleaseType : java/lang/Enum {
+	public static final field ALPHA Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
+	public static final field BETA Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
+	public static final field RELEASE Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
+	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/RepositoryHandlerKt {
+	public static final fun curseForge (Lorg/gradle/api/artifacts/dsl/RepositoryHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
+	public static final fun curseForge (Lorg/gradle/api/artifacts/dsl/RepositoryHandler;Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/plugins/CurseForgePublishPlugin : org/gradle/api/Plugin {
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/internal/file/FileResolver;)V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public abstract class io/github/themrmilchmann/gradle/publish/curseforge/tasks/AbstractPublishToCurseForge : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+}
+
+public class io/github/themrmilchmann/gradle/publish/curseforge/tasks/GeneratePublicationMetadata : org/gradle/api/DefaultTask {
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public final fun generate ()V
+	public final fun getPublication ()Lorg/gradle/api/provider/Property;
+}
+
+public class io/github/themrmilchmann/gradle/publish/curseforge/tasks/PublishToCurseForgeRepository : io/github/themrmilchmann/gradle/publish/curseforge/tasks/AbstractPublishToCurseForge {
+	public fun <init> ()V
+	public final fun getRepository ()Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
+	public final fun publish ()V
+	public final fun setRepository (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;)V
+}
+
