@@ -19,41 +19,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
+package io.github.themrmilchmann.gradle.publish.curseforge
 
-import kotlinx.serialization.*
+public interface ArtifactRelationHandler {
 
-@Serializable
-internal data class UploadMetadata(
-    val changelog: String,
-    val changelogType: String,
-    val displayName: String? = null,
-    val parentFileID: Int? = null,
-    val gameVersions: List<Int>? = null,
-    val releaseType: String,
-    val relations: List<Relation>
-) {
+    public fun add(type: ArtifactRelation.Type, slug: String)
 
-    @Serializable
-    internal data class Relation(
-        val slug: String,
-        val type: Type
-    ) {
+    public fun embeddedLibrary(slug: String): Unit =
+        add(ArtifactRelation.Type.EmbeddedLibrary, slug)
 
-        @Serializable
-        internal enum class Type {
-            @SerialName("embeddedLibrary")
-            EMBEDDED_LIBRARY,
-            @SerialName("incompatible")
-            INCOMPATIBLE,
-            @SerialName("optionalDependency")
-            OPTIONAL_DEPENDENCY,
-            @SerialName("requiredDependency")
-            REQUIRED_DEPENDENCY,
-            @SerialName("tool")
-            TOOL
-        }
+    public fun incompatible(slug: String): Unit =
+        add(ArtifactRelation.Type.Incompatible, slug)
 
-    }
+    public fun optionalDependency(slug: String): Unit =
+        add(ArtifactRelation.Type.OptionalDependency, slug)
+
+    public fun requiredDependency(slug: String): Unit =
+        add(ArtifactRelation.Type.RequiredDependency, slug)
+
+    public fun tool(slug: String): Unit =
+        add(ArtifactRelation.Type.Tool, slug)
 
 }

@@ -34,6 +34,12 @@ internal abstract class AbstractCurseForgeArtifact : CurseForgeArtifact {
     override var displayName: String? = null
     override lateinit var releaseType: ReleaseType
 
+    override val relations: ArtifactRelations = object : ArtifactRelations, MutableSet<ArtifactRelation> by mutableSetOf() {
+        override fun add(type: ArtifactRelation.Type, slug: String) {
+            add(ArtifactRelation(slug, type))
+        }
+    }
+
     override fun builtBy(vararg tasks: Any) {
         additionalBuildDependencies.add(tasks)
     }

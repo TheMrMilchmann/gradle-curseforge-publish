@@ -19,41 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
+package io.github.themrmilchmann.gradle.publish.curseforge
 
-import kotlinx.serialization.*
-
-@Serializable
-internal data class UploadMetadata(
-    val changelog: String,
-    val changelogType: String,
-    val displayName: String? = null,
-    val parentFileID: Int? = null,
-    val gameVersions: List<Int>? = null,
-    val releaseType: String,
-    val relations: List<Relation>
-) {
-
-    @Serializable
-    internal data class Relation(
-        val slug: String,
-        val type: Type
-    ) {
-
-        @Serializable
-        internal enum class Type {
-            @SerialName("embeddedLibrary")
-            EMBEDDED_LIBRARY,
-            @SerialName("incompatible")
-            INCOMPATIBLE,
-            @SerialName("optionalDependency")
-            OPTIONAL_DEPENDENCY,
-            @SerialName("requiredDependency")
-            REQUIRED_DEPENDENCY,
-            @SerialName("tool")
-            TOOL
+public fun CurseForgeArtifact.relations(block: ArtifactRelationHandler.() -> Unit) {
+    val handler = object : ArtifactRelationHandler {
+        override fun add(type: ArtifactRelation.Type, slug: String) {
+            relations.add(type, slug)
         }
-
     }
 
+    block(handler)
 }

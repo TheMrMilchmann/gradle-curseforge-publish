@@ -31,6 +31,6 @@ public interface CurseForgeArtifact : PublicationArtifact {
 
     public var releaseType: ReleaseType
 
-    // TODO relations
+    public val relations: ArtifactRelations
 
 }

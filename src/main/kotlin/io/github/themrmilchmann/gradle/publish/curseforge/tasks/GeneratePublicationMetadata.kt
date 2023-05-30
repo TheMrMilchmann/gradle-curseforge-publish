@@ -61,11 +61,27 @@ public open class GeneratePublicationMetadata @Inject constructor(
             changelog = artifact.changelog.content,
             changelogType = artifact.changelog.type.toJSONType(),
             displayName = artifact.displayName,
-            releaseType = artifact.releaseType.toJSONType()
+            releaseType = artifact.releaseType.toJSONType(),
+            relations = artifact.relations.mapNotNull { artifactRelation ->
+                artifactRelation.type.toModelType().let {
+                    UploadMetadata.Relation(
+                        slug = artifactRelation.slug,
+                        type = it
+                    )
+                }
+            }
         )
 
         val outputFile = File("${artifact.file.absolutePath}.metadata.json")
         outputFile.writeText(json.encodeToString(metadata))
+    }
+
+    private fun ArtifactRelation.Type.toModelType(): UploadMetadata.Relation.Type = when (this) {
+        ArtifactRelation.Type.EmbeddedLibrary -> UploadMetadata.Relation.Type.EMBEDDED_LIBRARY
+        ArtifactRelation.Type.Incompatible -> UploadMetadata.Relation.Type.INCOMPATIBLE
+        ArtifactRelation.Type.OptionalDependency -> UploadMetadata.Relation.Type.OPTIONAL_DEPENDENCY
+        ArtifactRelation.Type.RequiredDependency -> UploadMetadata.Relation.Type.REQUIRED_DEPENDENCY
+        ArtifactRelation.Type.Tool -> UploadMetadata.Relation.Type.TOOL
     }
 
     private fun ChangelogType.toJSONType(): String = when (this) {
