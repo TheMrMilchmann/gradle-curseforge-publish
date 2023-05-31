@@ -58,6 +58,15 @@ publishing {
                 releaseType = ReleaseType.RELEASE // The release type (required)
 
                 displayName = "Example Project" // A user-friendly name for the project (optional)
+                
+                // Specify artifact relations (optional)
+                relations {
+                    embeddedLibrary("slug")
+                    incompatible("slug")
+                    optionalDependency("slug")
+                    requiredDependency("slug")
+                    tool("slug")
+                }
             }
         }
     }
