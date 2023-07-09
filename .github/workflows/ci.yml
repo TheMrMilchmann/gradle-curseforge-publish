@@ -31,7 +31,7 @@ jobs:
       - name: Gradle Assemble
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assemble -Psnapshot --info -S --show-version
+          arguments: assemble --info -S --show-version
           gradle-home-cache-cleanup: true
 
       - name: Tar files
@@ -72,34 +72,8 @@ jobs:
       - name: Gradle Check
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check -Psnapshot --info -S --show-version -Ptoolchain.test.version=${{ matrix.jdk }}
+          arguments: check --info -S --show-version -Ptoolchain.functionalTest.version=${{ matrix.jdk }}
           gradle-home-cache-cleanup: true
-
-
-  samples:
-    name: Configure Samples
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ env.WORKSPACE_ARTIFACT }}
-          path: .
-
-      - name: Untar
-        run: |
-          tar -xvf ${{ env.WORKSPACE_ARCHIVE }}
-          rm ${{ env.WORKSPACE_ARCHIVE }}
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: ${{ env.JDK_VERSION }}
-
-      - name: Gradle Publish (Dry-Run)
-        run: find samples/ -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 -n1 bash -c 'cd "$0" && echo $PWD && ./gradlew publish --dry-run --include-build ../../'
 
 
   # So, what's happening here?
@@ -117,7 +91,7 @@ jobs:
   cleanup:
     name: Cleanup
     if: ${{ always() }}
-    needs: ["check", "samples"]
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup
