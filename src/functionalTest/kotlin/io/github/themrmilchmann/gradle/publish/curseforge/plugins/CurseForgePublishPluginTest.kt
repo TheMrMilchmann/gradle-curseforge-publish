@@ -73,7 +73,7 @@ class CurseForgePublishPluginTest {
 
             // See https://docs.gradle.org/current/userguide/compatibility.html
             val javaVersion = JavaVersion.current()
-            if (javaVersion <= JavaVersion.VERSION_17) return@buildList
+            if (javaVersion < JavaVersion.VERSION_17) return@buildList
 
             add("loom-kotlin")
         }
