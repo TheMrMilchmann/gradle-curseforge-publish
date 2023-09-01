@@ -162,13 +162,6 @@ publishing {
     }
 }
 
-// TODO Figure out a clean way to do this
-afterEvaluate {
-    configurations.named(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME) {
-        dependencies.remove(project.dependencies.gradleApi())
-    }
-}
-
 dependencies {
     compileOnlyApi(kotlin("stdlib"))
 
