@@ -39,7 +39,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(19))
+        languageVersion = JavaLanguageVersion.of(19)
     }
 
     withJavadocJar()
@@ -52,15 +52,15 @@ kotlin {
     target {
         compilations.all {
             compilerOptions.configure {
-                apiVersion.set(KotlinVersion.KOTLIN_1_8)
-                languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                apiVersion = KotlinVersion.KOTLIN_1_8
+                languageVersion = KotlinVersion.KOTLIN_1_8
             }
         }
 
         compilations.named("main").configure {
             compilerOptions.configure {
                 @Suppress("DEPRECATION")
-                apiVersion.set(KotlinVersion.KOTLIN_1_4)
+                apiVersion = KotlinVersion.KOTLIN_1_4
 
                 /*
                  * 1.4 is deprecated, but we need it to stay compatible with old
@@ -75,11 +75,11 @@ kotlin {
 
 gradlePlugin {
     compatibility {
-        minimumGradleVersion.set("7.4")
+        minimumGradleVersion = "7.4"
     }
 
-    website.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish")
-    vcsUrl.set("https://github.com/TheMrMilchmann/gradle-curseforge-publish.git")
+    website = "https://github.com/TheMrMilchmann/gradle-curseforge-publish"
+    vcsUrl = "https://github.com/TheMrMilchmann/gradle-curseforge-publish.git"
 
     plugins {
         register("curseForgePublish") {
@@ -99,12 +99,12 @@ samWithReceiver {
 
 tasks {
     withType<JavaCompile>().configureEach {
-        options.release.set(8)
+        options.release = 8
     }
 
     withType<KotlinCompile>().configureEach {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget = JvmTarget.JVM_1_8
         }
     }
 
@@ -116,7 +116,7 @@ tasks {
         isEnableRelocation = true
         relocationPrefix = "io.github.themrmilchmann.gradle.publish.curseforge.internal.shadow"
 
-        archiveClassifier.set(null as String?)
+        archiveClassifier = null as String?
     }
 
     withType<Test>().configureEach {
@@ -126,12 +126,12 @@ tasks {
 
         @OptIn(ExperimentalToolchainSwitchesApi::class)
         javaLauncher.set(inferLauncher(default = project.javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(8))
+            languageVersion = JavaLanguageVersion.of(17)
         }))
     }
 
     validatePlugins {
-        enableStricterValidation.set(true)
+        enableStricterValidation = true
     }
 }
 
@@ -141,8 +141,8 @@ artifacts {
 }
 
 val emptyJar = tasks.register<Jar>("emptyJar") {
-    destinationDirectory.set(layout.buildDirectory.dir("emptyJar"))
-    archiveBaseName.set("io.github.themrmilchmann.curseforge-publish.gradle.plugin")
+    destinationDirectory = layout.buildDirectory.dir("emptyJar")
+    archiveBaseName = "io.github.themrmilchmann.curseforge-publish.gradle.plugin"
 }
 
 publishing {
@@ -154,8 +154,8 @@ publishing {
         }
 
         pom {
-            name.set("CurseForge Gradle Publish")
-            description.set("A Gradle plugin for publishing to CurseForge")
+            name = "CurseForge Gradle Publish"
+            description = "A Gradle plugin for publishing to CurseForge"
 
             packaging = "jar"
         }
