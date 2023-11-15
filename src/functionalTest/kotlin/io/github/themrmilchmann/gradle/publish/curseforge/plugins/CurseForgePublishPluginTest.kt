@@ -43,27 +43,17 @@ class CurseForgePublishPluginTest {
             val javaVersion = JavaVersion.current()
 
             // We don't support Gradle 8+ yet.
-//            add("8.1.1")
-//            add("8.1")
-//            add("8.0.2")
-//            add("8.0.1")
-//            add("8.0")
-            add("7.6.2")
-            add("7.6.1")
-            add("7.6")
+            add("7.6.3")
 
             @Suppress("UnstableApiUsage")
             if (javaVersion >= JavaVersion.VERSION_19) return@buildList
 
             add("7.5.1")
-            add("7.5")
 
             @Suppress("UnstableApiUsage")
             if (javaVersion >= JavaVersion.VERSION_18) return@buildList
 
             add("7.4.2")
-            add("7.4.1")
-            add("7.4")
         }
 
         @JvmStatic
