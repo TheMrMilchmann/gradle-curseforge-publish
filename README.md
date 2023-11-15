@@ -1,10 +1,10 @@
 # CurseForge Gradle Publish Plugin
 
-[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square&label=License)](https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish.svg?style=flat-square&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish)
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?style=flat-square&&label=Gradle%20Plugin%20Portal&logo=Gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fthemrmilchmann%2Fcurseforge-publish%2Fio.github.themrmilchmann.curseforge-publish.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/io.github.themrmilchmann.curseforge-publish)
-![Gradle](https://img.shields.io/badge/Gradle-7.4-green.svg?style=flat-square&color=1ba8cb&logo=Gradle)
-![Java](https://img.shields.io/badge/Java-8-green.svg?style=flat-square&color=b07219&logo=Java)
+[![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge&label=License)](https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish.svg?style=for-the-badge&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?style=for-the-badge&&label=Gradle%20Plugin%20Portal&logo=Gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fthemrmilchmann%2Fcurseforge-publish%2Fio.github.themrmilchmann.curseforge-publish.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/io.github.themrmilchmann.curseforge-publish)
+![Gradle](https://img.shields.io/badge/Gradle-7.4-green.svg?style=for-the-badge&color=1ba8cb&logo=Gradle)
+![Java](https://img.shields.io/badge/Java-8-green.svg?style=for-the-badge&color=b07219&logo=Java)
 
 A gradle plugin that adds support for publishing artifacts to [CurseForge](https://www.curseforge.com/).
 
