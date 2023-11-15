@@ -51,12 +51,12 @@ publishing {
             projectID.set(123456) // The CurseForge project ID (required)
 
             // Specify which game and version the mod/plugin targets (optional)
-            includeGameVersions { type, version -> type == "minecraft-1-16" && version == "1-16-5" }
+            gameVersions.add(GameVersion(type = "minecraft-1-16", version = "1-16-5"))
 
             // Specify which Java version is supported (optional)
-            javaVersion("8")
+            javaVersions.add(JavaVersion.VERSION_1_8)
 
-            artifact {
+            artifact(tasks.named("jar")) {
                 changelog = Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)
                 releaseType = ReleaseType.RELEASE // The release type (required)
                  
