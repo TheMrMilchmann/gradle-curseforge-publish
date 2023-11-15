@@ -58,14 +58,14 @@ class CurseForgePublishPluginTest {
 
         @JvmStatic
         private fun provideSamples(): List<String> = buildList {
-            add("forgegradle-kotlin")
-            add("gradle-kotlin")
+            add("forgegradle")
+            add("gradle")
 
             // See https://docs.gradle.org/current/userguide/compatibility.html
             val javaVersion = JavaVersion.current()
             if (javaVersion < JavaVersion.VERSION_17) return@buildList
 
-            add("loom-kotlin")
+            add("loom")
         }
 
         @JvmStatic
