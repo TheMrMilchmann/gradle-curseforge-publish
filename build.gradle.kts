@@ -156,8 +156,6 @@ publishing {
         pom {
             name = "CurseForge Gradle Publish"
             description = "A Gradle plugin for publishing to CurseForge"
-
-            packaging = "jar"
         }
     }
 }

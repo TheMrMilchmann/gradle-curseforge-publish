@@ -46,6 +46,7 @@ publishing {
         pom {
             name = project.name
             url = "https://github.com/TheMrMilchmann/gradle-curseforge-publish"
+            packaging = "jar"
 
             licenses {
                 licenses {
