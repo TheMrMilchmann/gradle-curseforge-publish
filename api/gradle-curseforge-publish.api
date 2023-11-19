@@ -123,7 +123,6 @@ public final class io/github/themrmilchmann/gradle/publish/curseforge/Repository
 }
 
 public final class io/github/themrmilchmann/gradle/publish/curseforge/plugins/CurseForgePublishPlugin : org/gradle/api/Plugin {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }

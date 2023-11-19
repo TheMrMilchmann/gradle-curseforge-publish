@@ -40,7 +40,7 @@ import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 
-public class CurseForgePublishPlugin @Inject constructor(
+public class CurseForgePublishPlugin @Inject private constructor(
     private val objectFactory: ObjectFactory
 ) : Plugin<Project> {
 
