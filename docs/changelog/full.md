@@ -1,3 +1,22 @@
+### 0.5.0
+
+_Released 2023 Nov 19_
+
+#### Improvements
+
+- Added support for artifact relations. [[GH-21](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/21)]
+- Plugin dependencies are now shadowed to avoid version conflicts with other
+  plugins.
+
+#### Fixes
+
+- Improved resilience against changes to the CurseForge upload API.
+- When using Loom, the correct mod artifact is now published by default. [[GH-19](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/19)]
+
+
+
+---
+
 ### 0.4.0
 
 _Released 2022 Dec 11_

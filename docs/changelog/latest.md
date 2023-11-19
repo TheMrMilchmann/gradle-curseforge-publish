@@ -1,11 +1,14 @@
-### 0.4.0
+### 0.5.0
 
-_Released 2022 Dec 11_
+_Released 2023 Nov 19_
 
 #### Improvements
 
-- Plugin dependencies are now bundled with the plugin to prevent potential
-  conflicts with other plugins.
-- Support inferring metadata from [Fabric Loom](https://github.com/FabricMC/fabric-loom).
-  - The Minecraft version and mod loader is now automatically set when the Loom
-    plugin is detected.
+- Added support for artifact relations. [[GH-21](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/21)]
+- Plugin dependencies are now shadowed to avoid version conflicts with other
+  plugins.
+
+#### Fixes
+
+- Improved resilience against changes to the CurseForge upload API.
+- When using Loom, the correct mod artifact is now published by default. [[GH-19](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/19)]
