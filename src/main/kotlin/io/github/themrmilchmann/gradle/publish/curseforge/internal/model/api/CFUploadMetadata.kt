@@ -24,34 +24,41 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
 import kotlinx.serialization.*
 
 @Serializable
-internal data class UploadMetadata(
+internal data class CFUploadMetadata(
     val changelog: String,
     val changelogType: String,
     val displayName: String? = null,
     val parentFileID: Int? = null,
     val gameVersions: List<Int>? = null,
     val releaseType: String,
-    val relations: List<Relation>
+    val relations: Relations? = null
 ) {
 
     @Serializable
-    internal data class Relation(
-        val slug: String,
-        val type: Type
+    internal data class Relations(
+        val projects: List<ProjectRelation>
     ) {
 
         @Serializable
-        internal enum class Type {
-            @SerialName("embeddedLibrary")
-            EMBEDDED_LIBRARY,
-            @SerialName("incompatible")
-            INCOMPATIBLE,
-            @SerialName("optionalDependency")
-            OPTIONAL_DEPENDENCY,
-            @SerialName("requiredDependency")
-            REQUIRED_DEPENDENCY,
-            @SerialName("tool")
-            TOOL
+        internal data class ProjectRelation(
+            val slug: String,
+            val type: Type
+        ) {
+
+            @Serializable
+            internal enum class Type {
+                @SerialName("embeddedLibrary")
+                EMBEDDED_LIBRARY,
+                @SerialName("incompatible")
+                INCOMPATIBLE,
+                @SerialName("optionalDependency")
+                OPTIONAL_DEPENDENCY,
+                @SerialName("requiredDependency")
+                REQUIRED_DEPENDENCY,
+                @SerialName("tool")
+                TOOL
+            }
+
         }
 
     }

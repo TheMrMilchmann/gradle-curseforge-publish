@@ -23,7 +23,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge
 
 public fun CurseForgeArtifact.relations(block: ArtifactRelationHandler.() -> Unit) {
     val handler = object : ArtifactRelationHandler {
-        override fun add(type: ArtifactRelation.Type, slug: String) {
+        override fun add(type: RelationType, slug: String) {
             relations.add(type, slug)
         }
     }

@@ -57,31 +57,33 @@ public open class GeneratePublicationMetadata @Inject constructor(
     }
 
     private fun generateArtifactMetadata(json: Json, artifact: AbstractCurseForgeArtifact) {
-        val metadata = UploadMetadata(
+        val projectRelations = artifact.relations.mapNotNull { artifactRelation ->
+            artifactRelation.type.toModelType().let {
+                CFUploadMetadata.Relations.ProjectRelation(
+                    slug = artifactRelation.slug,
+                    type = it
+                )
+            }
+        }
+
+        val metadata = CFUploadMetadata(
             changelog = artifact.changelog.content,
             changelogType = artifact.changelog.type.toJSONType(),
             displayName = artifact.displayName,
             releaseType = artifact.releaseType.toJSONType(),
-            relations = artifact.relations.mapNotNull { artifactRelation ->
-                artifactRelation.type.toModelType().let {
-                    UploadMetadata.Relation(
-                        slug = artifactRelation.slug,
-                        type = it
-                    )
-                }
-            }
+            relations = if (projectRelations.isNotEmpty()) CFUploadMetadata.Relations(projects = projectRelations) else null
         )
 
         val outputFile = File("${artifact.file.absolutePath}.metadata.json")
         outputFile.writeText(json.encodeToString(metadata))
     }
 
-    private fun ArtifactRelation.Type.toModelType(): UploadMetadata.Relation.Type = when (this) {
-        ArtifactRelation.Type.EmbeddedLibrary -> UploadMetadata.Relation.Type.EMBEDDED_LIBRARY
-        ArtifactRelation.Type.Incompatible -> UploadMetadata.Relation.Type.INCOMPATIBLE
-        ArtifactRelation.Type.OptionalDependency -> UploadMetadata.Relation.Type.OPTIONAL_DEPENDENCY
-        ArtifactRelation.Type.RequiredDependency -> UploadMetadata.Relation.Type.REQUIRED_DEPENDENCY
-        ArtifactRelation.Type.Tool -> UploadMetadata.Relation.Type.TOOL
+    private fun RelationType.toModelType(): CFUploadMetadata.Relations.ProjectRelation.Type = when (this) {
+        RelationType.EMBEDDED_LIBRARY -> CFUploadMetadata.Relations.ProjectRelation.Type.EMBEDDED_LIBRARY
+        RelationType.INCOMPATIBLE -> CFUploadMetadata.Relations.ProjectRelation.Type.INCOMPATIBLE
+        RelationType.OPTIONAL_DEPENDENCY -> CFUploadMetadata.Relations.ProjectRelation.Type.OPTIONAL_DEPENDENCY
+        RelationType.REQUIRED_DEPENDENCY -> CFUploadMetadata.Relations.ProjectRelation.Type.REQUIRED_DEPENDENCY
+        RelationType.TOOL -> CFUploadMetadata.Relations.ProjectRelation.Type.TOOL
     }
 
     private fun ChangelogType.toJSONType(): String = when (this) {

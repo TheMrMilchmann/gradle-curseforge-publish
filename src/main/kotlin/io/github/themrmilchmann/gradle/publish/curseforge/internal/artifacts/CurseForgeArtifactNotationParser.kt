@@ -27,8 +27,9 @@ import org.gradle.api.internal.file.*
 import org.gradle.api.internal.tasks.*
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.bundling.*
+import javax.inject.Inject
 
-internal class CurseForgeArtifactNotationParser(
+internal open class CurseForgeArtifactNotationParser @Inject constructor(
     private val fileResolver: FileResolver
 ) {
 

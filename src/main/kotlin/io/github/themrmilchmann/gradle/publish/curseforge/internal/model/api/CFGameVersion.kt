@@ -24,6 +24,10 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
 import kotlinx.serialization.*
 
 @Serializable
-internal data class UploadResponse(
-    val id: Int
+internal data class CFGameVersion(
+    val id: Int,
+    val gameVersionTypeID: Int,
+    val name: String,
+    val slug: String,
+    val apiVersion: String? = null
 )

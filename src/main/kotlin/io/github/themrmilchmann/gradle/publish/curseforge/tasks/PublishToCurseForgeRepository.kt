@@ -25,6 +25,7 @@ import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.repositories.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.*
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.CFGameVersion
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -40,15 +41,21 @@ import kotlinx.serialization.json.*
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.*
 
 @DisableCachingByDefault(because = "Not worth caching")
 public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() {
 
     private companion object {
+
+        val LOGGER: Logger = LoggerFactory.getLogger(PublishToCurseForgeRepository::class.java)
+
         val json = Json {
             ignoreUnknownKeys = true
         }
+
     }
 
     private var _repository: CurseForgeArtifactRepository? = null
@@ -72,7 +79,7 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
 
         val httpClient = HttpClient(Apache) {
             install(ContentNegotiation) {
-                json()
+                json(json)
             }
         }
 
@@ -80,17 +87,24 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
 
         val projectID = publication.projectID.finalizeAndGet()
 
-        val gameDependencies = httpClient.resolveGameDependencies(apiKey)
-        val gameVersions = httpClient.resolveGameVersions(apiKey)
+        val recognizedGameDependencies = httpClient.resolveGameDependencies(apiKey)
+        val recognizedGameVersions = httpClient.resolveGameVersions(apiKey)
 
-        val gameVersionIDs = gameDependencies.flatMap { dep ->
-            gameVersions.filter { version -> version.gameVersionTypeID == dep.id }
-                .mapNotNull { version ->
-                    if (publication.isGameVersionIncluded(dep, version))
-                        version.id
-                    else
-                        null
-                }
+        val gameVersions = publication.gameVersions.finalizeAndGet() + publication.javaVersions.finalizeAndGet().map { GameVersion(type = "java", version = "java-${it.majorVersion}") }
+        val gameVersionIDs = gameVersions.mapNotNull { gameVersion ->
+            val dependency = recognizedGameDependencies.find { it.slug == gameVersion.type }
+            if (dependency == null) {
+                LOGGER.warn("Could not find game version for type '{}', available: {}", gameVersion.type, recognizedGameVersions)
+                return@mapNotNull null
+            }
+
+            val version = recognizedGameVersions.find { it.gameVersionTypeID == dependency.id && it.slug == gameVersion.version }
+            if (version == null) {
+                LOGGER.warn("Could not find game version for type '{}' @ '{}', available: {}", gameVersion.type, gameVersion.version, recognizedGameVersions.filter { it.gameVersionTypeID == dependency.id })
+                return@mapNotNull null
+            }
+
+            version.id
         }
 
         val mainArtifactID = httpClient.doUploadFile(
@@ -118,7 +132,7 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
 
         val apiKey = apiKey.get()
 
-        val metadata = json.decodeFromString<UploadMetadata>(File("${artifact.file.absolutePath}.metadata.json").readText())
+        val metadata = json.decodeFromString<CFUploadMetadata>(File("${artifact.file.absolutePath}.metadata.json").readText())
             .copy(parentFileID = parentFileID, gameVersions = gameVersionIDs)
 
         val httpResponse = submitFormWithBinaryData(
@@ -141,7 +155,7 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
         }
 
         if (httpResponse.status.isSuccess()) {
-            return httpResponse.body<UploadResponse>().id
+            return httpResponse.body<CFUploadResponse>().id
         } else if (httpResponse.contentType() == ContentType.Application.Json) {
             error(httpResponse.body<String>())
         } else {
@@ -152,11 +166,11 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
     private suspend fun HttpClient.resolveGameDependencies(apiKey: String) =
         get("$url/api/game/version-types") {
             header("X-Api-Token", apiKey)
-        }.body<List<GameDependency>>()
+        }.body<List<CFGameDependency>>()
 
     private suspend fun HttpClient.resolveGameVersions(apiKey: String) =
         get("$url/api/game/versions") {
             header("X-Api-Token", apiKey)
-        }.body<List<GameVersion>>()
+        }.body<List<CFGameVersion>>()
 
 }

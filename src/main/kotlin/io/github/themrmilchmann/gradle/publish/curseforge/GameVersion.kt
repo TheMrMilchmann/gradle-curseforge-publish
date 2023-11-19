@@ -19,14 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
+package io.github.themrmilchmann.gradle.publish.curseforge
 
-import kotlinx.serialization.*
-
-@Serializable
-internal class GameVersion(
-    val id: Int,
-    val gameVersionTypeID: Int,
-    val name: String,
-    val slug: String
+/**
+ * TODO doc
+ *
+ * @since   0.5.0
+ */
+public data class GameVersion(
+    val type: String,
+    val version: String
 )

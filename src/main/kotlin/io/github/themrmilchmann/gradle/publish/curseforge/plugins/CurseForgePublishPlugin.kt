@@ -28,20 +28,20 @@ import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import io.github.themrmilchmann.gradle.publish.curseforge.tasks.*
 import org.apache.log4j.LogManager
 import org.gradle.api.*
-import org.gradle.api.internal.file.*
 import org.gradle.api.invocation.*
 import org.gradle.api.model.*
 import org.gradle.api.plugins.*
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.*
 import org.gradle.api.publish.plugins.*
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.JavaCompile
+import java.lang.IllegalStateException
 import java.util.*
-import javax.inject.*
+import javax.inject.Inject
 
 public class CurseForgePublishPlugin @Inject constructor(
-    private val objectFactory: ObjectFactory,
-    private val fileResolver: FileResolver
+    private val objectFactory: ObjectFactory
 ) : Plugin<Project> {
 
     internal companion object {
@@ -58,23 +58,99 @@ public class CurseForgePublishPlugin @Inject constructor(
 
         CurseForgePublishPlugin.gradle = gradle
 
-        extensions.configure(PublishingExtension::class.java) {
+        val defaultGameVersions = objects.setProperty(GameVersion::class.java)
+        val defaultJavaVersions = objects.setProperty(JavaVersion::class.java)
+
+        val publishing = extensions.getByType(PublishingExtension::class.java)
+        applyTo(publishing) {
             repositories {
                 this as ExtensionAware
-
                 extensions.create("curseForge", CurseForgeRepositoryExtension::class.java, repositories)
             }
 
-            publications.registerFactory(CurseForgePublication::class.java, CurseForgePublicationFactory(fileResolver))
-            realizePublishingTasksLater(target)
+            publications.registerFactory(CurseForgePublication::class.java, CurseForgePublicationFactory(objectFactory))
+
+            realizePublishingTasksLater(
+                project = target,
+                defaultGameVersions = defaultGameVersions,
+                defaultJavaVersions = defaultJavaVersions
+            )
         }
 
-        configureFabricLoomIntegration()
-        configureForgeGradleIntegration()
+        var isUsingForgeGradle = false
+        var isUsingLoom = false
+
+        project.pluginManager.withPlugin("fabric-loom") {
+            if (isUsingForgeGradle) throw IllegalStateException("Cannot apply both ForgeGradle and Loom")
+            isUsingLoom = true
+
+            publishing.publications.withType(CurseForgePublication::class.java).configureEach {
+                artifact(tasks.named("remapJar"))
+            }
+
+            defaultGameVersions.set(provider {
+                val gameVersions = mutableSetOf<GameVersion>()
+                gameVersions += GameVersion("modloader", "fabric")
+
+                val minecraftConfiguration = configurations.findByName("minecraft")
+                if (minecraftConfiguration == null) {
+                    LOGGER.warn("Fabric Loom Gradle Plugin was detected but 'minecraft' configuration cannot be found.")
+                    return@provider gameVersions
+                }
+
+                val dependency = minecraftConfiguration
+                    .dependencies
+                    .find { it.group == "com.mojang" && it.name == "minecraft" }
+
+                if (dependency == null) {
+                    LOGGER.warn("Cannot find Minecraft dependency: ('com.mojang:minecraft')'")
+                    return@provider gameVersions
+                }
+
+                val mcVersion = dependency.version ?: error("")
+                val mcGameVersion = inferMinecraftGameVersion(mcVersion)
+
+                if (mcGameVersion != null) {
+                    gameVersions += mcGameVersion
+                } else {
+                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $mcVersion")
+                }
+
+                gameVersions
+            })
+        }
+
+        pluginManager.withPlugin("net.minecraftforge.gradle") {
+            if (isUsingLoom) throw IllegalStateException("Cannot apply both ForgeGradle and Loom")
+            isUsingForgeGradle = true
+
+            publishing.publications.withType(CurseForgePublication::class.java).configureEach {
+                artifact(tasks.named(JavaPlugin.JAR_TASK_NAME))
+            }
+
+            defaultGameVersions.set(provider {
+                val gameVersions = mutableSetOf<GameVersion>()
+                gameVersions += GameVersion("modloader", "forge")
+
+                val mcVersion = project.extensions.extraProperties["MC_VERSION"] as String
+                inferMinecraftGameVersion(mcVersion)
+
+                gameVersions
+            })
+
+            tasks.withType(AbstractPublishToCurseForge::class.java).configureEach {
+                dependsOn(tasks.named("reobfJar"))
+            }
+        }
+
         configureJavaIntegration()
     }
 
-    private fun PublishingExtension.realizePublishingTasksLater(project: Project) {
+    private fun PublishingExtension.realizePublishingTasksLater(
+        project: Project,
+        defaultGameVersions: Provider<Set<GameVersion>>,
+        defaultJavaVersions: Provider<Set<JavaVersion>>
+    ) {
         val curseForgePublications = publications.withType(CurseForgePublicationInternal::class.java)
         val tasks = project.tasks
 
@@ -89,6 +165,9 @@ public class CurseForgePublishPlugin @Inject constructor(
         }
 
         curseForgePublications.all {
+            gameVersions.convention(defaultGameVersions)
+            javaVersions.convention(defaultJavaVersions)
+
             createGenerateMetadataTask(tasks, this)
             createPublishTasksForEachCurseForgeRepo(tasks, publishLifecycleTask, this, repositories)
         }
@@ -138,103 +217,48 @@ public class CurseForgePublishPlugin @Inject constructor(
         }
     }
 
-    private fun Project.configureFabricLoomIntegration() {
-        pluginManager.withPlugin("fabric-loom") {
-            extensions.configure(PublishingExtension::class.java) {
-                publications.withType(CurseForgePublication::class.java).configureEach {
-                    includeGameVersions { type, version -> type == "modloader" && version == "fabric" }
-
-                    afterEvaluate {
-                        val minecraftConfiguration = configurations.findByName("minecraft")
-                        if (minecraftConfiguration == null) {
-                            LOGGER.warn("Fabric Loom Gradle Plugin was detected but 'minecraft' configuration cannot be found.")
-                            return@afterEvaluate
-                        }
-
-                        val dependency = minecraftConfiguration.dependencies.find { it.group == "com.mojang" && it.name == "minecraft" }
-                        if (dependency == null) {
-                            LOGGER.warn("Cannot find Minecraft dependency: ('com.mojang:minecraft')'")
-                            return@afterEvaluate
-                        }
-
-                        val mcVersion = dependency.version
-                        if (mcVersion == null) {
-                            LOGGER.warn("Minecraft dependency does not have version information")
-                            return@afterEvaluate
-                        }
-
-                        configureInferredMinecraftVersion(mcVersion)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun Project.configureForgeGradleIntegration() {
-        pluginManager.withPlugin("net.minecraftforge.gradle") {
-            extensions.configure(PublishingExtension::class.java) {
-                publications.withType(CurseForgePublication::class.java).configureEach {
-                    includeGameVersions { type, version -> type == "modloader" && version == "forge" }
-
-                    afterEvaluate {
-                        val mcVersion = this@configureForgeGradleIntegration.extensions.extraProperties["MC_VERSION"] as String
-                        configureInferredMinecraftVersion(mcVersion)
-                    }
-                }
-            }
-
-            afterEvaluate {
-                tasks.withType(AbstractPublishToCurseForge::class.java).configureEach {
-                    dependsOn(tasks.named("reobfJar"))
-                }
-            }
-        }
-    }
-
     private fun Project.configureJavaIntegration() {
         pluginManager.withPlugin("java") {
             extensions.configure(PublishingExtension::class.java) {
                 publications.withType(CurseForgePublication::class.java).configureEach {
-                    val jar = tasks.named(JavaPlugin.JAR_TASK_NAME)
-                    artifact(jar)
-
                     val compileJava = tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaCompile::class.java).get()
                     val targetVersionProvider = compileJava.options.release.map(Int::toString)
                         .orElse(compileJava.targetCompatibility)
                         .map {
                             // Normalize (e.g 1.8 => 8)
-                            val majorVersion = JavaVersion.toVersion(it).majorVersion
-                            LOGGER.debug("Inferred CurseForge Java dependency: version='java-$majorVersion'")
-                            majorVersion
+                            val version = JavaVersion.toVersion(it)
+                            LOGGER.debug("Inferred CurseForge Java dependency: version='java-${version.majorVersion}'")
+                            version
                         }
 
-                    javaVersion(targetVersionProvider)
+                    javaVersions.convention(targetVersionProvider.map { setOf(it) })
                 }
             }
         }
     }
 
-    private fun CurseForgePublication.configureInferredMinecraftVersion(version: String) {
+    private fun inferMinecraftGameVersion(version: String): GameVersion? {
         val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues
 
         if (matchGroups == null) {
             LOGGER.warn("Failed to parse Minecraft version string '$version'. The CurseForge publication cannot infer the required Minecraft version.")
-            return
+            return null
         }
 
         val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
         val mcVersionSlug = "${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
 
         LOGGER.debug("Inferred CurseForge Minecraft dependency: type='$mcDependencySlug', version='$mcVersionSlug'")
-        includeGameVersions { type, v -> type == mcDependencySlug && v == mcVersionSlug }
+        return GameVersion(mcDependencySlug, mcVersionSlug)
     }
 
     private inner class CurseForgePublicationFactory(
-        private val fileResolver: FileResolver
+        private val objectFactory: ObjectFactory
     ) : NamedDomainObjectFactory<CurseForgePublication> {
 
         override fun create(name: String): CurseForgePublication {
-            return objectFactory.newInstance(DefaultCurseForgePublication::class.java, name, CurseForgeArtifactNotationParser(fileResolver))
+            val parser = objectFactory.newInstance(CurseForgeArtifactNotationParser::class.java)
+            return objectFactory.newInstance(DefaultCurseForgePublication::class.java, name, parser)
         }
 
     }

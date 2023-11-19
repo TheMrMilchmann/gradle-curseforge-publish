@@ -21,29 +21,44 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.repositories.*
-import io.github.themrmilchmann.gradle.publish.curseforge.plugins.*
-import org.gradle.api.*
-import org.gradle.api.artifacts.dsl.*
-
 /**
  * TODO doc
  *
- * @return  the added resolver
- *
  * @since   0.5.0
  */
-public fun RepositoryHandler.curseForge(action: Action<in CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-    curseForge("https://minecraft.curseforge.com", action)
+public enum class RelationType {
+    /**
+     * TODO doc
+     *
+     * @since   0.5.0
+     */
+    EMBEDDED_LIBRARY,
 
-/**
- * TODO doc
- *
- * @return  the added resolver
- *
- * @since   0.5.0
- */
-public fun RepositoryHandler.curseForge(url: String, action: Action<in CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-    CurseForgePublishPlugin.gradle.rootProject.objects.newInstance(DefaultCurseForgeArtifactRepository::class.java, url)
-        .also(action::execute)
-        .also(::add)
+    /**
+     * TODO doc
+     *
+     * @since   0.5.0
+     */
+    INCOMPATIBLE,
+
+    /**
+     * TODO doc
+     *
+     * @since   0.5.0
+     */
+    OPTIONAL_DEPENDENCY,
+
+    /**
+     * TODO doc
+     *
+     * @since   0.5.0
+     */
+    REQUIRED_DEPENDENCY,
+
+    /**
+     * TODO doc
+     *
+     * @since   0.5.0
+     */
+    TOOL
+}

@@ -24,8 +24,21 @@ package io.github.themrmilchmann.gradle.publish.curseforge
 import org.gradle.api.artifacts.repositories.*
 import org.gradle.api.provider.*
 
+/**
+ * TODO doc
+ *
+ * @since   0.1.0
+ */
 public interface CurseForgeArtifactRepository : ArtifactRepository {
 
+    /**
+     * The API key used to authenticate against the repository.
+     *
+     * **WARNING:** Avoid using hardcoded values to set this property and,
+     * instead, make sure to properly store your secrets.
+     *
+     * @since   0.1.0
+     */
     public val apiKey: Property<String>
 
 }

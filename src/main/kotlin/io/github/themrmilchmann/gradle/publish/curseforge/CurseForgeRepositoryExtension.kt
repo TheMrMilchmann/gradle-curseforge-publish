@@ -25,13 +25,28 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.dsl.*
 import javax.inject.*
 
+/**
+ * TODO doc
+ *
+ * @since   0.5.0
+ */
 public abstract class CurseForgeRepositoryExtension @Inject constructor(
     private val repositories: RepositoryHandler
 ) {
 
+    /**
+     * TODO doc
+     *
+     * @since   0.5.0
+     */
     public fun repository(action: Action<CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
         repositories.curseForge(action)
 
+    /**
+     * TODO doc
+     *
+     * @since   0.5.0
+     */
     public fun repository(url: String, action: Action<CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
         repositories.curseForge(url, action)
 

@@ -24,7 +24,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
 import kotlinx.serialization.*
 
 @Serializable
-internal data class GameDependency(
+internal data class CFGameDependency(
     val id: Int,
     val name: String,
     val slug: String

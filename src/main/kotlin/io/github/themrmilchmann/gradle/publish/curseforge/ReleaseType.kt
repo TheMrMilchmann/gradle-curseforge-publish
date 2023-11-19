@@ -21,8 +21,30 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
+/**
+ * The type of release.
+ *
+ * @since   0.1.0
+ */
 public enum class ReleaseType {
+    /**
+     * An "alpha" release.
+     *
+     * @since   0.1.0
+     */
     ALPHA,
+
+    /**
+     * A "beta" release.
+     *
+     * @since   0.1.0
+     */
     BETA,
+
+    /**
+     * A stable release.
+     *
+     * @since   0.1.0
+     */
     RELEASE
 }

@@ -35,7 +35,7 @@ internal abstract class AbstractCurseForgeArtifact : CurseForgeArtifact {
     override lateinit var releaseType: ReleaseType
 
     override val relations: ArtifactRelations = object : ArtifactRelations, MutableSet<ArtifactRelation> by mutableSetOf() {
-        override fun add(type: ArtifactRelation.Type, slug: String) {
+        override fun add(type: RelationType, slug: String) {
             add(ArtifactRelation(slug, type))
         }
     }

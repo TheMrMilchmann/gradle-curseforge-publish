@@ -23,8 +23,6 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.publication
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.*
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.GameDependency
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.GameVersion
 import org.gradle.api.*
 import org.gradle.api.artifacts.*
 import org.gradle.api.internal.*
@@ -34,7 +32,6 @@ import org.gradle.api.internal.component.*
 import org.gradle.api.internal.file.*
 import org.gradle.api.model.*
 import org.gradle.api.provider.*
-import org.gradle.api.provider.Provider
 import org.gradle.api.publish.internal.*
 import org.gradle.api.publish.internal.PublicationInternal.PublishedFile
 import org.gradle.api.publish.internal.versionmapping.*
@@ -81,37 +78,8 @@ internal open class DefaultCurseForgePublication @Inject constructor(
         _mainArtifact = artifactImpl
     }
 
-    private val gameVersionFilters = mutableListOf<(String, String) -> Boolean>()
-
-    override fun includeGameVersions(filter: (type: String, version: String) -> Boolean) {
-        gameVersionFilters += filter
-    }
-
-    override fun isGameVersionIncluded(dependency: GameDependency, version: GameVersion): Boolean =
-        gameVersionFilters.any { filter ->
-            if (dependency.slug == "java" && javaVersions.any { "java-${if (it is Provider<*>) it.get() else it}" == version.slug }) return true
-            filter(dependency.slug, version.slug)
-        }
-
-    private val _javaVersions = mutableSetOf<Any>()
-    override var javaVersions: Set<Any>
-        get() = _javaVersions
-        set(value) {
-            _javaVersions.clear()
-            _javaVersions.addAll(value)
-        }
-
-    override fun javaVersion(version: Provider<String>) {
-        _javaVersions += version
-    }
-
-    override fun javaVersion(version: String) {
-        _javaVersions += version
-    }
-
-    override fun javaVersions(vararg versions: String) {
-        _javaVersions.addAll(versions)
-    }
+    override val gameVersions = objects.setProperty(GameVersion::class.java)
+    override val javaVersions = objects.setProperty(JavaVersion::class.java)
 
     override lateinit var publicationMetadataGenerator: TaskProvider<out Task>
 
@@ -124,7 +92,6 @@ internal open class DefaultCurseForgePublication @Inject constructor(
     private var withBuildIdentifier: Boolean = false
     override fun withoutBuildIdentifier() { withBuildIdentifier = false }
     override fun withBuildIdentifier() { withBuildIdentifier = true }
-
 
     override fun getDisplayName(): DisplayName =
         Describables.withTypeAndName("CurseForge publication", name)

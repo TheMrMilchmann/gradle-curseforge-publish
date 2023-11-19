@@ -23,7 +23,6 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.publication
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.*
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.*
 import org.gradle.api.*
 import org.gradle.api.publish.internal.*
 import org.gradle.api.tasks.*
@@ -35,7 +34,5 @@ internal interface CurseForgePublicationInternal : CurseForgePublication, Public
     val extraArtifacts: Set<AbstractCurseForgeArtifact>
 
     var publicationMetadataGenerator: TaskProvider<out Task>
-
-    fun isGameVersionIncluded(dependency: GameDependency, version: GameVersion): Boolean
 
 }

@@ -23,15 +23,5 @@ package io.github.themrmilchmann.gradle.publish.curseforge
 
 public data class ArtifactRelation(
     val slug: String,
-    val type: Type
-) {
-
-    public enum class Type {
-        EmbeddedLibrary,
-        Incompatible,
-        OptionalDependency,
-        RequiredDependency,
-        Tool
-    }
-
-}
+    val type: RelationType
+)

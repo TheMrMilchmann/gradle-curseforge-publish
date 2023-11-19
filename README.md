@@ -48,10 +48,10 @@ publishing {
 
             // Specify which game and version the mod/plugin targets (optional)
             // This information is inferred when using the Fabric Loom or ForgeGradle plugin.
-            includeGameVersions { type, version -> type == "minecraft-1-16" && version == "1-16-5" }
+            gameVersions.add(GameVersion("minecraft-1-16", "1.16.5"))
             
-            // Specify which Java version is supported (optional)
-            javaVersion("18")
+            // Specify which Java versions are supported (optional)
+            javaVersions.add(JavaVersion.JAVA_17)
 
             artifact {
                 changelog = Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)
@@ -105,7 +105,7 @@ publishing {
 
 | Gradle | Minimal plugin version |
 |--------|------------------------|
-| 8.0    | 0.5.0                  |
+| 7.6    | 0.5.0                  |
 | 7.4    | 0.1.0                  |
 
 

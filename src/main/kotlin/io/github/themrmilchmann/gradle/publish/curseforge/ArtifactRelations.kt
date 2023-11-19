@@ -23,6 +23,6 @@ package io.github.themrmilchmann.gradle.publish.curseforge
 
 public interface ArtifactRelations : MutableSet<ArtifactRelation> {
 
-    public fun add(type: ArtifactRelation.Type, slug: String)
+    public fun add(type: RelationType, slug: String)
 
 }

@@ -21,23 +21,71 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
+/**
+ * An `ArtifactRelationHandler` is used to declare artifact relations.
+ *
+ * @since   0.5.0
+ */
 public interface ArtifactRelationHandler {
 
-    public fun add(type: ArtifactRelation.Type, slug: String)
+    /**
+     * Adds a relation to the given artifact.
+     *
+     * @param type  the type of the relation
+     * @param slug  the slug of the related artifact
+     *
+     * @since   0.5.0
+     */
+    public fun add(type: RelationType, slug: String)
 
+    /**
+     * Adds an [embedded library][RelationType.EMBEDDED_LIBRARY] relation.
+     *
+     * @param slug  the slug of the related artifact
+     *
+     * @since   0.5.0
+     */
     public fun embeddedLibrary(slug: String): Unit =
-        add(ArtifactRelation.Type.EmbeddedLibrary, slug)
+        add(RelationType.EMBEDDED_LIBRARY, slug)
 
+    /**
+     * Adds an [incompatible][RelationType.INCOMPATIBLE] relation.
+     *
+     * @param slug  the slug of the related artifact
+     *
+     * @since   0.5.0
+     */
     public fun incompatible(slug: String): Unit =
-        add(ArtifactRelation.Type.Incompatible, slug)
+        add(RelationType.INCOMPATIBLE, slug)
 
+    /**
+     * Adds an [optional dependency][RelationType.OPTIONAL_DEPENDENCY] relation.
+     *
+     * @param slug  the slug of the related artifact
+     *
+     * @since   0.5.0
+     */
     public fun optionalDependency(slug: String): Unit =
-        add(ArtifactRelation.Type.OptionalDependency, slug)
+        add(RelationType.OPTIONAL_DEPENDENCY, slug)
 
+    /**
+     * Adds a [required dependency][RelationType.REQUIRED_DEPENDENCY] relation.
+     *
+     * @param slug  the slug of the related artifact
+     *
+     * @since   0.5.0
+     */
     public fun requiredDependency(slug: String): Unit =
-        add(ArtifactRelation.Type.RequiredDependency, slug)
+        add(RelationType.REQUIRED_DEPENDENCY, slug)
 
+    /**
+     * Adds a [tool][RelationType.TOOL] relation.
+     *
+     * @param slug  the slug of the related artifact
+     *
+     * @since   0.5.0
+     */
     public fun tool(slug: String): Unit =
-        add(ArtifactRelation.Type.Tool, slug)
+        add(RelationType.TOOL, slug)
 
 }

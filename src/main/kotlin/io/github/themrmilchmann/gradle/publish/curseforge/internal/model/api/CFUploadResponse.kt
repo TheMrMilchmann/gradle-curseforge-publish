@@ -19,31 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge
+package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
 
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.repositories.*
-import io.github.themrmilchmann.gradle.publish.curseforge.plugins.*
-import org.gradle.api.*
-import org.gradle.api.artifacts.dsl.*
+import kotlinx.serialization.*
 
-/**
- * TODO doc
- *
- * @return  the added resolver
- *
- * @since   0.5.0
- */
-public fun RepositoryHandler.curseForge(action: Action<in CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-    curseForge("https://minecraft.curseforge.com", action)
-
-/**
- * TODO doc
- *
- * @return  the added resolver
- *
- * @since   0.5.0
- */
-public fun RepositoryHandler.curseForge(url: String, action: Action<in CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-    CurseForgePublishPlugin.gradle.rootProject.objects.newInstance(DefaultCurseForgeArtifactRepository::class.java, url)
-        .also(action::execute)
-        .also(::add)
+@Serializable
+internal data class CFUploadResponse(
+    val id: Int
+)

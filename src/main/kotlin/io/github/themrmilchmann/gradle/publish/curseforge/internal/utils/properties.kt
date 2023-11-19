@@ -28,6 +28,11 @@ internal fun <T> Property<T>.finalizeAndGet(): T {
     return get()
 }
 
+internal fun <T> SetProperty<T>.finalizeAndGet(): Set<T> {
+    finalizeValue()
+    return get()
+}
+
 internal fun <T> Property<T>.finalizeAndGetOrNull(): T? {
     finalizeValue()
     return orNull
