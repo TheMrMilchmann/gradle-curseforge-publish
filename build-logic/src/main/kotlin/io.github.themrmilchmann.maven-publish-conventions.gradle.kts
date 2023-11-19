@@ -33,7 +33,7 @@ publishing {
 
         if (sonatypeUsername != null && sonatypePassword != null && stagingRepositoryId != null) {
             maven {
-                url = uri("https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$stagingRepositoryId/")
+                url = uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$stagingRepositoryId/")
 
                 credentials {
                     username = sonatypeUsername
