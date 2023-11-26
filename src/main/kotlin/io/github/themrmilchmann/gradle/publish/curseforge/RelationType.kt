@@ -22,41 +22,46 @@
 package io.github.themrmilchmann.gradle.publish.curseforge
 
 /**
- * TODO doc
+ * The type of relation between two CurseForge projects.
+ *
+ * The type describes how another project relates to a "current" project. See [CurseForgePublicationArtifact.relations]
+ * for more information.
  *
  * @since   0.5.0
+ *
+ * @author  Leon Linhart
  */
 public enum class RelationType {
     /**
-     * TODO doc
+     * Indicates that the related project is embedded into this project.
      *
      * @since   0.5.0
      */
     EMBEDDED_LIBRARY,
 
     /**
-     * TODO doc
+     * Indicates that the related project is incompatible with this project.
      *
      * @since   0.5.0
      */
     INCOMPATIBLE,
 
     /**
-     * TODO doc
+     * Indicates that the related project is an optional dependency of this project.
      *
      * @since   0.5.0
      */
     OPTIONAL_DEPENDENCY,
 
     /**
-     * TODO doc
+     * Indicates that the related project is a required dependency of this project.
      *
      * @since   0.5.0
      */
     REQUIRED_DEPENDENCY,
 
     /**
-     * TODO doc
+     * Indicates that the related project is a tool used for creating this project.
      *
      * @since   0.5.0
      */

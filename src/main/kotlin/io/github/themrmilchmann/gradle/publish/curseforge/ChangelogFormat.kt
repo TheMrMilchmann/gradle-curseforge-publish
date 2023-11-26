@@ -21,33 +21,32 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
-import org.gradle.api.*
-import org.gradle.api.artifacts.dsl.*
-import javax.inject.*
-
 /**
- * TODO doc
+ * The format of a [changelog][Changelog].
  *
- * @since   0.5.0
+ * @since   0.6.0
+ *
+ * @author  Leon Linhart
  */
-public abstract class CurseForgeRepositoryExtension @Inject constructor(
-    private val repositories: RepositoryHandler
-) {
+public enum class ChangelogFormat {
+    /**
+     * HTML
+     *
+     * @since   0.6.0
+     */
+    HTML,
 
     /**
-     * TODO doc
+     * Markdown
      *
-     * @since   0.5.0
+     * @since   0.6.0
      */
-    public fun repository(action: Action<CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-        repositories.curseForge(action)
+    MARKDOWN,
 
     /**
-     * TODO doc
+     * Plain text
      *
-     * @since   0.5.0
+     * @since   0.6.0
      */
-    public fun repository(url: String, action: Action<CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-        repositories.curseForge(url, action)
-
+    TEXT
 }

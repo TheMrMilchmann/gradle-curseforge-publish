@@ -19,31 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge
+package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.repositories.*
-import io.github.themrmilchmann.gradle.publish.curseforge.plugins.*
-import org.gradle.api.*
-import org.gradle.api.artifacts.dsl.*
+import org.gradle.api.artifacts.*
+import org.gradle.api.tasks.TaskDependency
+import java.io.*
+import javax.inject.Inject
 
-/**
- * TODO doc
- *
- * @return  the added resolver
- *
- * @since   0.5.0
- */
-public fun RepositoryHandler.curseForge(action: Action<in CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-    curseForge("https://minecraft.curseforge.com", action)
+internal open class PublishArtifactBasedCurseForgeArtifactWrapper @Inject constructor(
+    private val publishArtifact: PublishArtifact
+) : CurseForgeArtifactWrapper {
 
-/**
- * TODO doc
- *
- * @return  the added resolver
- *
- * @since   0.5.0
- */
-public fun RepositoryHandler.curseForge(url: String, action: Action<in CurseForgeArtifactRepository>): CurseForgeArtifactRepository =
-    CurseForgePublishPlugin.gradle.rootProject.objects.newInstance(DefaultCurseForgeArtifactRepository::class.java, url)
-        .also(action::execute)
-        .also(::add)
+    override val file: File get() = publishArtifact.file
+    override fun getBuildDependencies(): TaskDependency = publishArtifact.buildDependencies
+
+}

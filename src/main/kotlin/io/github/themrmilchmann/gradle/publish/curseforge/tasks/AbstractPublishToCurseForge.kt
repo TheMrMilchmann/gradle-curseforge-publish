@@ -25,37 +25,25 @@ import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.publication.*
 import org.gradle.api.*
 import org.gradle.api.tasks.*
-import org.gradle.internal.serialization.Transient.varOf
 import org.gradle.work.*
 import java.util.concurrent.*
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 public abstract class AbstractPublishToCurseForge : DefaultTask() {
 
-    private val _publication: org.gradle.internal.serialization.Transient.Var<CurseForgePublicationInternal> = varOf()
-
+    @Transient
     @get:Internal
+    internal var publicationInternal: CurseForgePublicationInternal? = null
+
+    @get:Nested
     internal var publication: CurseForgePublication?
-        get() = _publication.get()
-        set(value) { _publication.set(value.asPublicationInternal()) }
-
-    @get:Internal
-    internal val publicationInternal: CurseForgePublicationInternal?
-        get() = _publication.get()
-
-    init {
-        // Allow the publication to participate in incremental build
-        inputs.files(Callable { publicationInternal?.publishableArtifacts?.files })
-            .withPropertyName("publication.publishableFiles")
-            .withPathSensitivity(PathSensitivity.NAME_ONLY)
-    }
+        get() = publicationInternal
+        set(value) { publicationInternal = value.asPublicationInternal() }
 
     private fun CurseForgePublication?.asPublicationInternal(): CurseForgePublicationInternal? = when (this) {
         null -> null
         is CurseForgePublicationInternal -> this
-        else -> throw InvalidUserDataException(
-            "Publication objects must implement the '${CurseForgePublicationInternal::class.qualifiedName}' interface, implementation '${this::class.qualifiedName}' does not"
-        )
+        else -> throw InvalidUserDataException("CurseForgePublication objects must implement the '${CurseForgePublicationInternal::class.qualifiedName}' interface, implementation '${this::class.qualifiedName}' does not")
     }
 
 }

@@ -22,17 +22,21 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.publication
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.*
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.CurseForgePublicationArtifactInternal
 import org.gradle.api.*
-import org.gradle.api.publish.internal.*
 import org.gradle.api.tasks.*
 
-internal interface CurseForgePublicationInternal : CurseForgePublication, PublicationInternal<CurseForgeArtifact> {
+internal interface CurseForgePublicationInternal : CurseForgePublication {
 
-    val mainArtifact: AbstractCurseForgeArtifact
+    @get:Internal
+    val mainArtifact: CurseForgePublicationArtifactInternal
+        get() = artifacts.getByName("main") as CurseForgePublicationArtifactInternal
 
-    val extraArtifacts: Set<AbstractCurseForgeArtifact>
+    @get:Internal
+    val extraArtifacts: List<CurseForgePublicationArtifactInternal>
+        get() = artifacts.filter { it.name != "main" }.map { it as CurseForgePublicationArtifactInternal }
 
+    @get:Internal
     var publicationMetadataGenerator: TaskProvider<out Task>
 
 }

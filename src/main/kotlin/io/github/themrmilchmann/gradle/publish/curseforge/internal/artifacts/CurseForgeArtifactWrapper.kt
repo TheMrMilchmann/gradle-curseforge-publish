@@ -19,14 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge
+package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
-public fun CurseForgeArtifact.relations(block: ArtifactRelationHandler.() -> Unit) {
-    val handler = object : ArtifactRelationHandler {
-        override fun add(type: RelationType, slug: String) {
-            relations.add(type, slug)
-        }
-    }
+import org.gradle.api.Buildable
+import java.io.File
 
-    block(handler)
+internal interface CurseForgeArtifactWrapper : Buildable {
+
+    val file: File
+
 }

@@ -19,21 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
+package io.github.themrmilchmann.gradle.publish.curseforge
 
-import org.gradle.api.internal.tasks.*
-import org.gradle.api.tasks.*
-import org.gradle.api.tasks.bundling.*
-import org.gradle.internal.impldep.com.google.common.collect.*
-import java.io.*
+import org.gradle.api.NamedDomainObjectContainer
 
-internal class ArchiveTaskBasedCurseForgeArtifact(
-    private val archiveTask: AbstractArchiveTask
-) : AbstractCurseForgeArtifact() {
-
-    private val buildDependencies = DefaultTaskDependency(null, ImmutableSet.of(archiveTask))
-
-    override fun getDefaultBuildDependencies(): TaskDependency = buildDependencies
-    override fun getFile(): File = archiveTask.archiveFile.get().asFile
-
-}
+/**
+ * A `CurseForgePublicationContainer` is responsible for creating and managing [CurseForgePublication] instances.
+ *
+ * The usual way to add publications is via a configuration block. See the documentation for [CurseForgePublishingExtension.publications]
+ * for examples on how to create and configure publications.
+ *
+ * @since   0.6.0
+ *
+ * @author  Leon Linhart
+ */
+public interface CurseForgePublicationContainer : NamedDomainObjectContainer<CurseForgePublication>

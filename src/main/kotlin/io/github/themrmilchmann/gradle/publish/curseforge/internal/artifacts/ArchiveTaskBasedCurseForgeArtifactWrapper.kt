@@ -21,25 +21,18 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
-import io.github.themrmilchmann.gradle.publish.curseforge.*
-import org.gradle.api.internal.tasks.*
-import org.gradle.api.publish.internal.*
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.TaskDependency
+import org.gradle.api.tasks.bundling.*
 import java.io.*
+import javax.inject.Inject
 
-internal class DerivedCurseForgeArtifact(
-    original: AbstractCurseForgeArtifact,
-    private val derivedFile: PublicationInternal.DerivedArtifact
-) : AbstractCurseForgeArtifact() {
+internal open class ArchiveTaskBasedCurseForgeArtifactWrapper @Inject constructor(
+    private val archiveTask: AbstractArchiveTask
+) : CurseForgeArtifactWrapper {
 
-    override var changelog: Changelog = original.changelog
-    override var displayName: String? = original.displayName
-    override var releaseType: ReleaseType = original.releaseType
+    override val file: File get() = archiveTask.archiveFile.get().asFile
 
-    override fun getDefaultBuildDependencies(): TaskDependency =
-        TaskDependencyInternal.EMPTY
-
-    override fun getFile(): File =
-        derivedFile.create()!!
+    private val taskDependency = TaskDependency { mutableSetOf(archiveTask) }
+    override fun getBuildDependencies(): TaskDependency = taskDependency
 
 }

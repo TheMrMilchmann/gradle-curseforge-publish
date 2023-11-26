@@ -19,18 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge
+package io.github.themrmilchmann.gradle.publish.curseforge.internal
 
-import org.gradle.api.publish.*
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
+import org.gradle.api.Buildable
 
-public interface CurseForgeArtifact : PublicationArtifact {
-
-    public var changelog: Changelog
-
-    public var displayName: String?
-
-    public var releaseType: ReleaseType
-
-    public val relations: ArtifactRelations
-
-}
+internal interface CurseForgePublicationArtifactInternal : CurseForgePublicationArtifact, Buildable

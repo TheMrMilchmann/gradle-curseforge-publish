@@ -21,40 +21,58 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
-import org.gradle.api.model.ObjectFactory
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
+import io.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin
 import javax.inject.Inject
 
 /**
- * A changelog.
+ * The configuration of how to publish the different components of a project to CurseForge.
  *
  * @since   0.6.0
  *
  * @author  Leon Linhart
  */
-public open class Changelog @Inject internal constructor(
-    objectFactory: ObjectFactory
+public abstract class CurseForgePublishingExtension @Inject internal constructor(
+    /**
+     * [CurseForge publications][CurseForgePublication] of the project.
+     *
+     * See [publications] for more information.
+     *
+     * @since   0.6.0
+     */
+    public val publications: CurseForgePublicationContainer
 ) {
 
-    /**
-     * The format of the changelog's [content].
-     *
-     * Defaults to [ChangelogFormat.TEXT].
-     *
-     * @since   0.6.0
-     */
-    @get:Input
-    public val format: Property<ChangelogFormat> = objectFactory.property(ChangelogFormat::class.java)
+    public companion object {
+
+        /**
+         * The name of this extension when installed by the [CurseForgePublishPlugin] ("curseforge").
+         *
+         * @since   0.6.0
+         */
+        @JvmStatic
+        public val NAME: String = "curseforge"
+
+    }
 
     /**
-     * The content of the changelog.
+     * The API token used to authenticate with CurseForge.
      *
-     * Defaults to the empty string `""`.
+     * **WARNING:** Avoid using hardcoded values to set this property and, instead, make sure to properly store your
+     * secrets.
      *
      * @since   0.6.0
      */
-    @get:Input
-    public val content: Property<String> = objectFactory.property(String::class.java)
+    public abstract val apiToken: Property<String>
+
+    /**
+     * Configures the [CurseForge publications][CurseForgePublication] of this project.
+     *
+     * @since   0.6.0
+     */
+    public fun publications(configure: Action<CurseForgePublicationContainer>) {
+        configure.execute(publications)
+    }
 
 }

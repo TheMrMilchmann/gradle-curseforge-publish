@@ -22,48 +22,50 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
 import org.gradle.api.artifacts.*
-import org.gradle.api.internal.artifacts.dsl.*
-import org.gradle.api.internal.file.*
-import org.gradle.api.internal.tasks.*
+import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.internal.tasks.TaskDependencyContainer
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.bundling.*
 import javax.inject.Inject
 
 internal open class CurseForgeArtifactNotationParser @Inject constructor(
-    private val fileResolver: FileResolver
+    private val fileResolver: FileResolver,
+    private val objectFactory: ObjectFactory
 ) {
 
     @Suppress("UNCHECKED_CAST")
-    fun parse(any: Any): AbstractCurseForgeArtifact = when (any) {
+    fun parse(any: Any): CurseForgeArtifactWrapper = when (any) {
         is AbstractArchiveTask -> parseArchiveTaskNotation(any)
         is Provider<*> -> parseProviderNotation(any as Provider<out AbstractArchiveTask>)
         is PublishArtifact -> parsePublishArtifactNotation(any)
         else -> parseFileNotation(any) ?: error("Failed to parse artifact notation: $any")
     }
 
-    private fun parseArchiveTaskNotation(archiveTask: AbstractArchiveTask): AbstractCurseForgeArtifact =
-        ArchiveTaskBasedCurseForgeArtifact(archiveTask)
+    private fun parseArchiveTaskNotation(archiveTask: AbstractArchiveTask): CurseForgeArtifactWrapper =
+        objectFactory.newInstance(ArchiveTaskBasedCurseForgeArtifactWrapper::class.java, archiveTask)
 
-    private fun parseFileNotation(notation: Any): AbstractCurseForgeArtifact? {
+    private fun parseFileNotation(notation: Any): CurseForgeArtifactWrapper? {
         val file = runCatching { fileResolver.asNotationParser().parseNotation(notation) }.getOrNull() ?: return null
-        val artifact = FileBasedCurseForgeArtifact(file)
+        val buildable = if (notation is TaskDependencyContainer) notation else null
+        val artifact = objectFactory.newInstance(FileBasedCurseForgeArtifactWrapper::class.java, file, buildable)
 
-        if (notation is TaskDependencyContainer) {
-            artifact.builtBy(
-                if (notation is Provider<*>)
-                    TaskDependencyContainer { context -> context.add(notation) }
-                else
-                    notation
-            )
-        }
+//        if (notation is TaskDependencyContainer) {
+//            artifact.builtBy(
+//                if (notation is Provider<*>)
+//                    TaskDependencyContainer { context -> context.add(notation) }
+//                else
+//                    notation
+//            )
+//        }
 
         return artifact
     }
 
-    private fun parseProviderNotation(provider: Provider<out AbstractArchiveTask>): AbstractCurseForgeArtifact =
-        PublishArtifactBasedCurseForgeArtifact(LazyPublishArtifact(provider, fileResolver))
+    private fun parseProviderNotation(provider: Provider<out AbstractArchiveTask>): CurseForgeArtifactWrapper =
+        objectFactory.newInstance(LazyCurseForgeArtifactWrapper::class.java, provider)
 
-    private fun parsePublishArtifactNotation(publishArtifact: PublishArtifact): AbstractCurseForgeArtifact =
-        PublishArtifactBasedCurseForgeArtifact(publishArtifact)
+    private fun parsePublishArtifactNotation(publishArtifact: PublishArtifact): CurseForgeArtifactWrapper =
+        objectFactory.newInstance(PublishArtifactBasedCurseForgeArtifactWrapper::class.java, publishArtifact)
 
 }

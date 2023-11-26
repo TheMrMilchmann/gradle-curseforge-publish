@@ -32,58 +32,69 @@ public abstract interface class io/github/themrmilchmann/gradle/publish/cursefor
 	public abstract fun add (Lio/github/themrmilchmann/gradle/publish/curseforge/RelationType;Ljava/lang/String;)V
 }
 
-public final class io/github/themrmilchmann/gradle/publish/curseforge/Changelog {
-	public fun <init> (Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
-	public final fun copy (Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;)Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
-	public static synthetic fun copy$default (Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;Ljava/lang/String;Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;ILjava/lang/Object;)Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getContent ()Ljava/lang/String;
-	public final fun getType ()Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
+public class io/github/themrmilchmann/gradle/publish/curseforge/Changelog {
+	public final fun getContent ()Lorg/gradle/api/provider/Property;
+	public final fun getFormat ()Lorg/gradle/api/provider/Property;
 }
 
-public final class io/github/themrmilchmann/gradle/publish/curseforge/ChangelogType : java/lang/Enum {
-	public static final field HTML Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
-	public static final field MARKDOWN Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
-	public static final field TEXT Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
-	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogType;
+public final class io/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat : java/lang/Enum {
+	public static final field HTML Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
+	public static final field MARKDOWN Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
+	public static final field TEXT Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
+	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
 }
 
-public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifact : org/gradle/api/publish/PublicationArtifact {
-	public abstract fun getChangelog ()Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
-	public abstract fun getDisplayName ()Ljava/lang/String;
-	public abstract fun getRelations ()Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelations;
-	public abstract fun getReleaseType ()Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
-	public abstract fun setChangelog (Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;)V
-	public abstract fun setDisplayName (Ljava/lang/String;)V
-	public abstract fun setReleaseType (Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;)V
-}
-
-public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactExtensionsKt {
-	public static final fun relations (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifact;Lkotlin/jvm/functions/Function1;)V
-}
-
-public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository : org/gradle/api/artifacts/repositories/ArtifactRepository {
-	public abstract fun getApiKey ()Lorg/gradle/api/provider/Property;
-}
-
-public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication : org/gradle/api/publish/Publication {
-	public abstract fun artifact (Ljava/lang/Object;)V
-	public abstract fun artifact (Ljava/lang/Object;Lorg/gradle/api/Action;)V
-	public abstract fun artifact (Lorg/gradle/api/Action;)V
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication {
+	public abstract fun artifacts (Lorg/gradle/api/Action;)V
+	public abstract fun gameVersion (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun getArtifacts ()Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifactContainer;
 	public abstract fun getGameVersions ()Lorg/gradle/api/provider/SetProperty;
 	public abstract fun getJavaVersions ()Lorg/gradle/api/provider/SetProperty;
-	public abstract fun getProjectID ()Lorg/gradle/api/provider/Property;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getProjectId ()Lorg/gradle/api/provider/Property;
+	public abstract fun javaVersion (Lorg/gradle/api/JavaVersion;)V
 }
 
-public abstract class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgeRepositoryExtension {
-	public fun <init> (Lorg/gradle/api/artifacts/dsl/RepositoryHandler;)V
-	public final fun repository (Ljava/lang/String;Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
-	public final fun repository (Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
+public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication$DefaultImpls {
+	public static fun artifacts (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication;Lorg/gradle/api/Action;)V
+	public static fun gameVersion (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication;Ljava/lang/String;Ljava/lang/String;)V
+	public static fun javaVersion (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication;Lorg/gradle/api/JavaVersion;)V
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifact : org/gradle/api/Buildable {
+	public abstract fun changelog (Lorg/gradle/api/Action;)V
+	public abstract fun from (Ljava/lang/Object;)V
+	public abstract fun getChangelog ()Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
+	public abstract fun getDisplayName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getFile ()Ljava/io/File;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getRelations ()Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelations;
+	public abstract fun getReleaseType ()Lorg/gradle/api/provider/Property;
+	public abstract fun relations (Lorg/gradle/api/Action;)V
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifact$DefaultImpls {
+	public static fun changelog (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifact;Lorg/gradle/api/Action;)V
+	public static fun relations (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifact;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifactContainer : org/gradle/api/NamedDomainObjectContainer {
+}
+
+public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationContainer : org/gradle/api/NamedDomainObjectContainer {
+}
+
+public abstract class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublishingExtension {
+	public static final field Companion Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublishingExtension$Companion;
+	public abstract fun getApiToken ()Lorg/gradle/api/provider/Property;
+	public static final fun getNAME ()Ljava/lang/String;
+	public final fun getPublications ()Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationContainer;
+	public final fun publications (Lorg/gradle/api/Action;)V
+}
+
+public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublishingExtension$Companion {
+	public final fun getNAME ()Ljava/lang/String;
 }
 
 public final class io/github/themrmilchmann/gradle/publish/curseforge/GameVersion {
@@ -117,11 +128,6 @@ public final class io/github/themrmilchmann/gradle/publish/curseforge/ReleaseTyp
 	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
 }
 
-public final class io/github/themrmilchmann/gradle/publish/curseforge/RepositoryHandlerKt {
-	public static final fun curseForge (Lorg/gradle/api/artifacts/dsl/RepositoryHandler;Ljava/lang/String;Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
-	public static final fun curseForge (Lorg/gradle/api/artifacts/dsl/RepositoryHandler;Lorg/gradle/api/Action;)Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
-}
-
 public final class io/github/themrmilchmann/gradle/publish/curseforge/plugins/CurseForgePublishPlugin : org/gradle/api/Plugin {
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
@@ -131,16 +137,9 @@ public abstract class io/github/themrmilchmann/gradle/publish/curseforge/tasks/A
 	public fun <init> ()V
 }
 
-public class io/github/themrmilchmann/gradle/publish/curseforge/tasks/GeneratePublicationMetadata : org/gradle/api/DefaultTask {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
-	public final fun generate ()V
-	public final fun getPublication ()Lorg/gradle/api/provider/Property;
-}
-
 public class io/github/themrmilchmann/gradle/publish/curseforge/tasks/PublishToCurseForgeRepository : io/github/themrmilchmann/gradle/publish/curseforge/tasks/AbstractPublishToCurseForge {
 	public fun <init> ()V
-	public final fun getRepository ()Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;
+	public final fun getApiToken ()Lorg/gradle/api/provider/Property;
 	public final fun publish ()V
-	public final fun setRepository (Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgeArtifactRepository;)V
 }
 

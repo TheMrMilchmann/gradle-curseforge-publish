@@ -21,15 +21,16 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
-import org.gradle.api.internal.tasks.*
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.TaskDependency
 import java.io.*
+import javax.inject.Inject
 
-internal class FileBasedCurseForgeArtifact(
-    private val file: File
-) : AbstractCurseForgeArtifact() {
+internal open class FileBasedCurseForgeArtifactWrapper @Inject constructor(
+    override val file: File,
+    taskDependency: TaskDependency?
+) : CurseForgeArtifactWrapper {
 
-    override fun getDefaultBuildDependencies(): TaskDependency = TaskDependencyInternal.EMPTY
-    override fun getFile(): File = file
+    private val taskDependency = taskDependency ?: TaskDependency { emptySet() }
+    override fun getBuildDependencies(): TaskDependency = taskDependency
 
 }

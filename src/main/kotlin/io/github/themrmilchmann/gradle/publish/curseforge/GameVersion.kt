@@ -22,9 +22,14 @@
 package io.github.themrmilchmann.gradle.publish.curseforge
 
 /**
- * TODO doc
+ * A version identifying a version of a game.
+ *
+ * @param type      the game type parameter as reported by CurseForge
+ * @param version   the game version parameter as reported by CurseForge
  *
  * @since   0.5.0
+ *
+ * @author  Leon Linhart
  */
 public data class GameVersion(
     val type: String,

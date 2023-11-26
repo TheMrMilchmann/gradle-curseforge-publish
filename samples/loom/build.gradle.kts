@@ -22,9 +22,9 @@
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 
 plugins {
-    java
     id("fabric-loom") version "1.0.12"
     id("io.github.themrmilchmann.curseforge-publish") version "0.4.0"
+    java
 }
 
 version = "0.1.0"
@@ -35,21 +35,18 @@ java {
     }
 }
 
-publishing {
-    repositories {
-        curseForge {
-            /*
-             * In a real application, it is recommended to store the API key outside the build script.
-             *
-             * // Store the key in "~/.gradle/gradle.properties"
-             * apiKey.set(extra["cfApiKey"] as String)
-             */
-            apiKey.set("123e4567-e89b-12d3-a456-426614174000")
-        }
-    }
+curseforge {
+    /*
+     * In a real application, it is recommended to store the API key outside the build script.
+     *
+     * // Store the key in "~/.gradle/gradle.properties"
+     * apiKey.set(extra["cfApiKey"] as String)
+     */
+    apiKey.set("123e4567-e89b-12d3-a456-426614174000")
+
     publications {
-        create<CurseForgePublication>("curseForge") {
-            projectID.set(123456) // The CurseForge project ID (required)
+        named("fabric") {
+            projectId.set("123456") // The CurseForge project ID (required)
 
             // Game Dependencies are inferred when Fabric Loom is detected
 

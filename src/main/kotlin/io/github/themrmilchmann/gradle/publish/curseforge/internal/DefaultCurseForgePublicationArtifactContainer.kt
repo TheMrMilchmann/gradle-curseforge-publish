@@ -19,17 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
+package io.github.themrmilchmann.gradle.publish.curseforge.internal
 
-import org.gradle.api.artifacts.*
-import org.gradle.api.tasks.*
-import java.io.*
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifactContainer
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactNotationParser
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.model.ObjectFactory
+import javax.inject.Inject
 
-internal class PublishArtifactBasedCurseForgeArtifact(
-    private val publishArtifact: PublishArtifact
-) : AbstractCurseForgeArtifact() {
-
-    override fun getDefaultBuildDependencies(): TaskDependency = publishArtifact.buildDependencies
-    override fun getFile(): File = publishArtifact.file
-
-}
+/**
+ * Default implementation of [CurseForgePublicationArtifactContainer].
+ *
+ * @author  Leon Linhart
+ */
+internal open class DefaultCurseForgePublicationArtifactContainer @Inject internal constructor(
+    objects: ObjectFactory
+): CurseForgePublicationArtifactContainer, NamedDomainObjectContainer<CurseForgePublicationArtifact> by objects.domainObjectContainer(CurseForgePublicationArtifact::class.java, { name ->
+    val artifactFactory = objects.newInstance(CurseForgeArtifactNotationParser::class.java)
+    objects.newInstance(DefaultCurseForgePublicationArtifact::class.java, name, artifactFactory)
+})

@@ -25,6 +25,8 @@ package io.github.themrmilchmann.gradle.publish.curseforge
  * The type of release.
  *
  * @since   0.1.0
+ *
+ * @author  Leon Linhart
  */
 public enum class ReleaseType {
     /**

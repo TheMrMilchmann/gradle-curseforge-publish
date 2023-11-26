@@ -22,9 +22,9 @@
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 
 plugins {
-    java
+    id("io.github.themrmilchmann.curseforge-publish") version "0.6.0"
     id("net.minecraftforge.gradle") version "5.1.73"
-    id("io.github.themrmilchmann.curseforge-publish") version "0.4.0"
+    java
 }
 
 version = "0.1.0"
@@ -39,23 +39,18 @@ minecraft {
     mappings("official", "1.16.5")
 }
 
-publishing {
-    repositories {
-        curseForge {
-            /*
-             * In a real application, it is recommended to store the API key outside the build script.
-             *
-             * // Store the key in "~/.gradle/gradle.properties"
-             * apiKey.set(extra["cfApiKey"] as String)
-             */
-            apiKey.set("123e4567-e89b-12d3-a456-426614174000")
-        }
-    }
-    publications {
-        create<CurseForgePublication>("curseForge") {
-            projectID.set(123456) // The CurseForge project ID (required)
+curseforge {
+    /*
+     * In a real application, it is recommended to store the API key outside the build script.
+     *
+     * // Store the key in "~/.gradle/gradle.properties"
+     * apiKey.set(extra["cfApiKey"] as String)
+     */
+    apiKey.set("123e4567-e89b-12d3-a456-426614174000")
 
-            // Game Dependencies are inferred when ForgeGradle is detected
+    publications {
+        named("minecraftForge") {
+            projectId.set("123456") // The CurseForge project ID (required)
 
             artifact {
                 changelog = Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)

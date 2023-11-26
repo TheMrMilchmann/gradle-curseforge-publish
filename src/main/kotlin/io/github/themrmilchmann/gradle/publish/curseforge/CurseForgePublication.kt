@@ -23,55 +23,103 @@ package io.github.themrmilchmann.gradle.publish.curseforge
 
 import org.gradle.api.*
 import org.gradle.api.provider.*
-import org.gradle.api.publish.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 
 /**
- * TODO doc
+ * A `CurseForgePublication` is the representation/configuration of how Gradle should publish something to CurseForge.
  *
  * @since   0.1.0
+ *
+ * @author  Leon Linhart
  */
-public interface CurseForgePublication : Publication {
+public interface CurseForgePublication {
 
     /**
-     * TODO doc
+     * The name that of this publication.
      *
-     * @since   0.1.0
+     * This is the name that is used to refer to this publication during the build. This information is not published to
+     * CurseForge.
+     *
+     * @since   0.6.0
      */
-    public val projectID: Property<Int>
+    @get:Internal
+    public val name: String
 
     /**
-     * TODO doc
+     * The ID of the CurseForge project that this publication is published to.
      *
-     * @since   0.1.0
+     * @since   0.6.0
      */
-    public fun artifact(artifact: Any)
-
-    /**
-     * TODO doc
-     *
-     * @since   0.1.0
-     */
-    public fun artifact(action: Action<CurseForgeArtifact>)
-
-    /**
-     * TODO doc
-     *
-     * @since   0.1.0
-     */
-    public fun artifact(artifact: Any, action: Action<CurseForgeArtifact>)
+    @get:Input
+    public val projectId: Property<String>
 
     /**
      * The supported [game versions][GameVersion].
      *
      * @since   0.5.0
      */
+    @get:Input
     public val gameVersions: SetProperty<GameVersion>
+
+    /**
+     * Adds a version to this publication's supported [game versions][gameVersions].
+     *
+     * @since   0.6.0
+     */
+    public fun gameVersion(type: String, version: String) {
+        gameVersions.add(GameVersion(type, version))
+    }
 
     /**
      * The supported Java versions.
      *
      * @since   0.5.0
      */
+    @get:Input
     public val javaVersions: SetProperty<JavaVersion>
+
+    /**
+     * Adds a version to this publication's supported [java versions][javaVersions].
+     *
+     * @since   0.6.0
+     */
+    public fun javaVersion(version: JavaVersion) {
+        javaVersions.add(version)
+    }
+
+    /**
+     * The artifacts of the publication.
+     *
+     * See [artifacts] for more information.
+     *
+     * @since   0.6.0
+     */
+    @get:Nested
+    public val artifacts: CurseForgePublicationArtifactContainer
+
+    /**
+     * Configures the artifacts of this publication.
+     *
+     * Each publication must have a primary artifact when publishing to CurseForge. The primary artifact of a
+     * publication is named "main". When a publication is implicitly created by the plugin, the main artifact is
+     * automatically configured. Otherwise, an artifact can be added as follows:
+     *
+     * ```kotlin
+     * artifacts {
+     *     register("main") {
+     *         from(...)
+     *     }
+     * }
+     * ```
+     *
+     * @param configure the action or closure to configure the artifacts with
+     *
+     * @since   0.6.0
+     */
+    public fun artifacts(configure: Action<CurseForgePublicationArtifactContainer>) {
+        configure.execute(artifacts)
+    }
 
 }

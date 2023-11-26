@@ -19,26 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge
+package io.github.themrmilchmann.gradle.publish.curseforge.internal
 
-import org.gradle.api.artifacts.repositories.*
-import org.gradle.api.provider.*
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublication
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationContainer
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.publication.DefaultCurseForgePublication
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.model.ObjectFactory
+import javax.inject.Inject
 
 /**
- * TODO doc
+ * Default implementation of [CurseForgePublicationContainer].
  *
- * @since   0.1.0
+ * @author  Leon Linhart
  */
-public interface CurseForgeArtifactRepository : ArtifactRepository {
-
-    /**
-     * The API key used to authenticate against the repository.
-     *
-     * **WARNING:** Avoid using hardcoded values to set this property and,
-     * instead, make sure to properly store your secrets.
-     *
-     * @since   0.1.0
-     */
-    public val apiKey: Property<String>
-
-}
+internal open class DefaultCurseForgePublicationContainer @Inject internal constructor(
+    objects: ObjectFactory
+) : CurseForgePublicationContainer, NamedDomainObjectContainer<CurseForgePublication> by objects.domainObjectContainer(CurseForgePublication::class.java, { name ->
+    objects.newInstance(DefaultCurseForgePublication::class.java, name)
+})

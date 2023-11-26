@@ -73,6 +73,13 @@ kotlin {
     }
 }
 
+sourceSets {
+    register("integrationTest") {
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["main"].output
+    }
+}
+
 gradlePlugin {
     compatibility {
         minimumGradleVersion = "7.4"
@@ -119,6 +126,19 @@ tasks {
         archiveClassifier = null as String?
     }
 
+    val test by getting
+
+    val integrationTest = register<Test>("integrationTest") {
+        group = JavaBasePlugin.VERIFICATION_GROUP
+        description = "Runs the integration tests."
+
+        // It is not necessary to run integration tests after unit tests, but it's generally a good practice.
+        shouldRunAfter(test)
+
+        testClassesDirs = sourceSets.named("integrationTest").get().output.classesDirs
+        classpath = sourceSets.named("integrationTest").get().runtimeClasspath
+    }
+
     withType<Test>().configureEach {
         dependsOn(shadowJar)
 
@@ -128,6 +148,10 @@ tasks {
         javaLauncher.set(inferLauncher(default = project.javaToolchains.launcherFor {
             languageVersion = JavaLanguageVersion.of(17)
         }))
+    }
+
+    check {
+        dependsOn(integrationTest)
     }
 
     validatePlugins {
@@ -157,6 +181,18 @@ publishing {
             name = "CurseForge Gradle Publish"
             description = "A Gradle plugin for publishing to CurseForge"
         }
+    }
+}
+
+configurations {
+    named("integrationTestCompileOnly").configure {
+        extendsFrom(compileOnlyApi.get())
+    }
+    named("integrationTestImplementation").configure {
+        extendsFrom(implementation.get())
+    }
+    named("integrationTestRuntimeOnly").configure {
+        extendsFrom(runtimeOnly.get())
     }
 }
 
@@ -194,4 +230,11 @@ dependencies {
     functionalTestImplementation(libs.junit.jupiter.api)
     functionalTestImplementation(libs.junit.jupiter.params)
     functionalTestRuntimeOnly(libs.junit.jupiter.engine)
+
+    "integrationTestImplementation"(kotlin("stdlib"))
+    "integrationTestImplementation"(platform(libs.junit.bom))
+    "integrationTestImplementation"(libs.junit.jupiter.api)
+    "integrationTestImplementation"(libs.junit.jupiter.params)
+    "integrationTestRuntimeOnly"(libs.junit.jupiter.engine)
+    "integrationTestRuntimeOnly"(gradleTestKit())
 }

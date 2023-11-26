@@ -19,28 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.repositories
+package io.github.themrmilchmann.gradle.publish.curseforge
 
-import io.github.themrmilchmann.gradle.publish.curseforge.*
-import org.gradle.api.*
-import org.gradle.api.artifacts.repositories.*
-import org.gradle.api.model.*
-import org.gradle.api.provider.*
-import javax.inject.*
+import org.gradle.api.NamedDomainObjectContainer
 
-internal open class DefaultCurseForgeArtifactRepository @Inject constructor(
-    val url: String,
-    objectFactory: ObjectFactory
-) : CurseForgeArtifactRepository {
-
-    override val apiKey: Property<String> = objectFactory.property(String::class.java)
-
-    private var name: String = "CurseForge"
-    override fun getName(): String = name
-    override fun setName(name: String) { this.name = name }
-
-    override fun content(configureAction: Action<in RepositoryContentDescriptor>) {
-        error("Unsupported Operation")
-    }
-
-}
+/**
+ * A `CurseForgePublicationArtifactContainer` is responsible for creating and managing [CurseForgePublicationArtifact]
+ * instances.
+ *
+ * The usual way to add artifacts is via a configuration block. See the documentation for [CurseForgePublication.artifacts]
+ * for examples on how to create and configure artifacts.
+ *
+ * @since   0.6.0
+ *
+ * @author  Leon Linhart
+ */
+public interface CurseForgePublicationArtifactContainer : NamedDomainObjectContainer<CurseForgePublicationArtifact>
