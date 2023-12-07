@@ -6,7 +6,7 @@
 ![Gradle](https://img.shields.io/badge/Gradle-7.4-green.svg?style=for-the-badge&color=1ba8cb&logo=Gradle)
 ![Java](https://img.shields.io/badge/Java-8-green.svg?style=for-the-badge&color=b07219&logo=Java)
 
-A gradle plugin that adds support for publishing artifacts to [CurseForge](https://www.curseforge.com/).
+A Gradle plugin that provides support for publishing artifacts to [CurseForge](https://www.curseforge.com/).
 
 
 ## Usage
