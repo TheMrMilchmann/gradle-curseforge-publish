@@ -46,6 +46,7 @@ public open class Changelog @Inject internal constructor(
      */
     @get:Input
     public val format: Property<ChangelogFormat> = objectFactory.property(ChangelogFormat::class.java)
+        .convention(ChangelogFormat.TEXT)
 
     /**
      * The content of the changelog.
@@ -56,5 +57,6 @@ public open class Changelog @Inject internal constructor(
      */
     @get:Input
     public val content: Property<String> = objectFactory.property(String::class.java)
+        .convention("")
 
 }
