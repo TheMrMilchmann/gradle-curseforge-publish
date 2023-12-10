@@ -114,6 +114,7 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                     return@provider gameVersions.toSet()
                 }
 
+                LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
                 gameVersions += mcGameVersion
                 gameVersions.toSet()
             }
@@ -141,6 +142,7 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                     return@provider gameVersions.toSet()
                 }
 
+                LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
                 gameVersions += mcGameVersion
                 gameVersions.toSet()
             }
@@ -168,6 +170,7 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                     return@provider gameVersions.toSet()
                 }
 
+                LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
                 gameVersions += mcGameVersion
                 gameVersions.toSet()
             }
@@ -212,21 +215,6 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
             dependsOn(publishToCurseForgeTask)
             dependsOn(tasks.withType(PublishToCurseForgeRepository::class.java))
         }
-    }
-
-    private fun inferMinecraftGameVersion(version: String): GameVersion? {
-        val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues
-
-        if (matchGroups == null) {
-            LOGGER.warn("Failed to parse Minecraft version string '$version'. The CurseForge publication cannot infer the required Minecraft version.")
-            return null
-        }
-
-        val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
-        val mcVersionSlug = "${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
-
-        LOGGER.debug("Inferred CurseForge Minecraft dependency: type='$mcDependencySlug', version='$mcVersionSlug'")
-        return GameVersion(mcDependencySlug, mcVersionSlug)
     }
 
 }
