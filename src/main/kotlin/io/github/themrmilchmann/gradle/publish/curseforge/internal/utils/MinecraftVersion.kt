@@ -31,3 +31,12 @@ internal fun inferMinecraftGameVersion(version: String): GameVersion? {
 
     return GameVersion(mcDependencySlug, mcVersionSlug)
 }
+
+internal fun inferMinecraftGameVersionFromNeoForgeDependency(version: String): GameVersion? {
+    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues ?: return null
+
+    val mcDependencySlug = "minecraft-1-${matchGroups[1]}"
+    val mcVersionSlug = "1-${matchGroups[1]}-${matchGroups[2]}"
+
+    return GameVersion(mcDependencySlug, mcVersionSlug)
+}

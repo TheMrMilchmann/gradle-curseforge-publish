@@ -163,10 +163,27 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "neoforge")
 
-                val mcVersion = project.extensions.extraProperties["MC_VERSION"] as String
-                val mcGameVersion = inferMinecraftGameVersion(mcVersion)
+                val implementationConfiguration = configurations.findByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME)
+                if (implementationConfiguration == null) {
+                    LOGGER.warn("Fabric Loom Gradle Plugin was detected but 'minecraft' configuration cannot be found.")
+                    return@provider gameVersions.toSet()
+                }
+
+                val dependency = implementationConfiguration.dependencies.find { it.group == "net.neoforged" && it.name == "neoforge" }
+                if (dependency == null) {
+                    LOGGER.warn("Cannot find Minecraft dependency: ('net.neoforged:neoforge')'")
+                    return@provider gameVersions.toSet()
+                }
+
+                val neoforgeVersion = dependency.version
+                if (neoforgeVersion == null) {
+                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $neoforgeVersion")
+                    return@provider gameVersions.toSet()
+                }
+
+                val mcGameVersion = inferMinecraftGameVersionFromNeoForgeDependency(neoforgeVersion) // TODO
                 if (mcGameVersion == null) {
-                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $mcVersion")
+                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $neoforgeVersion")
                     return@provider gameVersions.toSet()
                 }
 
