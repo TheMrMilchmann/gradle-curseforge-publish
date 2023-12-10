@@ -41,6 +41,4 @@ internal open class DefaultCurseForgePublication @Inject constructor(
     override val gameVersions = objects.setProperty(GameVersion::class.java)
     override val javaVersions = objects.setProperty(JavaVersion::class.java)
 
-    override lateinit var publicationMetadataGenerator: TaskProvider<out Task>
-
 }

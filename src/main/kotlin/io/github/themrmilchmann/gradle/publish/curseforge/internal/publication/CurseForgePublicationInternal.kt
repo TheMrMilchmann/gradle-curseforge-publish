@@ -36,7 +36,4 @@ internal interface CurseForgePublicationInternal : CurseForgePublication {
     val extraArtifacts: List<CurseForgePublicationArtifactInternal>
         get() = artifacts.filter { it.name != "main" }.map { it as CurseForgePublicationArtifactInternal }
 
-    @get:Internal
-    var publicationMetadataGenerator: TaskProvider<out Task>
-
 }
