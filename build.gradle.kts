@@ -86,7 +86,7 @@ kotlin {
 
 gradlePlugin {
     compatibility {
-        minimumGradleVersion = "7.4"
+        minimumGradleVersion = "7.6"
     }
 
     website = "https://github.com/TheMrMilchmann/gradle-curseforge-publish"
