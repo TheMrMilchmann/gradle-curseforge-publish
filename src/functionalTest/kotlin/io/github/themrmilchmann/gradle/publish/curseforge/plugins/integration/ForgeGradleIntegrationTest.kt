@@ -31,21 +31,21 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
 
 /**
- * Functional tests for the integration with the Fabric Loom Gradle plugin.
+ * Functional tests for the integration with the ForgeGradle plugin.
  *
  * @author  Leon Linhart
  */
-class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
+class ForgeGradleIntegrationTest : AbstractFunctionalPluginTest() {
 
     private companion object {
 
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
-            return provideGradleVersions().map { gradleVersion -> when {
-                gradleVersion >= "8.3" -> "1.4.5"
-                gradleVersion >= "8.1" -> "1.3.9"
-                else -> "1.1.9"
-            }.let { Arguments.of(gradleVersion, it) }}
+            return provideGradleVersions().mapNotNull { gradleVersion -> when {
+                gradleVersion >= "8.1" -> "6.0.16"
+                gradleVersion >= "8.0" -> null
+                else -> "5.1.77"
+            }?.let { Arguments.of(gradleVersion, it) }}
         }
 
     }
@@ -55,7 +55,7 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
 
     @ParameterizedTest
     @MethodSource("provideTestArguments")
-    fun testIntegration(gradleVersion: String, loomVersion: String) {
+    fun testIntegration(gradleVersion: String, forgeGradleVersion: String) {
         File(projectDir, "settings.gradle.kts").writeText(
             """
             pluginManagement {
@@ -65,7 +65,7 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
             
                 repositories {
                     gradlePluginPortal()
-                    maven(url = "https://maven.fabricmc.net")
+                    maven(url = "https://maven.minecraftforge.net")
                 }
             }
             
@@ -82,8 +82,8 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
             import io.github.themrmilchmann.gradle.publish.curseforge.*
             
             plugins {
-                id("fabric-loom") version "$loomVersion"
                 id("io.github.themrmilchmann.curseforge-publish")
+                id("net.minecraftforge.gradle") version "$forgeGradleVersion"
                 java
             }
             
@@ -92,20 +92,23 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
                     languageVersion.set(JavaLanguageVersion.of(17))
                 }
             }
+
+            minecraft {
+                mappings("official", "1.20.2")
+            }
             
             curseforge {
                 apiToken.set("123e4567-e89b-12d3-a456-426614174000")
 
                 publications {
-                    named("fabric") {
+                    named("minecraftForge") {
                         projectId.set("$PROJECT_ID")
                     }
                 }
             }
             
             dependencies {
-                minecraft("com.mojang:minecraft:1.20.2")
-                mappings(loom.officialMojangMappings())
+                minecraft("net.minecraftforge:forge:1.20.2-48.0.1")
             }
             """.removeSuffix("\n").trimIndent()
         )
@@ -118,8 +121,8 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
             .forwardOutput()
             .build()
 
-        assertTrue("Published main artifact (artifact 67890) of publication 'fabric' to CurseForge (project $PROJECT_ID)" in result.output)
-        assertTrue("Published publication 'fabric' to CurseForge (project $PROJECT_ID)" in result.output)
+        assertTrue("Published main artifact (artifact 67890) of publication 'minecraftForge' to CurseForge (project $PROJECT_ID)" in result.output)
+        assertTrue("Published publication 'minecraftForge' to CurseForge (project $PROJECT_ID)" in result.output)
     }
 
 }
