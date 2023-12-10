@@ -235,6 +235,8 @@ dependencies {
     functionalTestImplementation(libs.junit.jupiter.params)
     functionalTestRuntimeOnly(libs.junit.jupiter.engine)
 
+    functionalTestImplementation(libs.ktor.server.netty)
+
     "integrationTestImplementation"(kotlin("stdlib"))
     "integrationTestImplementation"(platform(libs.junit.bom))
     "integrationTestImplementation"(libs.junit.jupiter.api)

@@ -37,20 +37,23 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Not worth caching")
-public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() {
+public open class PublishToCurseForgeRepository @Inject internal constructor(
+    objectFactory: ObjectFactory,
+    providerFactory: ProviderFactory
+) : AbstractPublishToCurseForge() {
 
     private companion object {
 
         val LOGGER: Logger = LoggerFactory.getLogger(PublishToCurseForgeRepository::class.java)
-
-        private const val BASE_URL = "https://minecraft.curseforge.com"
 
         val json = Json {
             ignoreUnknownKeys = true
@@ -59,7 +62,11 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
     }
 
     @get:Input
-    public val apiToken: Property<String> = project.objects.property(String::class.java)
+    public val baseUrl: Property<String> = objectFactory.property(String::class.java)
+        .convention(providerFactory.gradleProperty("gradle-curseforge-publish.internal.base-url").orElse("https://minecraft.curseforge.com"))
+
+    @get:Input
+    public val apiToken: Property<String> = objectFactory.property(String::class.java)
 
     @TaskAction
     public fun publish(): Unit = runBlocking {
@@ -94,19 +101,25 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
             version.id
         }
 
-        val mainArtifactID = httpClient.doUploadFile(
+        val mainArtifactId = httpClient.doUploadFile(
             publication.mainArtifact,
             projectId = projectId,
             gameVersionIds = gameVersionIDs
         )
 
+        logger.info("Published main artifact (artifact $mainArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
+
         publication.extraArtifacts.forEach { artifact ->
-            httpClient.doUploadFile(
+            val extraArtifactId = httpClient.doUploadFile(
                 artifact,
                 projectId = projectId,
-                parentFileId = mainArtifactID
+                parentFileId = mainArtifactId
             )
+
+            logger.info("Published '${artifact.name}' artifact (artifact $extraArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
         }
+
+        logger.info("Published publication '${publication.name}' to CurseForge (project $projectId)")
     }
 
     private suspend fun HttpClient.doUploadFile(
@@ -118,10 +131,11 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
         require((parentFileId != null) xor (gameVersionIds != null)) { "Exactly one of the parameter must be set: parentFileID, gameVersionIDs" }
 
         val apiKey = apiToken.get()
+        val baseUrl = baseUrl.get()
         val metadata = generateArtifactMetadata(artifact, parentFileId = parentFileId, gameVersionIds = gameVersionIds)
 
         val httpResponse = submitFormWithBinaryData(
-            url = "$BASE_URL/api/projects/${projectId}/upload-file",
+            url = "$baseUrl/api/projects/${projectId}/upload-file",
             formData = formData {
                 append(
                     "metadata",
@@ -174,15 +188,14 @@ public open class PublishToCurseForgeRepository : AbstractPublishToCurseForge() 
     }
 
     private suspend fun HttpClient.resolveGameDependencies(apiKey: String) =
-        get("$BASE_URL/api/game/version-types") {
+        get("${baseUrl.get()}/api/game/version-types") {
             header("X-Api-Token", apiKey)
         }.body<List<CFGameDependency>>()
 
     private suspend fun HttpClient.resolveGameVersions(apiKey: String) =
-        get("$BASE_URL/api/game/versions") {
+        get("${baseUrl.get()}/api/game/versions") {
             header("X-Api-Token", apiKey)
         }.body<List<CFGameVersion>>()
-
 
     private fun RelationType.toModelType(): CFUploadMetadata.Relations.ProjectRelation.Type = when (this) {
         RelationType.EMBEDDED_LIBRARY -> CFUploadMetadata.Relations.ProjectRelation.Type.EMBEDDED_LIBRARY
