@@ -37,6 +37,13 @@ plugins {
     id("io.github.themrmilchmann.maven-publish-conventions")
 }
 
+sourceSets {
+    register("integrationTest") {
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["main"].output
+    }
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -70,13 +77,10 @@ kotlin {
                 freeCompilerArgs.add("-Xsuppress-version-warnings")
             }
         }
-    }
-}
 
-sourceSets {
-    register("integrationTest") {
-        compileClasspath += sourceSets["main"].output
-        runtimeClasspath += sourceSets["main"].output
+        compilations.named("integrationTest") {
+            associateWith(compilations.getByName("main"))
+        }
     }
 }
 
