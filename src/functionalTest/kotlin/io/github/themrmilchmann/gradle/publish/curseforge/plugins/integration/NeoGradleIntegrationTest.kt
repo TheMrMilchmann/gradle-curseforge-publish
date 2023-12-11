@@ -41,10 +41,10 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
 
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
-            return provideGradleVersions().map { gradleVersion -> when {
+            return provideGradleVersions().mapNotNull { gradleVersion -> when {
                 gradleVersion >= "8.0" -> "7.0.61"
                 else -> null
-            }.let { Arguments.of(gradleVersion, it) }}
+            }?.let { Arguments.of(gradleVersion, it) }}
         }
 
     }
