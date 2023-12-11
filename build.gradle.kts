@@ -96,7 +96,7 @@ gradlePlugin {
         register("curseForgePublish") {
             id = "io.github.themrmilchmann.curseforge-publish"
             displayName = "CurseForge Gradle Publish Plugin"
-            description = "A Gradle plugin for publishing to CurseForge"
+            description = "A Gradle plugin that provides support for publishing artifacts to CurseForge."
             tags.addAll("curseforge", "minecraft", "publishing")
 
             implementationClass = "io.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
@@ -182,8 +182,8 @@ publishing {
         }
 
         pom {
-            name = "CurseForge Gradle Publish"
-            description = "A Gradle plugin for publishing to CurseForge"
+            name = "CurseForge Gradle Publish Plugin"
+            description = "A Gradle plugin that provides support for publishing artifacts to CurseForge."
         }
     }
 }
