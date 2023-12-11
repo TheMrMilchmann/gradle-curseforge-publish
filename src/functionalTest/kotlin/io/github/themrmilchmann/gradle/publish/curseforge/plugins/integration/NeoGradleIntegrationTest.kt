@@ -112,7 +112,7 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
             .withGradleVersion(gradleVersion)
             .withPluginClasspath()
             .withProjectDir(projectDir)
-            .withArguments("publish", "--info", "-Dorg.gradle.jvmargs=-Xmx3g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")
+            .withArguments("publish", "--info", "--build-cache", "-Dorg.gradle.jvmargs=-Xmx3g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")
             .forwardOutput()
             .build()
 
