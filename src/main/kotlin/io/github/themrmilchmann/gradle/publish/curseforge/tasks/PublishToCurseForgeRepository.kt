@@ -29,8 +29,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.*
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Not worth caching")
@@ -38,12 +36,6 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
     objectFactory: ObjectFactory,
     providerFactory: ProviderFactory
 ) : AbstractPublishToCurseForge() {
-
-    private companion object {
-
-        val LOGGER: Logger = LoggerFactory.getLogger(PublishToCurseForgeRepository::class.java)
-
-    }
 
     @get:Input
     public val baseUrl: Property<String> = objectFactory.property(String::class.java)
@@ -69,13 +61,13 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
         val gameVersionIDs = gameVersions.mapNotNull { gameVersion ->
             val dependency = recognizedGameDependencies.find { it.slug == gameVersion.type }
             if (dependency == null) {
-                LOGGER.warn("Could not find game version for type '{}', available: {}", gameVersion.type, recognizedGameVersions)
+                logger.warn("Could not find game version for type '{}', available: {}", gameVersion.type, recognizedGameVersions)
                 return@mapNotNull null
             }
 
             val version = recognizedGameVersions.find { it.gameVersionTypeID == dependency.id && it.slug == gameVersion.version }
             if (version == null) {
-                LOGGER.warn("Could not find game version for type '{}' @ '{}', available: {}", gameVersion.type, gameVersion.version, recognizedGameVersions.filter { it.gameVersionTypeID == dependency.id })
+                logger.warn("Could not find game version for type '{}' @ '{}', available: {}", gameVersion.type, gameVersion.version, recognizedGameVersions.filter { it.gameVersionTypeID == dependency.id })
                 return@mapNotNull null
             }
 
