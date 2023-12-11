@@ -26,6 +26,7 @@ import io.github.themrmilchmann.gradle.publish.curseforge.internal.DefaultCurseF
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import io.github.themrmilchmann.gradle.publish.curseforge.tasks.*
 import org.gradle.api.*
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.plugins.*
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.plugins.*
@@ -90,32 +91,16 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "fabric")
 
-                val minecraftConfiguration = configurations.findByName("minecraft")
-                if (minecraftConfiguration == null) {
-                    LOGGER.warn("Fabric Loom Gradle Plugin was detected but 'minecraft' configuration cannot be found.")
-                    return@provider gameVersions.toSet()
-                }
+                val mcGameVersion = inferGameVersionFromDependency(
+                    configurations,
+                    configurationName = "minecraft",
+                    integration = "FabricLoom",
+                    group = "com.mojang",
+                    name = "minecraft",
+                    extractVersion = ::extractMinecraftVersionFromFabricLoomMinecraftDependencyVersion
+                )
 
-                val dependency = minecraftConfiguration.dependencies.find { it.group == "com.mojang" && it.name == "minecraft" }
-                if (dependency == null) {
-                    LOGGER.warn("Cannot find Minecraft dependency: ('com.mojang:minecraft')'")
-                    return@provider gameVersions.toSet()
-                }
-
-                val mcVersion = dependency.version
-                if (mcVersion == null) {
-                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $mcVersion")
-                    return@provider gameVersions.toSet()
-                }
-
-                val mcGameVersion = inferMinecraftGameVersion(mcVersion) // TODO
-                if (mcGameVersion == null) {
-                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $mcVersion")
-                    return@provider gameVersions.toSet()
-                }
-
-                LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
-                gameVersions += mcGameVersion
+                if (mcGameVersion != null) gameVersions += mcGameVersion
                 gameVersions.toSet()
             }
 
@@ -135,15 +120,16 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "forge")
 
-                val mcVersion = project.extensions.extraProperties["MC_VERSION"] as String
-                val mcGameVersion = inferMinecraftGameVersion(mcVersion)
-                if (mcGameVersion == null) {
-                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $mcVersion")
-                    return@provider gameVersions.toSet()
-                }
+                val mcGameVersion = inferGameVersionFromDependency(
+                    configurations,
+                    JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME,
+                    integration = "ForgeGradle",
+                    group = "net.minecraftforge",
+                    name = "forge",
+                    extractVersion = ::extractMinecraftVersionFromForgeGradleMinecraftDependencyVersion
+                )
 
-                LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
-                gameVersions += mcGameVersion
+                if (mcGameVersion != null) gameVersions += mcGameVersion
                 gameVersions.toSet()
             }
 
@@ -163,32 +149,16 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "neoforge")
 
-                val implementationConfiguration = configurations.findByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME)
-                if (implementationConfiguration == null) {
-                    LOGGER.warn("Fabric Loom Gradle Plugin was detected but 'minecraft' configuration cannot be found.")
-                    return@provider gameVersions.toSet()
-                }
+                val mcGameVersion = inferGameVersionFromDependency(
+                    configurations,
+                    JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME,
+                    integration = "NeoGradle",
+                    group = "ng_dummy_ng.net.neoforged",
+                    name = "neoforge",
+                    extractVersion = ::extractMinecraftVersionFromNeoForgeVersion
+                )
 
-                val dependency = implementationConfiguration.dependencies.find { it.group == "net.neoforged" && it.name == "neoforge" }
-                if (dependency == null) {
-                    LOGGER.warn("Cannot find Minecraft dependency: ('net.neoforged:neoforge')'")
-                    return@provider gameVersions.toSet()
-                }
-
-                val neoforgeVersion = dependency.version
-                if (neoforgeVersion == null) {
-                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $neoforgeVersion")
-                    return@provider gameVersions.toSet()
-                }
-
-                val mcGameVersion = inferMinecraftGameVersionFromNeoForgeDependency(neoforgeVersion) // TODO
-                if (mcGameVersion == null) {
-                    LOGGER.warn("Could not infer Minecraft game version from dependency version: $neoforgeVersion")
-                    return@provider gameVersions.toSet()
-                }
-
-                LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
-                gameVersions += mcGameVersion
+                if (mcGameVersion != null) gameVersions += mcGameVersion
                 gameVersions.toSet()
             }
 
@@ -200,6 +170,41 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 }
             }
         }
+    }
+
+    private fun inferGameVersionFromDependency(
+        configurations: ConfigurationContainer,
+        configurationName: String,
+        integration: String,
+        group: String,
+        name: String,
+        extractVersion: (String) -> MinecraftVersion?
+    ): GameVersion? {
+        val configuration = configurations.findByName(configurationName) ?: let {
+            LOGGER.warn("[$integration] Configuration '$configurationName' could not be found")
+            return null
+        }
+
+        val dependency = configuration.allDependencies.find { it.group == group && it.name == name } ?: let {
+            LOGGER.warn("[$integration] Could not find Minecraft dependency '$group:$name' in configuration '$configurationName'")
+            return null
+        }
+
+        val dependencyVersion = dependency.version ?: let {
+            LOGGER.warn("[$integration] Found Minecraft dependency does not have a declared version")
+            return null
+        }
+
+        // https://help.minecraft.net/hc/en-us/articles/9971900758413-Major-Minor-Versions-in-Minecraft-Java-Edition
+        val (one, major, minor) = extractVersion(dependencyVersion) ?: let {
+            LOGGER.warn("[$integration] Could not infer Minecraft version from dependency version '$dependencyVersion'")
+            return null
+        }
+
+        val mcGameVersion = GameVersion(type = "minecraft-$one-$major", version = "$one-$major-$minor")
+        LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
+
+        return mcGameVersion
     }
 
     private fun Project.configureJavaIntegration(publications: CurseForgePublicationContainer) {

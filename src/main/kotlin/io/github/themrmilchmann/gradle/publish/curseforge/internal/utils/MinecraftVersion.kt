@@ -21,22 +21,20 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.utils
 
-import io.github.themrmilchmann.gradle.publish.curseforge.GameVersion
-
-internal fun inferMinecraftGameVersion(version: String): GameVersion? {
+internal fun extractMinecraftVersionFromFabricLoomMinecraftDependencyVersion(version: String): MinecraftVersion? {
     val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues ?: return null
-
-    val mcDependencySlug = "minecraft-${matchGroups[1]}-${matchGroups[2]}"
-    val mcVersionSlug = "${matchGroups[1]}-${matchGroups[2]}-${matchGroups[3]}"
-
-    return GameVersion(mcDependencySlug, mcVersionSlug)
+    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3])
 }
 
-internal fun inferMinecraftGameVersionFromNeoForgeDependency(version: String): GameVersion? {
-    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues ?: return null
-
-    val mcDependencySlug = "minecraft-1-${matchGroups[1]}"
-    val mcVersionSlug = "1-${matchGroups[1]}-${matchGroups[2]}"
-
-    return GameVersion(mcDependencySlug, mcVersionSlug)
+internal fun extractMinecraftVersionFromForgeGradleMinecraftDependencyVersion(version: String): MinecraftVersion? {
+    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version.substringBefore('-'))?.groupValues ?: return null
+    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3])
 }
+
+internal fun extractMinecraftVersionFromNeoForgeVersion(version: String): MinecraftVersion? {
+    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues ?: return null
+    return MinecraftVersion(major = matchGroups[1], minor = matchGroups[2])
+}
+
+// https://help.minecraft.net/hc/en-us/articles/9971900758413-Major-Minor-Versions-in-Minecraft-Java-Edition
+internal data class MinecraftVersion(val one: String = "1", val major: String, val minor: String)
