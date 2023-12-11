@@ -103,10 +103,24 @@ publishing {
 
 ## Compatibility Map
 
-| Gradle | Minimal plugin version |
-|--------|------------------------|
-| 7.6    | 0.5.0                  |
-| 7.4    | 0.1.0                  |
+The compatibility can be referred to, to check which Gradle versions are
+supported by a given version of the plugin or which plugin version is required
+for a given version of Gradle.
+
+If a plugin version is not listed, it's compatibility has not changed since the
+most recent listed version that is lower than the given version. Similarly, if a
+maximum supported Gradle version is not listed, it is assumed that the plugin is
+still working with the most recent version of Gradle.
+
+| Plugin Version | Minimum Gradle Versions | Maximum Supported Gradle Version |
+|----------------|-------------------------|----------------------------------|
+| 0.6.0          | 7.6                     |                                  |
+| 0.5.0          | 7.4                     | 7.6.*                            |
+| 0.1.0          | 7.4                     | 7.5.*                            |
+
+If a plugin version is not compatible with a version of Gradle despite this
+table stating the opposite, please make sure to check the issue tracker and file
+an issue if necessary.
 
 
 ## Building from source
