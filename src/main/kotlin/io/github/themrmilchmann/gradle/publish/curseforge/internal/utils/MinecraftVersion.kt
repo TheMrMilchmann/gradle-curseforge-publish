@@ -22,17 +22,17 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.utils
 
 internal fun extractMinecraftVersionFromFabricLoomMinecraftDependencyVersion(version: String): MinecraftVersion? {
-    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues ?: return null
-    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3])
+    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version.substringBefore('-'))?.groupValues ?: return null
+    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3].ifBlank { "0" })
 }
 
 internal fun extractMinecraftVersionFromForgeGradleMinecraftDependencyVersion(version: String): MinecraftVersion? {
     val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version.substringBefore('-'))?.groupValues ?: return null
-    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3])
+    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3].ifBlank { "0" })
 }
 
 internal fun extractMinecraftVersionFromNeoForgeVersion(version: String): MinecraftVersion? {
-    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version)?.groupValues ?: return null
+    val matchGroups = """^([0-9]+)\.([0-9]+)\.([0-9]+)""".toRegex().matchEntire(version.substringBefore('-'))?.groupValues ?: return null
     return MinecraftVersion(major = matchGroups[1], minor = matchGroups[2])
 }
 

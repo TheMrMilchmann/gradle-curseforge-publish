@@ -23,6 +23,8 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.utils
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 
 /**
  * Unit tests for `MinecraftVersion`
@@ -32,18 +34,26 @@ import org.junit.jupiter.api.*
 class MinecraftVersionTest {
 
     @Test
-    fun testInferMinecraftGameVersion_Stable() {
-        val gameVersion = inferMinecraftGameVersion("1.19.2")
-        assertNotNull(gameVersion)
+    fun testExtractMinecraftVersionFromFabricLoomMinecraftDependencyVersion() {
+        assertEquals(MinecraftVersion("2", "3", "77"), extractMinecraftVersionFromFabricLoomMinecraftDependencyVersion("2.3.77"))
+        assertEquals(MinecraftVersion("2", "3", "0"), extractMinecraftVersionFromFabricLoomMinecraftDependencyVersion("2.3"))
 
-        assertEquals("minecraft-1-19", gameVersion!!.type)
-        assertEquals("1-19-2", gameVersion.version)
+        assertNull(extractMinecraftVersionFromFabricLoomMinecraftDependencyVersion("2.3.77.2"))
     }
 
     @Test
-    fun testInferMinecraftGameVersion_Invalid() {
-        val gameVersion = inferMinecraftGameVersion("1.19")
-        assertNull(gameVersion)
+    fun testExtractMinecraftVersionFromForgeGradleMinecraftDependencyVersion() {
+        assertEquals(MinecraftVersion("1", "20", "2"), extractMinecraftVersionFromForgeGradleMinecraftDependencyVersion("1.20.2-46.0.3"))
+        assertEquals(MinecraftVersion("1", "20", "0"), extractMinecraftVersionFromForgeGradleMinecraftDependencyVersion("1.20-46.0.3"))
+    }
+
+    @Test
+    fun testExtractMinecraftVersionFromNeoForgeVersion() {
+        assertEquals(MinecraftVersion("1", "20", "2"), extractMinecraftVersionFromNeoForgeVersion("20.2.86"))
+        assertEquals(MinecraftVersion("1", "20", "2"), extractMinecraftVersionFromNeoForgeVersion("20.2.86-beta"))
+
+        assertNull(extractMinecraftVersionFromNeoForgeVersion("2.86-beta"))
+        assertNull(extractMinecraftVersionFromNeoForgeVersion("20.2.86.4-beta"))
     }
 
 }
