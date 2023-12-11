@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
+package io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model
 
 import kotlinx.serialization.*
 

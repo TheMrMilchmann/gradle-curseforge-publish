@@ -22,21 +22,9 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.tasks
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.CurseForgePublicationArtifactInternal
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.*
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api.CFGameVersion
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.CurseForgeApiClient
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
@@ -55,10 +43,6 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
 
         val LOGGER: Logger = LoggerFactory.getLogger(PublishToCurseForgeRepository::class.java)
 
-        val json = Json {
-            ignoreUnknownKeys = true
-        }
-
     }
 
     @get:Input
@@ -70,19 +54,16 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
 
     @TaskAction
     public fun publish(): Unit = runBlocking {
-        val apiKey = apiToken.finalizeAndGetOrNull() ?: error("CurseForge API key has not been provided")
+        val baseUrl = baseUrl.finalizeAndGet()
+        val apiToken = apiToken.finalizeAndGetOrNull() ?: error("CurseForge API key has not been provided")
 
-        val httpClient = HttpClient(Apache) {
-            install(ContentNegotiation) {
-                json(json)
-            }
-        }
+        val cfApiClient = CurseForgeApiClient(baseUrl = baseUrl, apiToken = apiToken)
 
         val publication = publicationInternal!!
         val projectId = publication.projectId.finalizeAndGet()
 
-        val recognizedGameDependencies = httpClient.resolveGameDependencies(apiKey)
-        val recognizedGameVersions = httpClient.resolveGameVersions(apiKey)
+        val recognizedGameDependencies = cfApiClient.getGameVersionTypes()
+        val recognizedGameVersions = cfApiClient.getGameVersions()
 
         val gameVersions = publication.gameVersions.finalizeAndGet() + publication.javaVersions.finalizeAndGet().map { GameVersion(type = "java", version = "java-${it.majorVersion}") }
         val gameVersionIDs = gameVersions.mapNotNull { gameVersion ->
@@ -101,120 +82,25 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
             version.id
         }
 
-        val mainArtifactId = httpClient.doUploadFile(
+        val mainArtifactId = cfApiClient.uploadFile(
             publication.mainArtifact,
             projectId = projectId,
             gameVersionIds = gameVersionIDs
-        )
+        ).id
 
         logger.info("Published main artifact (artifact $mainArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
 
         publication.extraArtifacts.forEach { artifact ->
-            val extraArtifactId = httpClient.doUploadFile(
+            val extraArtifactId = cfApiClient.uploadFile(
                 artifact,
                 projectId = projectId,
                 parentFileId = mainArtifactId
-            )
+            ).id
 
             logger.info("Published '${artifact.name}' artifact (artifact $extraArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
         }
 
         logger.info("Published publication '${publication.name}' to CurseForge (project $projectId)")
-    }
-
-    private suspend fun HttpClient.doUploadFile(
-        artifact: CurseForgePublicationArtifactInternal,
-        projectId: String,
-        parentFileId: Int? = null,
-        gameVersionIds: List<Int>? = null
-    ): Int {
-        require((parentFileId != null) xor (gameVersionIds != null)) { "Exactly one of the parameter must be set: parentFileID, gameVersionIDs" }
-
-        val apiKey = apiToken.get()
-        val baseUrl = baseUrl.get()
-        val metadata = generateArtifactMetadata(artifact, parentFileId = parentFileId, gameVersionIds = gameVersionIds)
-
-        val httpResponse = submitFormWithBinaryData(
-            url = "$baseUrl/api/projects/${projectId}/upload-file",
-            formData = formData {
-                append(
-                    "metadata",
-                    Json.encodeToString(metadata),
-                    headersOf(HttpHeaders.ContentType, "application/json")
-                )
-
-                append(
-                    "file",
-                    artifact.file.readBytes(),
-                    headersOf(HttpHeaders.ContentDisposition, "filename=${artifact.file.name}")
-                )
-            }
-        ) {
-            header("X-Api-Token", apiKey)
-        }
-
-        if (httpResponse.status.isSuccess()) {
-            return httpResponse.body<CFUploadResponse>().id
-        } else if (httpResponse.contentType() == ContentType.Application.Json) {
-            error(httpResponse.body<String>())
-        } else {
-            error("Publishing CurseForge publication '${publication!!.name}' failed with status code: ${httpResponse.status}")
-        }
-    }
-
-    private fun generateArtifactMetadata(
-        artifact: CurseForgePublicationArtifactInternal,
-        parentFileId: Int? = null,
-        gameVersionIds: List<Int>? = null
-    ): CFUploadMetadata {
-        val projectRelations = artifact.relations.mapNotNull { artifactRelation ->
-            artifactRelation.type.toModelType().let {
-                CFUploadMetadata.Relations.ProjectRelation(
-                    slug = artifactRelation.slug,
-                    type = it
-                )
-            }
-        }
-
-        return CFUploadMetadata(
-            changelog = artifact.changelog.content.get(),
-            changelogType = artifact.changelog.format.get().toJSONType(),
-            displayName = artifact.displayName.get(),
-            parentFileID = parentFileId,
-            gameVersions = gameVersionIds,
-            releaseType = artifact.releaseType.get().toJSONType(),
-            relations = if (projectRelations.isNotEmpty()) CFUploadMetadata.Relations(projects = projectRelations) else null
-        )
-    }
-
-    private suspend fun HttpClient.resolveGameDependencies(apiKey: String) =
-        get("${baseUrl.get()}/api/game/version-types") {
-            header("X-Api-Token", apiKey)
-        }.body<List<CFGameDependency>>()
-
-    private suspend fun HttpClient.resolveGameVersions(apiKey: String) =
-        get("${baseUrl.get()}/api/game/versions") {
-            header("X-Api-Token", apiKey)
-        }.body<List<CFGameVersion>>()
-
-    private fun RelationType.toModelType(): CFUploadMetadata.Relations.ProjectRelation.Type = when (this) {
-        RelationType.EMBEDDED_LIBRARY -> CFUploadMetadata.Relations.ProjectRelation.Type.EMBEDDED_LIBRARY
-        RelationType.INCOMPATIBLE -> CFUploadMetadata.Relations.ProjectRelation.Type.INCOMPATIBLE
-        RelationType.OPTIONAL_DEPENDENCY -> CFUploadMetadata.Relations.ProjectRelation.Type.OPTIONAL_DEPENDENCY
-        RelationType.REQUIRED_DEPENDENCY -> CFUploadMetadata.Relations.ProjectRelation.Type.REQUIRED_DEPENDENCY
-        RelationType.TOOL -> CFUploadMetadata.Relations.ProjectRelation.Type.TOOL
-    }
-
-    private fun ChangelogFormat.toJSONType(): String = when (this) {
-        ChangelogFormat.HTML -> "html"
-        ChangelogFormat.MARKDOWN -> "markdown"
-        ChangelogFormat.TEXT -> "text"
-    }
-
-    private fun ReleaseType.toJSONType(): String = when (this) {
-        ReleaseType.ALPHA -> "alpha"
-        ReleaseType.BETA -> "beta"
-        ReleaseType.RELEASE -> "release"
     }
 
 }

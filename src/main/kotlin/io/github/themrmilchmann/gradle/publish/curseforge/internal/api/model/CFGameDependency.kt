@@ -19,15 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.model.api
+package io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model
 
 import kotlinx.serialization.*
 
 @Serializable
-internal data class CFGameVersion(
+internal data class CFGameDependency(
     val id: Int,
-    val gameVersionTypeID: Int,
     val name: String,
-    val slug: String,
-    val apiVersion: String? = null
+    val slug: String
 )
