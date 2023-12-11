@@ -1,21 +1,36 @@
 [versions]
 binary-compatibility-validator = "0.13.2"
+fabric-loom = "1.4.5"
+forgegradle = "6.0.16"
 gradle-toolchain-switches = "0.3.0"
 gradle-shadow = "8.1.1"
 kotlin = "1.9.21"
 kotlinx-serialization = "1.5.0"
 ktor = "2.3.7"
 junit = "5.10.1"
+neogradle = "7.0.61"
 nokee-gradle-plugin-dev = "1.6.10"
 plugin-publish = "1.2.1"
 
 
 [libraries]
+# net.fabricmc:fabric-loom - Fabric Loom
+# https://github.com/FabricMC/fabric-loom
+fabric-loom = { module = "net.fabricmc:fabric-loom", version.ref = "fabric-loom" }
+
 # io.ktor - Ktor
 ktor-client-apache = { module = "io.ktor:ktor-client-apache", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+
+# net.minecraftforge.gradle - ForgeGradle
+# https://github.com/MinecraftForge/ForgeGradle
+forgegradle = { module = "net.minecraftforge.gradle:ForgeGradle", version.ref = "forgegradle" }
+
+# net.neoforged.gradle.userdev - NeoGradle
+# https://github.com/neoforged/NeoGradle
+neogradle = { module = "net.neoforged.gradle:userdev", version.ref = "neogradle" }
 
 # org.jetbrains.kotlinx:kotlinx-serialization-* - kotlinx-serialization
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
