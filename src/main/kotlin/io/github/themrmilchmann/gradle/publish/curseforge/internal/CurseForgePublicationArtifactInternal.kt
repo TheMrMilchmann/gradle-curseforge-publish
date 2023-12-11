@@ -23,5 +23,10 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal
 
 import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
 import org.gradle.api.Buildable
+import org.gradle.api.file.FileCollection
 
-internal interface CurseForgePublicationArtifactInternal : CurseForgePublicationArtifact, Buildable
+internal interface CurseForgePublicationArtifactInternal : CurseForgePublicationArtifact, Buildable {
+
+    val publishableFiles: FileCollection
+
+}

@@ -30,6 +30,7 @@ internal open class FileBasedCurseForgeArtifactWrapper @Inject constructor(
     taskDependency: TaskDependency?
 ) : CurseForgeArtifactWrapper {
 
+    @Transient
     private val taskDependency = taskDependency ?: TaskDependency { emptySet() }
     override fun getBuildDependencies(): TaskDependency = taskDependency
 

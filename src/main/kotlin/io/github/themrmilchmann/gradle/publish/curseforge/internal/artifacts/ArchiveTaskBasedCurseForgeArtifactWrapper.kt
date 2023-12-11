@@ -30,8 +30,9 @@ internal open class ArchiveTaskBasedCurseForgeArtifactWrapper @Inject constructo
     private val archiveTask: AbstractArchiveTask
 ) : CurseForgeArtifactWrapper {
 
-    override val file: File get() = archiveTask.archiveFile.get().asFile
+    override val file: File by lazy { archiveTask.archiveFile.get().asFile }
 
+    @Transient
     private val taskDependency = TaskDependency { mutableSetOf(archiveTask) }
     override fun getBuildDependencies(): TaskDependency = taskDependency
 

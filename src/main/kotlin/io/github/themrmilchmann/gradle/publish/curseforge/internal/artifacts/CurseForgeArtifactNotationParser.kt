@@ -21,6 +21,7 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
 import org.gradle.api.artifacts.*
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.tasks.TaskDependencyContainer
@@ -39,6 +40,7 @@ internal open class CurseForgeArtifactNotationParser @Inject constructor(
         is AbstractArchiveTask -> parseArchiveTaskNotation(any)
         is Provider<*> -> parseProviderNotation(any as Provider<out AbstractArchiveTask>)
         is PublishArtifact -> parsePublishArtifactNotation(any)
+        is CurseForgePublicationArtifact -> parseCurseForgePublicationArtifact(any)
         else -> parseFileNotation(any) ?: error("Failed to parse artifact notation: $any")
     }
 
@@ -67,5 +69,8 @@ internal open class CurseForgeArtifactNotationParser @Inject constructor(
 
     private fun parsePublishArtifactNotation(publishArtifact: PublishArtifact): CurseForgeArtifactWrapper =
         objectFactory.newInstance(PublishArtifactBasedCurseForgeArtifactWrapper::class.java, publishArtifact)
+
+    private fun parseCurseForgePublicationArtifact(artifact: CurseForgePublicationArtifact): CurseForgeArtifactWrapper =
+        objectFactory.newInstance(CurseForgePublicationArtifactBasedCurseForgeArtifactWrapper::class.java, artifact)
 
 }

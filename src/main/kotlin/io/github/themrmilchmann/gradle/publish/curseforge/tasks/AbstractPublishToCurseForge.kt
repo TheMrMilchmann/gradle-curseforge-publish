@@ -22,23 +22,33 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.tasks
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.CurseForgePublicationArtifactInternal
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.publication.*
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.work.*
-import java.util.concurrent.*
+import java.util.concurrent.Callable
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 public abstract class AbstractPublishToCurseForge : DefaultTask() {
 
-    @Transient
     @get:Internal
     internal var publicationInternal: CurseForgePublicationInternal? = null
 
-    @get:Nested
+    @get:Internal
     internal var publication: CurseForgePublication?
         get() = publicationInternal
         set(value) { publicationInternal = value.asPublicationInternal() }
+
+    init {
+        // Allow the publication to participate in incremental build
+        inputs.files(Callable {
+            val publication = publicationInternal ?: return@Callable null
+            publication.artifacts.map { (it as CurseForgePublicationArtifactInternal).publishableFiles }
+        })
+            .withPropertyName("publication.publishableFiles")
+            .withPathSensitivity(PathSensitivity.NAME_ONLY)
+    }
 
     private fun CurseForgePublication?.asPublicationInternal(): CurseForgePublicationInternal? = when (this) {
         null -> null

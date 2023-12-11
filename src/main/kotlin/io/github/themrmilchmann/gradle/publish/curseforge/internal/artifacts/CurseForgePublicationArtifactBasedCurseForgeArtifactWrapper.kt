@@ -21,14 +21,14 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
-import org.gradle.api.artifacts.*
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
 import org.gradle.api.tasks.TaskDependency
 import java.io.*
 import javax.inject.Inject
 
-internal open class PublishArtifactBasedCurseForgeArtifactWrapper @Inject constructor(
+internal open class CurseForgePublicationArtifactBasedCurseForgeArtifactWrapper @Inject constructor(
     @Transient
-    private val publishArtifact: PublishArtifact
+    private val publishArtifact: CurseForgePublicationArtifact
 ) : CurseForgeArtifactWrapper {
 
     override val file: File by lazy { publishArtifact.file }

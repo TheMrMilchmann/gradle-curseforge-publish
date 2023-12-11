@@ -32,10 +32,13 @@ import java.io.File
 import javax.inject.Inject
 
 internal open class LazyCurseForgeArtifactWrapper @Inject constructor(
+    @Transient
     private val provider: Provider<*>,
+    @Transient
     private val objectFactory: ObjectFactory
 ) : CurseForgeArtifactWrapper {
 
+    @delegate:Transient
     private val delegate: CurseForgeArtifactWrapper by lazy {
         when (val value = provider.get()) {
             is FileSystemLocation -> objectFactory.newInstance(FileBasedCurseForgeArtifactWrapper::class.java, value.asFile)
@@ -46,8 +49,7 @@ internal open class LazyCurseForgeArtifactWrapper @Inject constructor(
         }
     }
 
-    override val file: File
-        get() = delegate.file
+    override val file: File by lazy { delegate.file }
 
     override fun getBuildDependencies(): TaskDependency =
         delegate.buildDependencies

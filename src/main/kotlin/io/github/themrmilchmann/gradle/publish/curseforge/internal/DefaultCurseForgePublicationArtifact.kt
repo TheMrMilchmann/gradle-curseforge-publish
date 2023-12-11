@@ -24,10 +24,11 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactWrapper
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactNotationParser
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskDependency
@@ -42,11 +43,17 @@ import javax.inject.Inject
 internal open class DefaultCurseForgePublicationArtifact @Inject constructor(
     override val name: String,
     private val artifactFactory: CurseForgeArtifactNotationParser,
-    private val objectFactory: ObjectFactory
+    private val objectFactory: ObjectFactory,
+    providerFactory: ProviderFactory,
+    project: Project
 ) : CurseForgePublicationArtifactInternal {
 
     override val displayName: Property<String> = objectFactory.property(String::class.java)
+        .convention(providerFactory.provider { "${project.name} ${project.version}" })
+
     override val releaseType: Property<ReleaseType> = objectFactory.property(ReleaseType::class.java)
+        .convention(ReleaseType.RELEASE)
+
     override val changelog: Changelog = objectFactory.newInstance(Changelog::class.java)
 
     override val relations: ArtifactRelations = object : ArtifactRelations, MutableSet<ArtifactRelation> by mutableSetOf() {
@@ -63,10 +70,8 @@ internal open class DefaultCurseForgePublicationArtifact @Inject constructor(
     override val file: File
         get() = artifactWrapper.file
 
-    // Required to let publications take part in incremental builds
-    @Suppress("unused")
     @get:InputFiles
-    val publishableFiles: FileCollection
+    override val publishableFiles: FileCollection
         get() = objectFactory.fileCollection()
             .from(file)
             .builtBy(this)
@@ -75,8 +80,8 @@ internal open class DefaultCurseForgePublicationArtifact @Inject constructor(
     override fun getBuildDependencies(): TaskDependency =
         artifactWrapper.buildDependencies
 
-    override fun from(any: Any) {
-        _artifactWrapper = artifactFactory.parse(any)
+    override fun from(file: Any) {
+        _artifactWrapper = artifactFactory.parse(file)
     }
 
 }
