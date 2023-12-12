@@ -146,7 +146,10 @@ or the following command on Windows:
 
 Important Gradle tasks to remember are:
 - `clean`                   - clean build results
-- `build`                   - assemble and test the Java library
+- `build`                   - assemble and test the plugin
+- `functionalTest`          - run the functional tests to verify compatibility
+                              with different versions of Gradle and mod 
+                              toolchains
 - `publishToMavenLocal`     - build and install all public artifacts to the
                               local maven repository
 
