@@ -138,8 +138,8 @@ public abstract class io/github/themrmilchmann/gradle/publish/curseforge/tasks/A
 }
 
 public class io/github/themrmilchmann/gradle/publish/curseforge/tasks/PublishToCurseForgeRepository : io/github/themrmilchmann/gradle/publish/curseforge/tasks/AbstractPublishToCurseForge {
-	public fun <init> ()V
 	public final fun getApiToken ()Lorg/gradle/api/provider/Property;
+	public final fun getBaseUrl ()Lorg/gradle/api/provider/Property;
 	public final fun publish ()V
 }
 
