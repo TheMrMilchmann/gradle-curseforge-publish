@@ -248,6 +248,8 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
+    testImplementation(libs.ktor.client.mock)
+
     functionalTestImplementation(kotlin("stdlib"))
     functionalTestImplementation(platform(libs.junit.bom))
     functionalTestImplementation(libs.junit.jupiter.api)
