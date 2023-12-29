@@ -21,6 +21,16 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
+/**
+ * A relation to an artifact.
+ *
+ * @param slug  the artifact
+ * @param type  the type of relation
+ *
+ * @since   0.5.0
+ *
+ * @author  Leon Linhart
+ */
 public data class ArtifactRelation(
     val slug: String,
     val type: RelationType

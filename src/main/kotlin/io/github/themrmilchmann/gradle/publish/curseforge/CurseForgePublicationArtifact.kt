@@ -67,20 +67,37 @@ public interface CurseForgePublicationArtifact : Buildable {
     /**
      * The release type of the artifact.
      *
+     * Defaults to [ReleaseType.RELEASE].
+     *
      * @since   0.6.0
      */
     @get:Input
     public val releaseType: Property<ReleaseType>
 
+    /**
+     * The file represented by this publication artifact.
+     *
+     * @since   0.6.0
+     */
     @get:InputFile
     public val file: File
 
     /**
-     * TODO doc
+     * Sets the underlying artifact file represented by this publication artifact. This method converts the supplied
+     * file based on its type:
+     *
+     * - An [AbstractArchiveTask][org.gradle.api.tasks.bundling.AbstractArchiveTask].
+     * - A [PublishArtifact][org.gradle.api.artifacts.PublishArtifact].
+     * - A [CurseForgePublicationArtifact].
+     * - A [Provider][org.gradle.api.provider.Provider] of any supported type. The provider's value is resolved
+     *   recursively.
+     * - Any file notation as specified by [org.gradle.api.Project.file].
+     *
+     * @param file  the object to resolve as artifact file
      *
      * @since   0.6.0
      */
-    public fun from(any: Any)
+    public fun from(file: Any)
 
     /**
      * The changelog of the artifact.
@@ -95,6 +112,8 @@ public interface CurseForgePublicationArtifact : Buildable {
     /**
      * Configures the changelog of this artifact.
      *
+     * @param configure the action or closure to configure the changelog with
+     *
      * @since   0.6.0
      */
     public fun changelog(configure: Action<Changelog>) {
@@ -102,13 +121,20 @@ public interface CurseForgePublicationArtifact : Buildable {
     }
 
     /**
-     * TODO doc
+     * The relations of the artifact.
      *
      * @since   0.6.0
      */
     @get:Nested
     public val relations: ArtifactRelations
 
+    /**
+     * Configures the relations of this artifact.
+     *
+     * @param configure the action or closure to configure the relations with
+     *
+     * @since   0.6.0
+     */
     public fun relations(configure: Action<ArtifactRelationHandler>) {
         val handler = object : ArtifactRelationHandler {
             override fun add(type: RelationType, slug: String) {

@@ -25,6 +25,8 @@ package io.github.themrmilchmann.gradle.publish.curseforge
  * An `ArtifactRelationHandler` is used to declare artifact relations.
  *
  * @since   0.5.0
+ *
+ * @author  Leon Linhart
  */
 public interface ArtifactRelationHandler {
 

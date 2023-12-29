@@ -29,6 +29,13 @@ import org.gradle.api.tasks.*
 import org.gradle.work.*
 import java.util.concurrent.Callable
 
+/**
+ * Base class for tasks that publish a [CurseForgePublication].
+ *
+ * @since   0.1.0
+ *
+ * @author  Leon Linhart
+ */
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 public abstract class AbstractPublishToCurseForge : DefaultTask() {
 

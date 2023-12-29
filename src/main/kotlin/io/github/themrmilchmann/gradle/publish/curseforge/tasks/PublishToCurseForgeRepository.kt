@@ -34,16 +34,33 @@ import org.gradle.api.tasks.*
 import org.gradle.work.*
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Not worth caching")
+/**
+ * Publishes a [CurseForgePublication] to CurseForge.
+ *
+ * @since   0.1.0
+ *
+ * @author  Leon Linhart
+ */
+@DisableCachingByDefault(because = "Cannot be cached effectively")
 public open class PublishToCurseForgeRepository @Inject internal constructor(
     objectFactory: ObjectFactory,
     providerFactory: ProviderFactory
 ) : AbstractPublishToCurseForge() {
 
+    /**
+     * The base URL of the CurseForge Upload API to target.
+     *
+     * @since   0.6.0
+     */
     @get:Input
     public val baseUrl: Property<String> = objectFactory.property(String::class.java)
         .convention(providerFactory.gradleProperty("gradle-curseforge-publish.internal.base-url").orElse("https://minecraft.curseforge.com"))
 
+    /**
+     * The API token to use to authorize the publication.
+     *
+     * @since   0.6.0
+     */
     @get:Input
     public val apiToken: Property<String> = objectFactory.property(String::class.java)
 
