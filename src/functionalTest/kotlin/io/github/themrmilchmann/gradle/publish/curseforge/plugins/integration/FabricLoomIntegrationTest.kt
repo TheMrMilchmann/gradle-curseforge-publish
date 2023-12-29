@@ -41,11 +41,14 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
 
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
-            return provideGradleVersions().map { gradleVersion -> when {
+            val javaVersion = System.getProperty("java.version")
+
+            return provideGradleVersions().mapNotNull { gradleVersion -> when {
+                javaVersion <= "11" -> null
                 gradleVersion >= "8.3" -> "1.4.5"
                 gradleVersion >= "8.1" -> "1.3.9"
                 else -> "1.1.9"
-            }.let { Arguments.of(gradleVersion, it) }}
+            }?.let { Arguments.of(gradleVersion, it) }}
         }
 
     }
