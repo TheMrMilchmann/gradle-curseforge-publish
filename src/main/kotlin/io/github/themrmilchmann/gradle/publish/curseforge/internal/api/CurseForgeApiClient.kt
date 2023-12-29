@@ -30,14 +30,15 @@ import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model.CFG
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model.CFUploadMetadata
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model.CFUploadResponse
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.cio.*
+import io.ktor.util.reflect.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -72,26 +73,34 @@ internal class CurseForgeApiClient(
     private val baseUrl: String,
     private val httpClient: HttpClient,
     private val json: Json
-) {
+) : AutoCloseable by httpClient {
 
-    suspend fun getGameVersions(): List<CFGameVersion> {
+    @Suppress("UNCHECKED_CAST")
+    private inline fun <reified T : Any> wrap(httpResponse: HttpResponse): CurseForgeApiResponse<T> = when (httpResponse.status.value) {
+        in (200 until 300), in (301 until 400) -> CurseForgeApiResponse.Success(typeInfo<T>(), httpResponse)
+        HttpStatusCode.Unauthorized.value -> CurseForgeApiResponse.Unauthorized(httpResponse) as CurseForgeApiResponse<T>
+        in (500 until 600) -> CurseForgeApiResponse.ServerError(httpResponse) as CurseForgeApiResponse<T>
+        else -> CurseForgeApiResponse.ClientError(httpResponse) as CurseForgeApiResponse<T>
+    }
+
+    suspend fun getGameVersions(): CurseForgeApiResponse<List<CFGameVersion>> {
         val url = URLBuilder(baseUrl).run {
             path("/api/game/versions")
             build()
         }
 
         val httpResponse = httpClient.get(url)
-        return httpResponse.body()
+        return wrap(httpResponse)
     }
 
-    suspend fun getGameVersionTypes(): List<CFGameDependency> {
+    suspend fun getGameVersionTypes(): CurseForgeApiResponse<List<CFGameDependency>> {
         val url = URLBuilder(baseUrl).run {
             path("/api/game/version-types")
             build()
         }
 
         val httpResponse = httpClient.get(url)
-        return httpResponse.body()
+        return wrap(httpResponse)
     }
 
     suspend fun uploadFile(
@@ -99,7 +108,7 @@ internal class CurseForgeApiClient(
         projectId: String,
         parentFileId: Int? = null,
         gameVersionIds: List<Int>? = null
-    ): CFUploadResponse {
+    ): CurseForgeApiResponse<CFUploadResponse> {
         require((parentFileId != null) xor (gameVersionIds != null)) { "Exactly one of the parameter must be set: parentFileID, gameVersionIDs" }
 
         val url = URLBuilder(baseUrl).run {
@@ -125,9 +134,8 @@ internal class CurseForgeApiClient(
             url(url)
         }
 
-        return httpResponse.body()
+        return wrap(httpResponse)
     }
-
 
     private fun generateArtifactMetadata(
         artifact: CurseForgePublicationArtifactInternal,

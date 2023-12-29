@@ -23,7 +23,10 @@ package io.github.themrmilchmann.gradle.publish.curseforge.tasks
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.CurseForgeApiClient
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.CurseForgeApiResponse
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model.CFGameVersion
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
@@ -49,50 +52,97 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
         val baseUrl = baseUrl.finalizeAndGet()
         val apiToken = apiToken.finalizeAndGetOrNull() ?: error("CurseForge API key has not been provided")
 
-        val cfApiClient = CurseForgeApiClient(baseUrl = baseUrl, apiToken = apiToken)
-
         val publication = publicationInternal!!
         val projectId = publication.projectId.finalizeAndGet()
 
-        val recognizedGameDependencies = cfApiClient.getGameVersionTypes()
-        val recognizedGameVersions = cfApiClient.getGameVersions()
+        CurseForgeApiClient(baseUrl = baseUrl, apiToken = apiToken).use { cfApiClient ->
+            val recognizedGameDependencies = cfApiClient.getGameVersionTypes().unwrap()
+            val recognizedGameVersions: List<CFGameVersion> = cfApiClient.getGameVersions().unwrap()
 
-        val gameVersions = publication.gameVersions.finalizeAndGet() + publication.javaVersions.finalizeAndGet().map { GameVersion(type = "java", version = "java-${it.majorVersion}") }
-        val gameVersionIDs = gameVersions.mapNotNull { gameVersion ->
-            val dependency = recognizedGameDependencies.find { it.slug == gameVersion.type }
-            if (dependency == null) {
-                logger.warn("Could not find game version for type '{}', available: {}", gameVersion.type, recognizedGameVersions)
-                return@mapNotNull null
+            val gameVersions = publication.gameVersions.finalizeAndGet() + publication.javaVersions.finalizeAndGet().map { GameVersion(type = "java", version = "java-${it.majorVersion}") }
+            val gameVersionIDs = gameVersions.mapNotNull { gameVersion ->
+                val dependency = recognizedGameDependencies.find { it.slug == gameVersion.type }
+                if (dependency == null) {
+                    logger.warn("Could not find game version for type '{}', available: {}", gameVersion.type, recognizedGameVersions)
+                    return@mapNotNull null
+                }
+
+                val version = recognizedGameVersions.find { it.gameVersionTypeID == dependency.id && it.slug == gameVersion.version }
+                if (version == null) {
+                    logger.warn("Could not find game version for type '{}' @ '{}', available: {}", gameVersion.type, gameVersion.version, recognizedGameVersions.filter { it.gameVersionTypeID == dependency.id })
+                    return@mapNotNull null
+                }
+
+                version.id
             }
 
-            val version = recognizedGameVersions.find { it.gameVersionTypeID == dependency.id && it.slug == gameVersion.version }
-            if (version == null) {
-                logger.warn("Could not find game version for type '{}' @ '{}', available: {}", gameVersion.type, gameVersion.version, recognizedGameVersions.filter { it.gameVersionTypeID == dependency.id })
-                return@mapNotNull null
-            }
-
-            version.id
-        }
-
-        val mainArtifactId = cfApiClient.uploadFile(
-            publication.mainArtifact,
-            projectId = projectId,
-            gameVersionIds = gameVersionIDs
-        ).id
-
-        logger.info("Published main artifact (artifact $mainArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
-
-        publication.extraArtifacts.forEach { artifact ->
-            val extraArtifactId = cfApiClient.uploadFile(
-                artifact,
+            val mainArtifactId = cfApiClient.uploadFile(
+                publication.mainArtifact,
                 projectId = projectId,
-                parentFileId = mainArtifactId
-            ).id
+                gameVersionIds = gameVersionIDs
+            ).unwrap().id
 
-            logger.info("Published '${artifact.name}' artifact (artifact $extraArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
+            logger.info("Published main artifact (artifact $mainArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
+
+            publication.extraArtifacts.forEach { artifact ->
+                val extraArtifactId = try {
+                    cfApiClient.uploadFile(
+                        artifact,
+                        projectId = projectId,
+                        parentFileId = mainArtifactId
+                    ).unwrap().id
+                } catch (t: Throwable) {
+                    logger.error(
+                        """
+                        ATTENTION!
+                        
+                        Publishing to CurseForge failed unexpectedly. This can lead to incomplete publications.
+                        Please go to CurseForge and correct the publication manually.
+                        
+                        ATTENTION!
+                        """.removeSurrounding("\n").trimIndent()
+                    )
+
+                    throw t
+                }
+
+                logger.info("Published '${artifact.name}' artifact (artifact $extraArtifactId) of publication '${publication.name}' to CurseForge (project $projectId)")
+            }
+
+            logger.info("Published publication '${publication.name}' to CurseForge (project $projectId)")
         }
+    }
 
-        logger.info("Published publication '${publication.name}' to CurseForge (project $projectId)")
+    private suspend fun <T>  CurseForgeApiResponse<T>.unwrap(): T = when (this) {
+        is CurseForgeApiResponse.Success -> {
+            logger.debug("Successfully called CurseForge Upload API: {}", httpResponse.call.request.url)
+            body()
+        }
+        is CurseForgeApiResponse.Unauthorized -> {
+            logger.error("CurseForge authentication failed. Make sure you specified a valid CurseForge API token")
+            error("CurseForge authentication failed")
+        }
+        is CurseForgeApiResponse.ClientError -> {
+            logger.error(
+                """
+                CurseForge Upload API call failed.
+                Please update to the latest version of https://github.com/TheMrMilchmann/gradle-curseforge-publish
+                or report this issue to the plugin maintainers if it persists.
+                
+                Failed call: {}
+                Response body:
+                {}
+                """.removeSurrounding("\n").trimIndent(), httpResponse.call.request.url, httpResponse.bodyAsText())
+            error("CurseForge Upload API call failed (client)")
+        }
+        is CurseForgeApiResponse.ServerError -> {
+            logger.error(
+                """
+                CurseForge Upload API returned unexpected response.
+                Please try again later or report this issue to the plugin maintainers if it persists.
+                """.removeSurrounding("\n").trimIndent())
+            error("CurseForge Upload API call failed (server)")
+        }
     }
 
 }
