@@ -25,6 +25,7 @@ import io.github.themrmilchmann.gradle.publish.curseforge.ChangelogFormat
 import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
 import io.github.themrmilchmann.gradle.publish.curseforge.ReleaseType
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactNotationParser
+import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.*
@@ -41,11 +42,12 @@ class DefaultCurseForgePublicationArtifactTest {
     @TempDir
     private lateinit var projectDir: File
 
+    private lateinit var project: Project
     private lateinit var artifact: CurseForgePublicationArtifact
 
     @BeforeEach
     fun setup() {
-        val project = ProjectBuilder.builder()
+        project = ProjectBuilder.builder()
             .withProjectDir(projectDir)
             .build()
 
@@ -55,7 +57,7 @@ class DefaultCurseForgePublicationArtifactTest {
 
     @Test
     fun testDisplayName() {
-        assertThrows<IllegalStateException> { artifact.displayName.get() }
+        assertEquals("${project.name} ${project.version}", artifact.displayName.get())
 
         artifact.displayName.set("Hello, World!")
         assertEquals("Hello, World!", artifact.displayName.get())
