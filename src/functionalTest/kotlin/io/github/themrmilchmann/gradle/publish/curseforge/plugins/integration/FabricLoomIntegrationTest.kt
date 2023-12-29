@@ -39,16 +39,18 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
 
     private companion object {
 
+        private const val SENTINEL = "SENTINEL"
+
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
             val javaVersion = System.getProperty("java.version")
 
             return provideGradleVersions().mapNotNull { gradleVersion -> when {
-                javaVersion <= "11" -> null
+                javaVersion <= "11" -> SENTINEL
                 gradleVersion >= "8.3" -> "1.4.5"
                 gradleVersion >= "8.1" -> "1.3.9"
                 else -> "1.1.9"
-            }?.let { Arguments.of(gradleVersion, it) }}
+            }.let { Arguments.of(gradleVersion, it) }}
         }
 
     }
@@ -59,6 +61,9 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
     @ParameterizedTest
     @MethodSource("provideTestArguments")
     fun testIntegration(gradleVersion: String, loomVersion: String) {
+        // See https://github.com/junit-team/junit5/issues/1477
+        if (loomVersion == SENTINEL) return
+
         File(projectDir, "settings.gradle.kts").writeText(
             """
             pluginManagement {
