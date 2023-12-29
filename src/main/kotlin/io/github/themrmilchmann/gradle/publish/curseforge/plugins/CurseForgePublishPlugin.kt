@@ -34,6 +34,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.JavaCompile
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
+import kotlin.math.log
 
 /**
  * Provides support for publishing artifacts to CurseForge.
@@ -86,7 +87,18 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
     }
 
     private fun Project.configureFabricLoomIntegration(publications: CurseForgePublicationContainer) {
+        val isEnabled = providers.gradleProperty("gradle-curseforge-publish.interop.fabric-loom").map(String::toBoolean).getOrElse(true)
+
+        if (!isEnabled) {
+            LOGGER.debug("Fabric Loom integration is disabled")
+            return
+        }
+
+        LOGGER.debug("Fabric Loom integration is enabled")
+
         pluginManager.withPlugin("fabric-loom") {
+            LOGGER.debug("Fabric Loom plugin detected")
+
             val defaultGameVersions: Provider<Set<GameVersion>> = provider {
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "fabric")
@@ -104,7 +116,8 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 gameVersions.toSet()
             }
 
-            publications.register("fabric") {
+            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.fabric-loom.publication-name").getOrElse("fabric")
+            publications.register(publicationName) {
                 gameVersions.convention(defaultGameVersions)
 
                 artifacts.register("main") {
@@ -115,7 +128,18 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
     }
 
     private fun Project.configureForgeGradleIntegration(publications: CurseForgePublicationContainer) {
+        val isEnabled = providers.gradleProperty("gradle-curseforge-publish.interop.forge-gradle").map(String::toBoolean).getOrElse(true)
+
+        if (!isEnabled) {
+            LOGGER.debug("ForgeGradle integration is disabled")
+            return
+        }
+
+        LOGGER.debug("ForgeGradle integration is enabled")
+
         pluginManager.withPlugin("net.minecraftforge.gradle") {
+            LOGGER.debug("ForgeGradle plugin detected")
+
             val defaultGameVersions: Provider<Set<GameVersion>> = provider {
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "forge")
@@ -133,7 +157,8 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 gameVersions.toSet()
             }
 
-            publications.register("minecraftForge") {
+            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.forge-gradle.publication-name").getOrElse("minecraftForge")
+            publications.register(publicationName) {
                 gameVersions.convention(defaultGameVersions)
 
                 artifacts.register("main") {
@@ -144,8 +169,19 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
     }
 
     private fun Project.configureNeoGradleIntegration(publications: CurseForgePublicationContainer) {
+        val isEnabled = providers.gradleProperty("gradle-curseforge-publish.interop.neogradle").map(String::toBoolean).getOrElse(true)
+
+        if (!isEnabled) {
+            LOGGER.debug("NeoGradle integration is disabled")
+            return
+        }
+
+        LOGGER.debug("NeoGradle integration is enabled")
+
         pluginManager.withPlugin("net.neoforged.gradle.userdev") {
             val defaultGameVersions: Provider<Set<GameVersion>> = provider {
+                LOGGER.debug("NeoGradle plugin detected")
+
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "neoforge")
 
@@ -162,7 +198,8 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 gameVersions.toSet()
             }
 
-            publications.register("neoForge") {
+            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.neogradle.publication-name").getOrElse("neoForge")
+            publications.register(publicationName) {
                 gameVersions.convention(defaultGameVersions)
 
                 artifacts.register("main") {
