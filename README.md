@@ -11,10 +11,10 @@ A Gradle plugin that provides support for publishing artifacts to [CurseForge](h
 
 ## Usage
 
-Learn how to set up basic publishing. While all concepts apply to both DSLs,
-code snippets are for [Gradle's Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html).
-Use the [samples](samples) for reference when working with the Groovy DSL.
-
+> [!NOTE]
+> The documentation of this plugin is written in [Gradle's Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html).
+> The plugin can also be used with Groovy build scripts and all concepts still
+> apply but the exact syntax may differ.
 
 ### Applying the Plugin
 
@@ -22,50 +22,68 @@ To use the plugin, include the following in your build script:
 
 ```kotlin
 plugins {
-    id("io.github.themrmilchmann.curseforge-publish") version "0.4.0"
+    id("io.github.themrmilchmann.curseforge-publish") version "0.6.0"
 }
 ```
 
-The plugin uses an extension on the project named `publishing` of type [PublishingExtension](https://docs.gradle.org/current/dsl/org.gradle.api.publish.PublishingExtension.html).
-This extension provides a container of named publications and a container of
-named repositories. The CurseForge Publish Plugin work with
-`CurseForgePublication` publications and `CurseForgeArtifactRepository`
-repositories.
+The plugin creates a top-level `curseforge` extension on the project. This
+extension provides a convenient property which can be used to configure the API
+token for all publications and a container of named publications.
 
-Once the plugin has been applied, repositories and publications can be defined.
+Once the plugin has been applied, publications can be defined.
 
 
 ### Publications
 
-This plugin provides [publications](https://docs.gradle.org/current/userguide/dependency_management_terminology.html#sub:terminology_publication)
-of type `CurseForgePublication`. 
+This plugin provides publications similar to Gradle's built-in publishing
+plugins (e.g. `maven-publish`). All required information for a publication is
+the ID of the CurseForge project to upload the publication to and a `main`
+artifact. A minimal publication could look as follows:
 
 ```kotlin
-publishing {
+curseforge {
     publications {
-        register<CurseForgePublication>("curseForge") {
-            projectID.set(123456) // The CurseForge project ID (required)
+        register("curseForge") {
+            projectId = "123456"
 
-            // Specify which game and version the mod/plugin targets (optional)
-            // This information is inferred when using the Fabric Loom or ForgeGradle plugin.
+            artifacts.register("main") {
+                from(tasks.named("jar"))
+            }
+        }
+    }
+}
+```
+
+Usually, providing additional information to a publication is desirable, for
+example, to improve discoverability or to give more information to users.
+
+> [!NOTE]
+> Information about mod dependencies (i.e. loader and game version) can
+> automatically be inferred when using one of the available integrations.
+
+```kotlin
+curseforge {
+    publications {
+        register("curseForge") {
+            projectId = "123456"
+
             gameVersions.add(GameVersion("minecraft-1-16", "1.16.5"))
-            
-            // Specify which Java versions are supported (optional)
-            javaVersions.add(JavaVersion.JAVA_17)
 
-            artifact {
-                changelog = Changelog("Example changelog...", ChangelogType.TEXT) // The changelog (required)
-                releaseType = ReleaseType.RELEASE // The release type (required)
+            artifacts.register("main") {
+                displayName = "Example Project"
+                releaseType = ReleaseType.BETA
 
-                displayName = "Example Project" // A user-friendly name for the project (optional)
-                
-                // Specify artifact relations (optional)
+                changelog {
+                    format = ChangelogFormat.MARKDOWN
+                    from(file("CHANGELOG.md"))
+                }
+
                 relations {
-                    embeddedLibrary("slug")
-                    incompatible("slug")
-                    optionalDependency("slug")
-                    requiredDependency("slug")
-                    tool("slug")
+                    embeddedLibrary("some-embedded-mod-slug")
+                    incompatible("some-incompatible-mod-slug")
+                    optionalDependency("some-optional-dependency-slug")
+                    requiredDependency("some-required-dependency-slug")
+                    tool("some-tool-slug")
                 }
             }
         }
@@ -74,31 +92,102 @@ publishing {
 ```
 
 
-### Repositories
+### Authenticating with CurseForge
 
-This plugin provides [repositories](https://docs.gradle.org/current/userguide/dependency_management_terminology.html#sub:terminology_repository)
-of type `CurseForgeArtifactRepository`.
-
-Here's a simple example of defining a publishing repository.
+The plugin uses the [CurseForge Upload API](https://support.curseforge.com/en/support/solutions/articles/9000197321-curseforge-upload-api).
+The API requires authentication using an API token. This token must be
+configured through the `curseforge` extension before artifacts can be
+published. (API tokens can be managed directly on [CurseForge](https://curseforge.com/account/api-tokens).)
 
 ```kotlin
-publishing {
-    repositories {
-        curseForge {
-            /*
-             * In a real application, it is recommended to store the API key
-             * outside the build script.
-             * 
-             * // Store the key in "~/.gradle/gradle.properties"
-             * apiKey.set(extra["cfApiKey"] as String)
-             */
-            apiKey.set("123e4567-e89b-12d3-a456-426614174000")
+curseforge {
+    apiToken = "123e4567-e89b-12d3-a456-426614174000"
+}
+```
+
+> [!WARNING]
+> In the example above, a demo API token is hardcoded in the build script. This
+> is dangerous as build scripts are usually committed into version-control which
+> could leak the API token.
+> Instead, consider placing the token in your user-specific Gradle properties
+> (under `~/.gradle/gradle.properties`) by using `providers.gradleProperty("curseforgeApiToken")`.
+
+
+## Interoperability
+
+The CurseForge Gradle Publish Plugin provides out-of-box support for various
+modding toolchains. When a supported toolchain is detected, the plugin attempts
+to infer publications and information from the project. Typically, the plugin
+then implicitly creates publications that are preconfigured using the inferred
+data.
+
+This plugin follows the [convention over configuration](https://en.wikipedia.org/wiki/Convention_over_configuration)
+paradigm. Thus, all information inferred from the project may be overwritten.
+Domain object creating can be tweaked using Gradle properties and properties
+may be set explicitly to overwrite conventions. Refer to the toolchain-specific
+sections for more information.
+
+Using inference and further configuring implicit publications is the recommended
+approach for working with this plugin. Alternatively, it is also possible to
+disable integrations.
+
+
+### FabricLoom
+
+When the [Fabric Loom](https://github.com/FabricMC/fabric-loom) plugin is
+detected, a publication is implicitly created. This publication is preconfigured
+with the Fabric mod loader dependency and a dependency on the Minecraft version
+that is targeted during the build.
+
+| Property                                                       | Description                                     | Default  |
+|----------------------------------------------------------------|-------------------------------------------------|----------|
+| gradle-curseforge-publish.interop.fabric-loom                  | Whether the integration is enabled              | `true`   |
+| gradle-curseforge-publish.interop.fabric-loom.publication-name | The name for the implicitly created publication | `fabric` |
+
+
+### ForgeGradle
+
+When the [ForgeGradle](https://github.com/MinecraftForge/ForgeGradle) plugin is
+detected, a publication is implicitly created. This publication is preconfigured
+with the MinecraftForge mod loader dependency and a dependency on the Minecraft
+version that is targeted during the build.
+
+| Property                                                        | Description                                     | Default          |
+|-----------------------------------------------------------------|-------------------------------------------------|------------------|
+| gradle-curseforge-publish.interop.forge-gradle                  | Whether the integration is enabled              | `true`           |
+| gradle-curseforge-publish.interop.forge-gradle.publication-name | The name for the implicitly created publication | `minecraftForge` |
+
+
+### NeoGradle
+
+When the [NeoGradle](https://github.com/neoforged/NeoGradle) plugin is detected,
+a publication is implicitly created. This publication is preconfigured with the
+NeoForge mod loader dependency and a dependency on the Minecraft version that is
+targeted during the build.
+
+| Property                                                     | Description                                     | Default    |
+|--------------------------------------------------------------|-------------------------------------------------|------------|
+| gradle-curseforge-publish.interop.neogradle                  | Whether the integration is enabled              | `true`     |
+| gradle-curseforge-publish.interop.neogradle.publication-name | The name for the implicitly created publication | `neoForge` |
+
+
+### Java
+
+When the `java-base` plugin is detected, the supported Java version is
+automatically inferred for the compilation target of the `compileJava` task.
+
+The inferred version can be overwritten by specifying the Java version manually
+for a publication:
+
+```kotlin
+curseforge {
+    publications {
+        named("main") {
+            javaVersions.add(JavaVersion.VERSION_1_8)
         }
     }
 }
 ```
-
-**Make sure not to check in your API key (or other secrets) in Git.**
 
 
 ## Compatibility Map
