@@ -21,11 +21,20 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
-import org.gradle.api.Buildable
-import java.io.File
+import org.gradle.api.internal.tasks.TaskDependencyContainer
+import org.gradle.api.tasks.TaskDependency
+import java.io.*
 
-internal interface CurseForgeArtifactWrapper : Buildable {
+internal open class FileBasedCurseForgeArtifactProvider(
+    override val file: File,
+    taskDependencyContainer: TaskDependencyContainer? = null
+) : CurseForgeArtifactProvider {
 
-    val file: File
+    private val taskDependencyContainer: TaskDependency = when (taskDependencyContainer) {
+        null -> TaskDependency { emptySet() }
+        else -> taskDependencyContainer as TaskDependency
+    }
+
+    override fun getBuildDependencies(): TaskDependency = taskDependencyContainer
 
 }

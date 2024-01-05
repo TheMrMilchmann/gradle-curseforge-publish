@@ -22,8 +22,10 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.internal
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactWrapper
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactProvider
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactNotationParser
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.Cached
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.deriveCachedOf
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -62,13 +64,15 @@ internal open class DefaultCurseForgePublicationArtifact @Inject constructor(
         }
     }
 
-    private var _artifactWrapper: CurseForgeArtifactWrapper? = null
+    @Transient
+    private var _artifactProvider: CurseForgeArtifactProvider? = null
 
-    private val artifactWrapper: CurseForgeArtifactWrapper
-        get() = _artifactWrapper ?: throw IllegalStateException("Artifact source has not been configured for artifact \"$name\"")
+    private val artifactProvider: CurseForgeArtifactProvider
+        get() = _artifactProvider ?: throw IllegalStateException("Artifact source has not been configured for artifact \"$name\"")
 
-    override val file: File
-        get() = artifactWrapper.file
+    @Transient
+    private val _file: Cached<File> = deriveCachedOf { artifactProvider.file }
+    override val file: File by lazy { _file.value }
 
     @get:InputFiles
     override val publishableFiles: FileCollection
@@ -78,10 +82,10 @@ internal open class DefaultCurseForgePublicationArtifact @Inject constructor(
 
     @Internal
     override fun getBuildDependencies(): TaskDependency =
-        artifactWrapper.buildDependencies
+        artifactProvider.buildDependencies
 
     override fun from(file: Any) {
-        _artifactWrapper = artifactFactory.parse(file)
+        _artifactProvider = artifactFactory.parse(file)
     }
 
 }

@@ -21,19 +21,15 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 
+import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
 import org.gradle.api.tasks.TaskDependency
-import org.gradle.api.tasks.bundling.*
 import java.io.*
-import javax.inject.Inject
 
-internal open class ArchiveTaskBasedCurseForgeArtifactWrapper @Inject constructor(
-    private val archiveTask: AbstractArchiveTask
-) : CurseForgeArtifactWrapper {
+internal open class CurseForgePublicationArtifactBasedCurseForgeArtifactProvider(
+    private val publishArtifact: CurseForgePublicationArtifact
+) : CurseForgeArtifactProvider {
 
-    override val file: File by lazy { archiveTask.archiveFile.get().asFile }
-
-    @Transient
-    private val taskDependency = TaskDependency { mutableSetOf(archiveTask) }
-    override fun getBuildDependencies(): TaskDependency = taskDependency
+    override val file: File by lazy { publishArtifact.file }
+    override fun getBuildDependencies(): TaskDependency = publishArtifact.buildDependencies
 
 }

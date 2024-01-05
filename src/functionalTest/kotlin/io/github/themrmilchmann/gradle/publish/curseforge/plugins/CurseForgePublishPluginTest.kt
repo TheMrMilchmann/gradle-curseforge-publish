@@ -103,7 +103,7 @@ class CurseForgePublishPluginTest : AbstractFunctionalPluginTest() {
             .build()
 
         assertTrue("Published main artifact (artifact 67890) of publication 'custom' to CurseForge (project $PROJECT_ID)" in result.output)
-        assertTrue("Published 'someOtherArtifact' artifact (artifact $67890) of publication 'custom' to CurseForge (project $PROJECT_ID)" in result.output)
+        assertTrue("Published 'someOtherArtifact' artifact (artifact 67890) of publication 'custom' to CurseForge (project $PROJECT_ID)" in result.output)
         assertTrue("Published publication 'custom' to CurseForge (project $PROJECT_ID)" in result.output)
     }
 

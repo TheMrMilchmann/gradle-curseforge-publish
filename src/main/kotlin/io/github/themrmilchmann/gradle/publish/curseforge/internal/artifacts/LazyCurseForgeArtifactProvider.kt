@@ -24,27 +24,21 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Task
 import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import java.io.File
-import javax.inject.Inject
 
-internal open class LazyCurseForgeArtifactWrapper @Inject constructor(
-    @Transient
-    private val provider: Provider<*>,
-    @Transient
-    private val objectFactory: ObjectFactory
-) : CurseForgeArtifactWrapper {
+internal open class LazyCurseForgeArtifactProvider(
+    private val provider: Provider<*>
+) : CurseForgeArtifactProvider {
 
-    @delegate:Transient
-    private val delegate: CurseForgeArtifactWrapper by lazy {
+    private val delegate: CurseForgeArtifactProvider by lazy {
         when (val value = provider.get()) {
-            is FileSystemLocation -> objectFactory.newInstance(FileBasedCurseForgeArtifactWrapper::class.java, value.asFile)
-            is File -> objectFactory.newInstance(FileBasedCurseForgeArtifactWrapper::class.java, value)
-            is AbstractArchiveTask -> objectFactory.newInstance(ArchiveTaskBasedCurseForgeArtifactWrapper::class.java, value)
-            is Task -> objectFactory.newInstance(FileBasedCurseForgeArtifactWrapper::class.java, value.outputs.files.singleFile)
+            is FileSystemLocation -> FileBasedCurseForgeArtifactProvider(value.asFile)
+            is File -> FileBasedCurseForgeArtifactProvider(value)
+            is AbstractArchiveTask -> ArchiveTaskBasedCurseForgeArtifactProvider(value)
+            is Task -> FileBasedCurseForgeArtifactProvider(value.outputs.files.singleFile)
             else -> throw InvalidUserDataException("Cannot convert provided value ($value) to a file.")
         }
     }
