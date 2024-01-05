@@ -23,6 +23,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal
 
 import io.github.themrmilchmann.gradle.publish.curseforge.ChangelogFormat
 import io.github.themrmilchmann.gradle.publish.curseforge.CurseForgePublicationArtifact
+import io.github.themrmilchmann.gradle.publish.curseforge.RelationType
 import io.github.themrmilchmann.gradle.publish.curseforge.ReleaseType
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactNotationParser
 import org.gradle.api.Project
@@ -91,7 +92,21 @@ class DefaultCurseForgePublicationArtifactTest {
 
     @Test
     fun testRelations() {
-        // TODO impl
+        val relations = artifact.relations
+
+        artifact.relations {
+            embeddedLibrary("some-embedded-mod-slug")
+            incompatible("some-incompatible-mod-slug")
+            optionalDependency("some-optional-dependency-slug")
+            requiredDependency("some-required-dependency-slug")
+            tool("some-tool-slug")
+        }
+
+        assertNotNull(relations.find { it.slug == "some-embedded-mod-slug" && it.type == RelationType.EMBEDDED_LIBRARY })
+        assertNotNull(relations.find { it.slug == "some-incompatible-mod-slug" && it.type == RelationType.INCOMPATIBLE })
+        assertNotNull(relations.find { it.slug == "some-optional-dependency-slug" && it.type == RelationType.OPTIONAL_DEPENDENCY })
+        assertNotNull(relations.find { it.slug == "some-required-dependency-slug" && it.type == RelationType.REQUIRED_DEPENDENCY })
+        assertNotNull(relations.find { it.slug == "some-tool-slug" && it.type == RelationType.TOOL })
     }
 
 }
