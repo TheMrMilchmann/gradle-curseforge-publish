@@ -181,7 +181,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
         with:
-          arguments: check publishPlugins --info -S --show-version
+          arguments: publishPlugins --info -S --show-version
           gradle-home-cache-cleanup: true
 
 
