@@ -1,14 +1,35 @@
-### 0.5.0
+### 0.6.0
 
-_Released 2023 Nov 19_
+_Released 2024 Jan 07_
+
+#### Overview
+
+This update contains a major rework of the API to be fully compatible with
+Gradle's configuration caching to be less likely to break on Gradle updates
+ahead of the 1.0.0 release.
+
+The API is considered to be mostly stable now is unlikely to change going
+forward. `1.0.0` will follow once enough testing has been done and feedback is
+gathered.
 
 #### Improvements
 
-- Added support for artifact relations. [[GH-21](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/21)]
-- Plugin dependencies are now shadowed to avoid version conflicts with other
-  plugins.
+- The plugin is now compatible with Gradle 8 (tested up to Gradle 8.5).
+  - The minimum required version is Gradle 7.6.
+- Implemented support for Gradle's configuration caching. [[GH-22](https://github.com/GW2ToolBelt/GW2ChatLinks/issues/22)]
+- Refactored integration with mod toolchain plugins.
+  - Multiple mod toolchains can now coexist in a single Gradle project.
+  - By default, publications are created with reasonable defaults when mod toolchains are detected.
+  - Inference can be disabled via Gradle properties.
+- Improved documentation and added missing JavaDoc to all public functionality.
+- Implemented reasonable defaults for changelog, release type and display name.
+- Publications can now fully participate in incremental builds.
 
-#### Fixes
+#### Breaking Changes
 
-- Improved resilience against changes to the CurseForge upload API.
-- When using Loom, the correct mod artifact is now published by default. [[GH-19](https://github.com/TheMrMilchmann/gradle-curseforge-publish/issues/19)]
+- Migrated from the `publishing` extension to a custom `curseforge` extension.
+- Renamed `apiKey` property to `apiToken` for consistency with CurseForge.
+- Unified the concept of artifacts and extra artifacts in the publication DSL.
+  - The primary artifact for a publication must have the special name `main`.
+- The changelog is now configured through a DSL instead of a plain Java object
+  for greater flexibility and better support for incremental builds.
