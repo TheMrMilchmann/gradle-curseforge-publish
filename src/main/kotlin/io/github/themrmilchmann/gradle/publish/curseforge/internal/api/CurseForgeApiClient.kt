@@ -50,16 +50,13 @@ internal fun CurseForgeApiClient(
     }
 ): CurseForgeApiClient = CurseForgeApiClient(
     baseUrl = baseUrl,
+    apiToken = apiToken,
     httpClient = HttpClient(Apache) {
         engine {
             followRedirects = true
             socketTimeout = 10_000
             connectTimeout = 10_000
             connectionRequestTimeout = 20_000
-
-            customizeRequest {
-                headersOf("X-Api-Token", apiToken)
-            }
         }
 
         install(ContentNegotiation) {
@@ -71,6 +68,7 @@ internal fun CurseForgeApiClient(
 
 internal class CurseForgeApiClient(
     private val baseUrl: String,
+    private val apiToken: String,
     private val httpClient: HttpClient,
     private val json: Json
 ) : AutoCloseable by httpClient {
@@ -89,7 +87,10 @@ internal class CurseForgeApiClient(
             build()
         }
 
-        val httpResponse = httpClient.get(url)
+        val httpResponse = httpClient.get(url) {
+            header("X-Api-Token", apiToken)
+        }
+
         return wrap(httpResponse)
     }
 
@@ -99,7 +100,10 @@ internal class CurseForgeApiClient(
             build()
         }
 
-        val httpResponse = httpClient.get(url)
+        val httpResponse = httpClient.get(url) {
+            header("X-Api-Token", apiToken)
+        }
+
         return wrap(httpResponse)
     }
 
@@ -132,6 +136,7 @@ internal class CurseForgeApiClient(
             )
         }) {
             url(url)
+            header("X-Api-Token", apiToken)
         }
 
         return wrap(httpResponse)

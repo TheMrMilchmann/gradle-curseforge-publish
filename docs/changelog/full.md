@@ -1,3 +1,14 @@
+### 0.6.1
+
+_Released 2024 Jan 07_
+
+#### Fixes
+
+- Restored authentication against CurseForge.
+
+
+---
+
 ### 0.6.0
 
 _Released 2024 Jan 07_

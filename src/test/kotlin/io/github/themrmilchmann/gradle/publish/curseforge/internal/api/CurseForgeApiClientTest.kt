@@ -69,6 +69,7 @@ class CurseForgeApiClientTest {
 
         return CurseForgeApiClient(
             baseUrl = "https://example.com",
+            apiToken = "foobar",
             httpClient = HttpClient(MockEngine { request ->
                 when (index.getAndIncrement()) {
                     0 -> respond(successResponse, headers = Headers.build {
@@ -110,6 +111,7 @@ class CurseForgeApiClientTest {
         assertEquals("https://example.com/api/game/versions", gameVersions.httpResponse.request.url.toString())
         assertInstanceOf(CurseForgeApiResponse.Success::class.java, gameVersions)
         assertEquals(2, (gameVersions as CurseForgeApiResponse.Success).body().size)
+        assertTrue(gameVersions.httpResponse.request.headers.contains("X-Api-Token", "foobar"))
 
         testDefaultCalls(client::getGameVersions)
     }
@@ -122,6 +124,7 @@ class CurseForgeApiClientTest {
         assertEquals("https://example.com/api/game/version-types", gameVersionTypes.httpResponse.request.url.toString())
         assertInstanceOf(CurseForgeApiResponse.Success::class.java, gameVersionTypes)
         assertEquals(2, (gameVersionTypes as CurseForgeApiResponse.Success).body().size)
+        assertTrue(gameVersionTypes.httpResponse.request.headers.contains("X-Api-Token", "foobar"))
 
         testDefaultCalls(client::getGameVersions)
     }
