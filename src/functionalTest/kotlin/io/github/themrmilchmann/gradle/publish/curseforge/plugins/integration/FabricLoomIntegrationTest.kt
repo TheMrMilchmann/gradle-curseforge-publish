@@ -47,7 +47,7 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
 
             return provideGradleVersions().mapNotNull { gradleVersion -> when {
                 javaVersion <= "11" || javaVersion.startsWith("11.") -> SENTINEL
-                gradleVersion >= "8.3" -> "1.5.0"
+                gradleVersion >= "8.3" -> "1.5"
                 gradleVersion >= "8.1" -> "1.3.9"
                 else -> "1.1.9"
             }.let { Arguments.of(gradleVersion, it) }}
