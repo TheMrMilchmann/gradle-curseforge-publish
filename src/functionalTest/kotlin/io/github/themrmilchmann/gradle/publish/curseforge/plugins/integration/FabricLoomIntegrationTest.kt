@@ -75,6 +75,19 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
                     gradlePluginPortal()
                     maven(url = "https://maven.fabricmc.net")
                 }
+            
+                buildscript {
+                    configurations.all {
+                        resolutionStrategy {
+                            eachDependency {
+                                if (requested.group == "com.google.code.gson" && requested.name == "gson") {
+                                    useVersion("2.10.1")
+                                    because("Fabric Loom requires a more recent version of Guava than FooJay toolchains")
+                                }
+                            }
+                        }
+                    }
+                }
             }
             
             plugins {
