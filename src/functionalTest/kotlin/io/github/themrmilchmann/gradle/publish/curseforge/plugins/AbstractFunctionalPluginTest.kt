@@ -139,6 +139,8 @@ abstract class AbstractFunctionalPluginTest {
             // See https://docs.gradle.org/current/userguide/compatibility.html
             val javaVersion = JavaVersion.current()
 
+            add("8.7")
+            add("8.6")
             add("8.5")
             if (javaVersion.majorVersion.toInt() >= 21) return@buildList
 
