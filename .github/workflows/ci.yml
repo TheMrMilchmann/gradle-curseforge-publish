@@ -28,11 +28,13 @@ jobs:
           distribution: "temurin"
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Gradle Assemble
-        uses: gradle/gradle-build-action@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
         with:
-          arguments: assemble --info -S --show-version
           gradle-home-cache-cleanup: true
+
+      - name: Gradle Assemble
+        run: ./gradlew assemble --info -S --show-version
 
       - name: Tar files
         run: tar -cvf ${{ env.WORKSPACE_ARCHIVE }} .
@@ -69,11 +71,13 @@ jobs:
           distribution: "temurin"
           java-version: ${{ env.JDK_VERSION }}
 
-      - name: Gradle Check
-        uses: gradle/gradle-build-action@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
         with:
-          arguments: check --info -S --show-version -Ptoolchain.functionalTest.version=${{ matrix.jdk }}
           gradle-home-cache-cleanup: true
+
+      - name: Gradle Check
+        run: ./gradlew check --info -S --show-version -Ptoolchain.test.version=${{ matrix.jdk }}
 
 
   # So, what's happening here?
