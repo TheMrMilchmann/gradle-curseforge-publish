@@ -1,5 +1,5 @@
 [versions]
-binary-compatibility-validator = "0.13.2"
+binary-compatibility-validator = "0.16.2"
 fabric-loom = "1.4.5"
 forgegradle = "6.0.16"
 gradle-toolchain-switches = "0.3.0"
