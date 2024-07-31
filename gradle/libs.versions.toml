@@ -53,6 +53,7 @@ plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "plugin-publi
 gradle-shadow = { id = "io.github.goooler.shadow", version.ref = "gradle-shadow" }
 
 # dev.gradleplugins - Nokee Gradle Plugin Development Plugins
+# https://github.com/gradle-plugins/toolbox
 gradle-plugin-functional-test = { id = "dev.gradleplugins.gradle-plugin-functional-test", version.ref = "nokee-gradle-plugin-dev" }
 gradle-plugin-unit-test = { id = "dev.gradleplugins.gradle-plugin-unit-test", version.ref = "nokee-gradle-plugin-dev" }
 
