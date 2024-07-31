@@ -3,7 +3,7 @@ binary-compatibility-validator = "0.16.2"
 fabric-loom = "1.4.5"
 forgegradle = "6.0.16"
 gradle-toolchain-switches = "0.3.0"
-gradle-shadow = "8.1.1"
+gradle-shadow = "8.1.8"
 kotlin = "2.0.0"
 kotlinx-serialization = "1.5.0"
 ktor = "2.3.12"
@@ -48,7 +48,9 @@ junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", vers
 plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "plugin-publish" }
 
 # com.github.johnrengelman.shadow - Gradle Shadow
-gradle-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradle-shadow" }
+# https://github.com/Goooler/shadow (https://github.com/GradleUp/shadow)
+#gradle-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradle-shadow" }
+gradle-shadow = { id = "io.github.goooler.shadow", version.ref = "gradle-shadow" }
 
 # dev.gradleplugins - Nokee Gradle Plugin Development Plugins
 gradle-plugin-functional-test = { id = "dev.gradleplugins.gradle-plugin-functional-test", version.ref = "nokee-gradle-plugin-dev" }
