@@ -35,7 +35,7 @@ class CurseForgePublishPluginTest : AbstractFunctionalPluginTest() {
 
     @ParameterizedTest
     @MethodSource("provideGradleVersions")
-    fun test(gradleVersion: String) {
+    fun test(gradleVersion: CharSequence) {
         File(projectDir, "settings.gradle.kts").writeText(
             """
             pluginManagement {
@@ -95,7 +95,7 @@ class CurseForgePublishPluginTest : AbstractFunctionalPluginTest() {
         )
 
         val result = GradleRunner.create()
-            .withGradleVersion(gradleVersion)
+            .withGradleVersion(gradleVersion.toString())
             .withPluginClasspath()
             .withProjectDir(projectDir)
             .withArguments("publish", "--info", "--build-cache", "--configuration-cache", "-Dorg.gradle.jvmargs=-Xmx2g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")

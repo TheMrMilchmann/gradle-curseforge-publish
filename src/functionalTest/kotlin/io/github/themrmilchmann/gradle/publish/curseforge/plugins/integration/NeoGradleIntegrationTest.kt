@@ -54,7 +54,7 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
 
     @ParameterizedTest
     @MethodSource("provideTestArguments")
-    fun testIntegration(gradleVersion: String, forgeGradleVersion: String) {
+    fun testIntegration(gradleVersion: CharSequence, forgeGradleVersion: String) {
         File(projectDir, "settings.gradle.kts").writeText(
             """
             pluginManagement {
@@ -109,7 +109,7 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
         )
 
         val result = GradleRunner.create()
-            .withGradleVersion(gradleVersion)
+            .withGradleVersion(gradleVersion.toString())
             .withPluginClasspath()
             .withProjectDir(projectDir)
             .withArguments("publish", "--info", "--build-cache", "-Dorg.gradle.jvmargs=-Xmx3g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")

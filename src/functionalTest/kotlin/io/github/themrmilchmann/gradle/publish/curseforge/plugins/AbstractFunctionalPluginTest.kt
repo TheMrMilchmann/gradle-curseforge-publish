@@ -135,7 +135,7 @@ abstract class AbstractFunctionalPluginTest {
         }
 
         @JvmStatic
-        fun provideGradleVersions(): List<String> = buildList {
+        fun provideGradleVersions(): List<GradleVersion> = buildList {
             // See https://docs.gradle.org/current/userguide/compatibility.html
             val javaVersion = JavaVersion.current()
 
@@ -150,14 +150,13 @@ abstract class AbstractFunctionalPluginTest {
             add("8.4")
             add("8.3")
 
-            @Suppress("UnstableApiUsage")
             if (javaVersion >= JavaVersion.VERSION_20) return@buildList
 
             add("8.2.1")
             add("8.1.1")
             add("8.0.2")
             add("7.6.3")
-        }
+        }.map(::GradleVersion)
 
     }
 

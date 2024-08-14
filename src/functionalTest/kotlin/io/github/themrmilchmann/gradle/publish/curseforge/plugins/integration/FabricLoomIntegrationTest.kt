@@ -60,7 +60,7 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
 
     @ParameterizedTest
     @MethodSource("provideTestArguments")
-    fun testIntegration(gradleVersion: String, loomVersion: String) {
+    fun testIntegration(gradleVersion: CharSequence, loomVersion: String) {
         // See https://github.com/junit-team/junit5/issues/1477
         if (loomVersion == SENTINEL) return
 
@@ -132,7 +132,7 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
         )
 
         val result = GradleRunner.create()
-            .withGradleVersion(gradleVersion)
+            .withGradleVersion(gradleVersion.toString())
             .withPluginClasspath()
             .withProjectDir(projectDir)
             .withArguments("publish", "--info", "--build-cache", "-Dorg.gradle.jvmargs=-Xmx2g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")
