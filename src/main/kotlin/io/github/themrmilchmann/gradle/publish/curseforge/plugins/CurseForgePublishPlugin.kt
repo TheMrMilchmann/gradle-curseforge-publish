@@ -64,7 +64,7 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
         }
 
         cfExtension.publications.all publication@{
-            val publishPublicationToCurseForgeTask = tasks.register("publish${name.capitalize()}PublicationToCurseForge", PublishToCurseForgeRepository::class.java) {
+            val publishPublicationToCurseForgeTask = tasks.register("publish${name.replaceFirstChar(Char::uppercase)}PublicationToCurseForge", PublishToCurseForgeRepository::class.java) {
                 description = "Publishes CurseForge publication '$name'"
                 group = PublishingPlugin.PUBLISH_TASK_GROUP
 
