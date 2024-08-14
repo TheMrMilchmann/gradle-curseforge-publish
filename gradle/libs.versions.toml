@@ -54,8 +54,7 @@ gradle-shadow = { id = "io.github.goooler.shadow", version.ref = "gradle-shadow"
 
 # dev.gradleplugins - Nokee Gradle Plugin Development Plugins
 # https://github.com/gradle-plugins/toolbox
-gradle-plugin-functional-test = { id = "dev.gradleplugins.gradle-plugin-functional-test", version.ref = "nokee-gradle-plugin-dev" }
-gradle-plugin-unit-test = { id = "dev.gradleplugins.gradle-plugin-unit-test", version.ref = "nokee-gradle-plugin-dev" }
+java-gradle-plugin = { id = "dev.gradleplugins.java-gradle-plugin", version.ref = "nokee-gradle-plugin-dev" }
 
 # io.github.themrmilchmann.gradle.toolchainswitches:gradle-toolchain-switches - Gradle Toolchain Switches Plugin
 gradle-toolchain-switches = { id = "io.github.themrmilchmann.toolchain-switches", version.ref = "gradle-toolchain-switches" }

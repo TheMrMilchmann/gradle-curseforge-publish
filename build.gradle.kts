@@ -22,26 +22,18 @@
 import io.github.themrmilchmann.gradle.toolchainswitches.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
     alias(libs.plugins.binary.compatibility.validator)
-    alias(libs.plugins.gradle.plugin.functional.test)
-    alias(libs.plugins.gradle.plugin.unit.test)
     alias(libs.plugins.gradle.shadow)
     alias(libs.plugins.gradle.toolchain.switches)
+    alias(libs.plugins.java.gradle.plugin)
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.plugin.samwithreceiver)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.plugin.publish)
     id("io.github.themrmilchmann.maven-publish-conventions")
-}
-
-sourceSets {
-    register("integrationTest") {
-        compileClasspath += sourceSets["main"].output
-        runtimeClasspath += sourceSets["main"].output
-    }
+    `jvm-test-suite`
 }
 
 java {
@@ -56,30 +48,26 @@ java {
 kotlin {
     explicitApi()
 
+    compilerOptions {
+        apiVersion = KotlinVersion.KOTLIN_1_8
+        languageVersion = KotlinVersion.KOTLIN_1_8
+
+        jvmTarget = JvmTarget.JVM_1_8
+
+        freeCompilerArgs.add("-Xjdk-release=1.8")
+    }
+
     target {
-        compilations.all {
-            compilerOptions.configure {
-                apiVersion = KotlinVersion.KOTLIN_1_8
-                languageVersion = KotlinVersion.KOTLIN_1_8
+        val mainCompilation = compilations.named("main") {
+            compileJavaTaskProvider.configure {
+                options.release.set(8)
             }
         }
 
-        compilations.named("main").configure {
-            compilerOptions.configure {
-                @Suppress("DEPRECATION")
-                apiVersion = KotlinVersion.KOTLIN_1_4
-
-                /*
-                 * 1.4 is deprecated, but we need it to stay compatible with old
-                 * Gradle versions anyway. Thus, we suppress the compiler's
-                 * warning.
-                 */
-                freeCompilerArgs.add("-Xsuppress-version-warnings")
+        compilations.configureEach {
+            if (name == "integrationTest") {
+                associateWith(mainCompilation.get())
             }
-        }
-
-        compilations.named("integrationTest") {
-            associateWith(compilations.getByName("main"))
         }
     }
 }
@@ -108,15 +96,64 @@ samWithReceiver {
     annotation("org.gradle.api.HasImplicitReceiver")
 }
 
+@Suppress("UnstableApiUsage")
+testing {
+    suites {
+        withType<JvmTestSuite>().configureEach {
+            useJUnitJupiter()
+
+            dependencies {
+                implementation(platform(libs.junit.bom))
+                implementation(libs.junit.jupiter.api)
+                implementation(libs.junit.jupiter.params)
+                runtimeOnly(libs.junit.jupiter.engine)
+            }
+        }
+
+        val test = named<JvmTestSuite>("test") {
+            dependencies {
+                implementation(libs.ktor.client.mock)
+            }
+        }
+
+        register<JvmTestSuite>("integrationTest") {
+            dependencies {
+                implementation(project())
+                implementation(gradleTestKit())
+                implementation(libs.fabric.loom)
+                implementation(libs.forgegradle)
+                implementation(libs.neogradle) {
+                    exclude(group = "org.codehaus.groovy")
+                }
+            }
+
+            targets.configureEach {
+                testTask.configure {
+                    shouldRunAfter(test)
+                }
+            }
+        }
+
+        register<JvmTestSuite>("functionalTest") {
+            dependencies {
+                implementation(project())
+                implementation(gradleTestKit())
+                implementation(libs.ktor.server.netty)
+                runtimeOnly(layout.files(tasks.named("pluginUnderTestMetadata")))
+            }
+
+            targets.configureEach {
+                testTask.configure {
+                    shouldRunAfter(test)
+                }
+            }
+        }
+    }
+}
+
 tasks {
     withType<JavaCompile>().configureEach {
         options.release = 8
-    }
-
-    withType<KotlinCompile>().configureEach {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_1_8
-        }
     }
 
     jar {
@@ -130,23 +167,8 @@ tasks {
         archiveClassifier = null as String?
     }
 
-    val test by getting
-
-    val integrationTest = register<Test>("integrationTest") {
-        group = JavaBasePlugin.VERIFICATION_GROUP
-        description = "Runs the integration tests."
-
-        // It is not necessary to run integration tests after unit tests, but it's generally a good practice.
-        shouldRunAfter(test)
-
-        testClassesDirs = sourceSets.named("integrationTest").get().output.classesDirs
-        classpath = sourceSets.named("integrationTest").get().runtimeClasspath
-    }
-
     withType<Test>().configureEach {
         dependsOn(shadowJar)
-
-        useJUnitPlatform()
 
         @OptIn(ExperimentalToolchainSwitchesApi::class)
         javaLauncher.set(inferLauncher(default = project.javaToolchains.launcherFor {
@@ -154,8 +176,10 @@ tasks {
         }))
     }
 
+    @Suppress("UnstableApiUsage")
     check {
-        dependsOn(integrationTest)
+        dependsOn(testing.suites.named("functionalTest"))
+        dependsOn(testing.suites.named("integrationTest"))
     }
 
     validatePlugins {
@@ -241,31 +265,4 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json) {
         exclude(group = "org.jetbrains.kotlin")
     }
-
-    testImplementation(kotlin("stdlib"))
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit.jupiter.params)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-
-    testImplementation(libs.ktor.client.mock)
-
-    functionalTestImplementation(kotlin("stdlib"))
-    functionalTestImplementation(platform(libs.junit.bom))
-    functionalTestImplementation(libs.junit.jupiter.api)
-    functionalTestImplementation(libs.junit.jupiter.params)
-    functionalTestRuntimeOnly(libs.junit.jupiter.engine)
-
-    functionalTestImplementation(libs.ktor.server.netty)
-
-    "integrationTestImplementation"(kotlin("stdlib"))
-    "integrationTestImplementation"(platform(libs.junit.bom))
-    "integrationTestImplementation"(libs.junit.jupiter.api)
-    "integrationTestImplementation"(libs.junit.jupiter.params)
-    "integrationTestRuntimeOnly"(libs.junit.jupiter.engine)
-    "integrationTestRuntimeOnly"(gradleTestKit())
-
-    "integrationTestImplementation"(libs.fabric.loom)
-    "integrationTestImplementation"(libs.forgegradle)
-    "integrationTestImplementation"(libs.neogradle)
 }
