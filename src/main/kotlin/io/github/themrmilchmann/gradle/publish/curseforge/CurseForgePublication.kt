@@ -34,6 +34,7 @@ import org.gradle.api.tasks.Nested
  *
  * @author  Leon Linhart
  */
+@CurseForgePublishPluginDsl
 public interface CurseForgePublication {
 
     /**

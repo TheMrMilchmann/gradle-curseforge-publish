@@ -21,6 +21,7 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
+@CurseForgePublishPluginDsl
 public interface ArtifactRelations : MutableSet<ArtifactRelation> {
 
     public fun add(type: RelationType, slug: String)

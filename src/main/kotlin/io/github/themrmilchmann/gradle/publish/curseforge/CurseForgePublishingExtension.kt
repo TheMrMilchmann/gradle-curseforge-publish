@@ -33,6 +33,7 @@ import javax.inject.Inject
  *
  * @author  Leon Linhart
  */
+@CurseForgePublishPluginDsl
 public abstract class CurseForgePublishingExtension @Inject internal constructor(
     /**
      * [CurseForge publications][CurseForgePublication] of the project.

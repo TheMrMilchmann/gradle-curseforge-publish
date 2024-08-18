@@ -37,6 +37,7 @@ import java.io.File
  *
  * @author  Leon Linhart
  */
+@CurseForgePublishPluginDsl
 public interface CurseForgePublicationArtifact : Buildable {
 
     /*
@@ -136,6 +137,7 @@ public interface CurseForgePublicationArtifact : Buildable {
      * @since   0.6.0
      */
     public fun relations(configure: Action<ArtifactRelationHandler>) {
+        val relations = relations
         val handler = object : ArtifactRelationHandler {
             override fun add(type: RelationType, slug: String) {
                 relations.add(type, slug)

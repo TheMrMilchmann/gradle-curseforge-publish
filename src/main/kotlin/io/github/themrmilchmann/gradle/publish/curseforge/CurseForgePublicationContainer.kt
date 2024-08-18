@@ -33,4 +33,5 @@ import org.gradle.api.NamedDomainObjectContainer
  *
  * @author  Leon Linhart
  */
+@CurseForgePublishPluginDsl
 public interface CurseForgePublicationContainer : NamedDomainObjectContainer<CurseForgePublication>

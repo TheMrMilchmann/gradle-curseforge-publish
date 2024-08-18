@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Leon Linhart
+ * Copyright (c) 2022-2024 Leon Linhart
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,13 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import javax.inject.Inject
-
 /**
- * A changelog.
+ * Marks the public configuration DSL of the CurseForge Gradle Publish Plugin.
  *
- * @since   0.6.0
+ * @since   1.0.0
  *
  * @author  Leon Linhart
  */
-@CurseForgePublishPluginDsl
-public open class Changelog @Inject internal constructor(
-    objectFactory: ObjectFactory
-) {
-
-    /**
-     * The format of the changelog's [content].
-     *
-     * Defaults to [ChangelogFormat.TEXT].
-     *
-     * @since   0.6.0
-     */
-    @get:Input
-    public val format: Property<ChangelogFormat> = objectFactory.property(ChangelogFormat::class.java)
-        .convention(ChangelogFormat.TEXT)
-
-    /**
-     * The content of the changelog.
-     *
-     * Defaults to the empty string `""`.
-     *
-     * @since   0.6.0
-     */
-    @get:Input
-    public val content: Property<String> = objectFactory.property(String::class.java)
-        .convention("")
-
-}
+@DslMarker
+@MustBeDocumented
+public annotation class CurseForgePublishPluginDsl

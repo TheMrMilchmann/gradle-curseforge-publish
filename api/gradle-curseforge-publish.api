@@ -85,6 +85,9 @@ public abstract interface class io/github/themrmilchmann/gradle/publish/cursefor
 public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationContainer : org/gradle/api/NamedDomainObjectContainer {
 }
 
+public abstract interface annotation class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublishPluginDsl : java/lang/annotation/Annotation {
+}
+
 public abstract class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublishingExtension {
 	public static final field Companion Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublishingExtension$Companion;
 	public abstract fun getApiToken ()Lorg/gradle/api/provider/Property;

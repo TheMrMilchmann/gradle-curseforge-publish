@@ -28,6 +28,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge
  *
  * @author  Leon Linhart
  */
+@CurseForgePublishPluginDsl
 public interface ArtifactRelationHandler {
 
     /**
