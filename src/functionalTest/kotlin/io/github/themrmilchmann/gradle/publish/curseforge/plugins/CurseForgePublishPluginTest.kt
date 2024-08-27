@@ -77,6 +77,7 @@ class CurseForgePublishPluginTest : AbstractFunctionalPluginTest() {
                         artifacts.register("main") {
                             from(tasks.named("jar"))
                             displayName.set("Example Project")
+                            releaseType.set(ReleaseType.BETA)
 
                             changelog {
                                 format.set(ChangelogFormat.TEXT)
