@@ -24,7 +24,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge
 /**
  * Marks the public configuration DSL of the CurseForge Gradle Publish Plugin.
  *
- * @since   1.0.0
+ * @since   0.7.0
  *
  * @author  Leon Linhart
  */
