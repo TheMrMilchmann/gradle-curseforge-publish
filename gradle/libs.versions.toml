@@ -8,6 +8,7 @@ kotlin = "2.0.20"
 kotlinx-serialization = "1.5.0"
 ktor = "2.3.12"
 junit = "5.11.0"
+moddevgradle = "1.0.19"
 neogradle = "7.0.61"
 nokee-gradle-plugin-dev = "1.6.10"
 plugin-publish = "1.2.2"
@@ -32,6 +33,10 @@ forgegradle = { module = "net.minecraftforge.gradle:ForgeGradle", version.ref = 
 # net.neoforged.gradle.userdev - NeoGradle
 # https://github.com/neoforged/NeoGradle
 neogradle = { module = "net.neoforged.gradle:userdev", version.ref = "neogradle" }
+
+# net.neoforged:moddev-gradle - ModDevGradle
+# https://github.com/neoforged/ModDevGradle
+moddevgradle = { module = "net.neoforged:moddev-gradle", version.ref = "moddevgradle" }
 
 # org.jetbrains.kotlinx:kotlinx-serialization-* - kotlinx-serialization
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }

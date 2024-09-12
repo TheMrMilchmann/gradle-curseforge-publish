@@ -125,6 +125,7 @@ testing {
                 implementation(libs.neogradle) {
                     exclude(group = "org.codehaus.groovy")
                 }
+                implementation(libs.moddevgradle)
             }
 
             targets.configureEach {
@@ -245,6 +246,8 @@ repositories {
 
 dependencies {
     compileOnlyApi(kotlin("stdlib"))
+
+    compileOnly(libs.moddevgradle)
 
     implementation(libs.kotlinx.serialization.json) {
         exclude(group = "org.jetbrains.kotlin")

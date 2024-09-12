@@ -158,7 +158,20 @@ version that is targeted during the build.
 | gradle-curseforge-publish.interop.forge-gradle.publication-name | The name for the implicitly created publication | `minecraftForge` |
 
 
-### NeoGradle
+### ModDevGradle (NeoForge)
+
+When the [ModDevGradle](https://github.com/neoforged/ModDevGradle) plugin is
+detected, a publication is implicitly created. This publication is preconfigured
+with the NeoForge mod loader dependency and a dependency on the Minecraft
+version that is targeted during the build.
+
+| Property                                                     | Description                                     | Default    |
+|--------------------------------------------------------------|-------------------------------------------------|------------|
+| gradle-curseforge-publish.interop.neoforged                  | Whether the integration is enabled              | `true`     |
+| gradle-curseforge-publish.interop.neoforged.publication-name | The name for the implicitly created publication | `neoForge` |
+
+
+### NeoGradle (NeoForge)
 
 When the [NeoGradle](https://github.com/neoforged/NeoGradle) plugin is detected,
 a publication is implicitly created. This publication is preconfigured with the
@@ -203,6 +216,7 @@ still working with the most recent version of Gradle.
 
 | Plugin Version | Minimum Gradle Versions | Maximum Supported Gradle Version |
 |----------------|-------------------------|----------------------------------|
+| 0.7.0          | 8.0                     |                                  |
 | 0.6.0          | 7.6                     |                                  |
 | 0.5.0          | 7.4                     | 7.6.*                            |
 | 0.1.0          | 7.4                     | 7.5.*                            |

@@ -23,6 +23,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge.plugins
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.DefaultCurseForgePublicationContainer
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.interop.moddevgradle.deriveNeoForgeVersionFromModDevGradleExtension
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import io.github.themrmilchmann.gradle.publish.curseforge.tasks.*
 import org.gradle.api.*
@@ -34,7 +35,6 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.JavaCompile
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
-import kotlin.math.log
 
 /**
  * Provides support for publishing artifacts to CurseForge.
@@ -83,6 +83,7 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
 
         configureFabricLoomIntegration(cfExtension.publications)
         configureForgeGradleIntegration(cfExtension.publications)
+        configureNeoForgeModDevGradleIntegration(cfExtension.publications)
         configureNeoGradleIntegration(cfExtension.publications)
     }
 
@@ -158,6 +159,49 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
             }
 
             val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.forge-gradle.publication-name").getOrElse("minecraftForge")
+            publications.register(publicationName) {
+                gameVersions.convention(defaultGameVersions)
+
+                artifacts.register("main") {
+                    from(tasks.named("jar"))
+                }
+            }
+        }
+    }
+
+    private fun Project.configureNeoForgeModDevGradleIntegration(publications: CurseForgePublicationContainer) {
+        val isEnabled = providers.gradleProperty("gradle-curseforge-publish.interop.neoforged").map(String::toBoolean).getOrElse(true)
+
+        if (!isEnabled) {
+            LOGGER.debug("NeoForge ModDevGradle integration is disabled")
+            return
+        }
+
+        LOGGER.debug("NeoForge ModDevGradle integration is enabled")
+
+        pluginManager.withPlugin("net.neoforged.moddev") {
+            val defaultGameVersions: Provider<Set<GameVersion>> = provider {
+                LOGGER.debug("NeoForge ModDevGradle plugin detected")
+
+                val gameVersions = mutableSetOf<GameVersion>()
+                gameVersions += GameVersion(type = "modloader", version = "neoforge")
+
+                val minecraftVersion = extractMinecraftVersionFromNeoForgeVersion(deriveNeoForgeVersionFromModDevGradleExtension())
+                if (minecraftVersion != null) {
+                    val (one, major, minor) = minecraftVersion
+
+                    val mcGameVersion = GameVersion(type = "minecraft-$one-$major", version = "$one-$major-$minor")
+                    gameVersions += mcGameVersion
+
+                    LOGGER.debug("Inferred CurseForge Minecraft dependency: type='${mcGameVersion.type}', version='${mcGameVersion.version}'")
+                } else {
+                    LOGGER.warn("[ModDevGradle] Could not infer Minecraft version from dependency version '$minecraftVersion'")
+                }
+
+                gameVersions.toSet()
+            }
+
+            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.neoforged.publication-name").getOrElse("neoForge")
             publications.register(publicationName) {
                 gameVersions.convention(defaultGameVersions)
 
