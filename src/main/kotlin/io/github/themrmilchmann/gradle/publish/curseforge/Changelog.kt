@@ -21,6 +21,7 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.changelog.ChangelogSourceParser
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -35,7 +36,8 @@ import javax.inject.Inject
  */
 @CurseForgePublishPluginDsl
 public open class Changelog @Inject internal constructor(
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
+    private val changelogParser: ChangelogSourceParser
 ) {
 
     /**
@@ -59,5 +61,24 @@ public open class Changelog @Inject internal constructor(
     @get:Input
     public val content: Property<String> = objectFactory.property(String::class.java)
         .convention("")
+
+    /**
+     * Sets the changelog's content.
+     *
+     * This method converts the supplied source to a string based on its type:
+     *
+     * - A [CharSequence].
+     * - A [Provider][org.gradle.api.provider.Provider] of any supported type. THe provider's value is resolved
+     *   recursively.
+     * - A file notation as specified by [org.gradle.api.Project.file].
+     *
+     * The changelog's content is set using the `Property.set(provider: Provider<? extends T>)` function regardless of
+     * the source provided.
+     *
+     * @since   0.7.0
+     */
+    public fun from(source: Any) {
+        content.set(changelogParser.parse(source))
+    }
 
 }

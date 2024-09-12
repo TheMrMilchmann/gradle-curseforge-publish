@@ -24,6 +24,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactProvider
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.artifacts.CurseForgeArtifactNotationParser
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.changelog.ChangelogSourceParser
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.Cached
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.deriveCachedOf
 import org.gradle.api.Project
@@ -56,7 +57,7 @@ internal open class DefaultCurseForgePublicationArtifact @Inject constructor(
     override val releaseType: Property<ReleaseType> = objectFactory.property(ReleaseType::class.java)
         .convention(ReleaseType.RELEASE)
 
-    override val changelog: Changelog = objectFactory.newInstance(Changelog::class.java)
+    override val changelog: Changelog = objectFactory.newInstance(Changelog::class.java, objectFactory.newInstance(ChangelogSourceParser::class.java))
 
     override val relations: ArtifactRelations = object : ArtifactRelations, MutableSet<ArtifactRelation> by mutableSetOf() {
         override fun add(type: RelationType, slug: String) {

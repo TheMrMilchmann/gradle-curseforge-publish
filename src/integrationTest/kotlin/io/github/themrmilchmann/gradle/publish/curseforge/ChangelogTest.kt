@@ -21,6 +21,7 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge
 
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.changelog.ChangelogSourceParser
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -46,7 +47,8 @@ class ChangelogTest {
             .withProjectDir(projectDir)
             .build()
 
-        changelog = project.objects.newInstance(Changelog::class.java)
+        val changelogSourceParser = project.objects.newInstance(ChangelogSourceParser::class.java)
+        changelog = project.objects.newInstance(Changelog::class.java, changelogSourceParser)
     }
 
     @Test
