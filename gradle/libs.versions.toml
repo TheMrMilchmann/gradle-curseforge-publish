@@ -11,7 +11,7 @@ junit = "5.11.0"
 moddevgradle = "1.0.19"
 neogradle = "7.0.61"
 nokee-gradle-plugin-dev = "1.6.10"
-plugin-publish = "1.2.2"
+plugin-publish = "1.3.0"
 
 
 [libraries]
