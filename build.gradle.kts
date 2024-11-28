@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
-    alias(libs.plugins.binary.compatibility.validator)
-    alias(libs.plugins.gradle.shadow)
-    alias(libs.plugins.gradle.toolchain.switches)
-    alias(libs.plugins.java.gradle.plugin)
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.plugin.samwithreceiver)
-    alias(libs.plugins.kotlin.plugin.serialization)
-    alias(libs.plugins.plugin.publish)
+    alias(buildDeps.plugins.binary.compatibility.validator)
+    alias(buildDeps.plugins.gradle.shadow)
+    alias(buildDeps.plugins.gradle.toolchain.switches)
+    alias(buildDeps.plugins.java.gradle.plugin)
+    alias(buildDeps.plugins.kotlin.jvm)
+    alias(buildDeps.plugins.kotlin.plugin.samwithreceiver)
+    alias(buildDeps.plugins.kotlin.plugin.serialization)
+    alias(buildDeps.plugins.plugin.publish)
     id("io.github.themrmilchmann.maven-publish-conventions")
     `jvm-test-suite`
 }
@@ -103,16 +103,16 @@ testing {
             useJUnitJupiter()
 
             dependencies {
-                implementation(platform(libs.junit.bom))
-                implementation(libs.junit.jupiter.api)
-                implementation(libs.junit.jupiter.params)
-                runtimeOnly(libs.junit.jupiter.engine)
+                implementation(platform(buildDeps.junit.bom))
+                implementation(buildDeps.junit.jupiter.api)
+                implementation(buildDeps.junit.jupiter.params)
+                runtimeOnly(buildDeps.junit.jupiter.engine)
             }
         }
 
         val test = named<JvmTestSuite>("test") {
             dependencies {
-                implementation(libs.ktor.client.mock)
+                implementation(buildDeps.ktor.client.mock)
             }
         }
 
@@ -120,12 +120,12 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(gradleTestKit())
-                implementation(libs.fabric.loom)
-                implementation(libs.forgegradle)
-                implementation(libs.neogradle) {
+                implementation(buildDeps.fabric.loom)
+                implementation(buildDeps.forgegradle)
+                implementation(buildDeps.neogradle) {
                     exclude(group = "org.codehaus.groovy")
                 }
-                implementation(libs.moddevgradle)
+                implementation(buildDeps.moddevgradle)
             }
 
             targets.configureEach {
@@ -139,7 +139,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(gradleTestKit())
-                implementation(libs.ktor.server.netty)
+                implementation(buildDeps.ktor.server.netty)
                 runtimeOnly(layout.files(tasks.named("pluginUnderTestMetadata")))
             }
 
@@ -247,18 +247,18 @@ repositories {
 dependencies {
     compileOnlyApi(kotlin("stdlib"))
 
-    compileOnly(libs.moddevgradle)
+    compileOnly(buildDeps.moddevgradle)
 
-    implementation(libs.kotlinx.serialization.json) {
+    implementation(buildDeps.kotlinx.serialization.json) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation(libs.ktor.client.apache) {
+    implementation(buildDeps.ktor.client.apache) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation(libs.ktor.client.content.negotiation) {
+    implementation(buildDeps.ktor.client.content.negotiation) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation(libs.ktor.serialization.kotlinx.json) {
+    implementation(buildDeps.ktor.serialization.kotlinx.json) {
         exclude(group = "org.jetbrains.kotlin")
     }
 }

@@ -33,4 +33,12 @@ plugins {
 
 rootProject.name = "gradle-curseforge-publish"
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        register("buildDeps") {
+            from(files("./gradle/build.versions.toml"))
+        }
+    }
+}
+
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
