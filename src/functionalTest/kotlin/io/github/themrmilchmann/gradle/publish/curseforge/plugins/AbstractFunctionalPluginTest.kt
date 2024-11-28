@@ -155,7 +155,6 @@ abstract class AbstractFunctionalPluginTest {
             add("8.2.1")
             add("8.1.1")
             add("8.0.2")
-            add("7.6.3")
         }.map(::GradleVersion)
 
     }
