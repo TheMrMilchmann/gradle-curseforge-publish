@@ -3,7 +3,7 @@ binary-compatibility-validator = "0.16.3"
 fabric-loom = "1.4.5"
 forgegradle = "6.0.26"
 gradle-toolchain-switches = "0.3.0"
-gradle-shadow = "8.1.8"
+gradle-shadow = "8.3.5"
 kotlin = "2.1.0"
 kotlinx-serialization = "1.5.0"
 ktor = "2.3.13"
@@ -55,7 +55,7 @@ plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "plugin-publi
 # com.github.johnrengelman.shadow - Gradle Shadow
 # https://github.com/Goooler/shadow (https://github.com/GradleUp/shadow)
 #gradle-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradle-shadow" }
-gradle-shadow = { id = "io.github.goooler.shadow", version.ref = "gradle-shadow" }
+gradle-shadow = { id = "com.gradleup.shadow", version.ref = "gradle-shadow" }
 
 # dev.gradleplugins - Nokee Gradle Plugin Development Plugins
 # https://github.com/gradle-plugins/toolbox
