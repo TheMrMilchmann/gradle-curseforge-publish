@@ -22,9 +22,7 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.utils
 
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.*
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.api.Test
 
 /**
  * Unit tests for `MinecraftVersion`
