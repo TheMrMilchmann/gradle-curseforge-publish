@@ -23,7 +23,7 @@ package io.github.themrmilchmann.gradle.publish.curseforge.plugins
 
 import io.github.themrmilchmann.gradle.publish.curseforge.*
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.DefaultCurseForgePublicationContainer
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.interop.moddevgradle.deriveNeoForgeVersionFromModDevGradleExtension
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.interop.moddevgradle.deriveMinecraftVersionFromModDevGradleExtension
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import io.github.themrmilchmann.gradle.publish.curseforge.tasks.*
 import org.gradle.api.*
@@ -186,7 +186,7 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 val gameVersions = mutableSetOf<GameVersion>()
                 gameVersions += GameVersion(type = "modloader", version = "neoforge")
 
-                val minecraftVersion = extractMinecraftVersionFromNeoForgeVersion(deriveNeoForgeVersionFromModDevGradleExtension())
+                val minecraftVersion = deriveMinecraftVersionFromModDevGradleExtension()
                 if (minecraftVersion != null) {
                     val (one, major, minor) = minecraftVersion
 

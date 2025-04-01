@@ -22,7 +22,17 @@
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.interop.moddevgradle
 
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.MinecraftVersion
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.extractMinecraftVersionFromNeoForgeVersion
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 
-internal fun Project.deriveMinecraftVersionFromModDevGradleExtension(): MinecraftVersion? =
-    deriveNeoForgeVersionFromModDevGradle2Extension() ?: deriveMinecraftVersionFromModDevGradle1Extension()
+internal fun Project.deriveMinecraftVersionFromModDevGradle1Extension(): MinecraftVersion? {
+    val extensionCls = Class.forName("net.neoforged.moddevgradle.dsl.NeoForgeExtension")
+    val neoforge = extensions.findByType(extensionCls) ?: error("Could not find NeoForge extension")
+
+    val versionGetter = extensionCls.getMethod("getVersion")
+    @Suppress("UNCHECKED_CAST")
+    val neoforgeVersion = (versionGetter.invoke(neoforge) as Property<String>).get()
+
+    return extractMinecraftVersionFromNeoForgeVersion(neoforgeVersion)
+}

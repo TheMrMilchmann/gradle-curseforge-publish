@@ -21,8 +21,19 @@
  */
 package io.github.themrmilchmann.gradle.publish.curseforge.internal.interop.moddevgradle
 
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.MinecraftVersion
+import io.github.themrmilchmann.gradle.publish.curseforge.internal.utils.*
 import org.gradle.api.Project
 
-internal fun Project.deriveMinecraftVersionFromModDevGradleExtension(): MinecraftVersion? =
-    deriveNeoForgeVersionFromModDevGradle2Extension() ?: deriveMinecraftVersionFromModDevGradle1Extension()
+internal fun Project.deriveNeoForgeVersionFromModDevGradle2Extension(): MinecraftVersion? {
+    val extensionCls = Class.forName("net.neoforged.moddevgradle.dsl.NeoForgeExtension")
+    val neoforge = extensions.findByType(extensionCls) ?: error("Could not find NeoForge extension")
+
+    val versionGetter = try {
+        neoforge.javaClass.getMethod("getMinecraftVersion")
+    } catch (_: NoSuchMethodException) {
+        return null
+    }
+
+    val minecraftVersion = versionGetter.invoke(neoforge) as String
+    return parseMinecraftVersion(minecraftVersion)
+}
