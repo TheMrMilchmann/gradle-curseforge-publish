@@ -200,12 +200,6 @@ val emptyJar = tasks.register<Jar>("emptyJar") {
 
 publishing {
     publications.withType<MavenPublication>().configureEach {
-        if (name == "curseForgePublishPluginMarkerMaven") {
-            artifact(emptyJar)
-            artifact(emptyJar) { classifier = "javadoc" }
-            artifact(emptyJar) { classifier = "sources" }
-        }
-
         pom {
             name = "CurseForge Gradle Publish Plugin"
             description = "A Gradle plugin that provides support for publishing artifacts to CurseForge."
@@ -246,8 +240,6 @@ repositories {
 
 dependencies {
     compileOnlyApi(kotlin("stdlib"))
-
-    compileOnly(buildDeps.moddevgradle)
 
     implementation(buildDeps.kotlinx.serialization.json) {
         exclude(group = "org.jetbrains.kotlin")
