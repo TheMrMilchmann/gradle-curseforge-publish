@@ -1,3 +1,14 @@
+### 0.8.0
+
+_Released 2025 Apr 01_
+
+#### Improvements
+
+- Added support for [ModDevGradle](https://github.com/neoforged/ModDevGradle) version 2.
+
+
+---
+
 ### 0.7.0
 
 _Released 2024 Nov 28_

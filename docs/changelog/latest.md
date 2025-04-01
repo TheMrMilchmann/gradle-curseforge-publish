@@ -1,21 +1,7 @@
-### 0.7.0
+### 0.8.0
 
-_Released 2024 Nov 28_
+_Released 2025 Apr 01_
 
 #### Improvements
 
-- Added `@DslMarker` annotations to the public configuration DSL to prevent
-  accidental usage of functions from outer scopes.
-- Implemented a new `from(any: Any)` function to flexibly parse changelog
-  contents from char sequences or file sources.
-    - This function was erroneously mentioned in the documentation already.
-- Support inferring metadata from [ModDevGradle](https://github.com/neoforged/ModDevGradle).
-    - The Minecraft version and mod loader is now automatically set when the
-      ModDevGradle plugin is detected.
-
-#### Breaking Changes
-
-- As a result of the added `@DslMarker`, the public configuration DSL is now
-  stricter and may require changes to existing build scripts.
-- Updated the minimum required Gradle version to 8.0 (from 7.6).
-- Updated the minimum required Java version to 17 (from 8).
+- Added support for [ModDevGradle](https://github.com/neoforged/ModDevGradle) version 2.
