@@ -42,6 +42,7 @@ class ForgeGradleIntegrationTest : AbstractFunctionalPluginTest() {
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
             return provideGradleVersions().mapNotNull { gradleVersion -> when {
+                gradleVersion >= "8.13" -> "6.0.35"
                 gradleVersion >= "8.7" -> "6.0.26"
                 gradleVersion >= "8.1" -> "6.0.16"
                 gradleVersion >= "8.0" -> null
