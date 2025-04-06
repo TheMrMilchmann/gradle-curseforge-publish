@@ -22,7 +22,7 @@ To use the plugin, include the following in your build script:
 
 ```kotlin
 plugins {
-    id("io.github.themrmilchmann.curseforge-publish") version "0.7.0"
+    id("io.github.themrmilchmann.curseforge-publish") version "0.8.0"
 }
 ```
 
