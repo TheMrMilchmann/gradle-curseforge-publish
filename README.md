@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge&label=License)](https://github.com/TheMrMilchmann/gradle-curseforge-publish/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish.svg?style=for-the-badge&label=Maven%20Central)](https://maven-badges.herokuapp.com/maven-central/io.github.themrmilchmann.gradle.publish.curseforge/gradle-curseforge-publish)
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v.svg?style=for-the-badge&&label=Gradle%20Plugin%20Portal&logo=Gradle&metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fio%2Fgithub%2Fthemrmilchmann%2Fcurseforge-publish%2Fio.github.themrmilchmann.curseforge-publish.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/io.github.themrmilchmann.curseforge-publish)
-![Gradle](https://img.shields.io/badge/Gradle-8.0-green.svg?style=for-the-badge&color=1ba8cb&logo=Gradle)
+![Gradle](https://img.shields.io/badge/Gradle-9.0.0-green.svg?style=for-the-badge&color=1ba8cb&logo=Gradle)
 ![Java](https://img.shields.io/badge/Java-17-green.svg?style=for-the-badge&color=b07219&logo=Java)
 
 A Gradle plugin that provides support for publishing artifacts to [CurseForge](https://www.curseforge.com/).
@@ -216,8 +216,9 @@ still working with the most recent version of Gradle.
 
 | Plugin Version | Minimum Gradle Versions | Maximum Supported Gradle Version |
 |----------------|-------------------------|----------------------------------|
-| 0.7.0          | 8.0                     |                                  |
-| 0.6.0          | 7.6                     |                                  |
+| 0.9.0          | 9.0.0                   |                                  |
+| 0.7.0          | 8.0                     | 8.14.*                           |
+| 0.6.0          | 7.6                     | 8.14.*                           |
 | 0.5.0          | 7.4                     | 7.6.*                            |
 | 0.1.0          | 7.4                     | 7.5.*                            |
 
@@ -234,7 +235,7 @@ This project uses [Gradle's toolchain support](https://docs.gradle.org/current/u
 to detect and select the JDKs required to run the build. Please refer to the
 build scripts to find out which toolchains are requested.
 
-An installed JDK 1.8 (or later) is required to use Gradle.
+An installed JDK 17 (or later) is required to use Gradle.
 
 ### Building
 

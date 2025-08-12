@@ -27,7 +27,6 @@ plugins {
     alias(buildDeps.plugins.binary.compatibility.validator)
     alias(buildDeps.plugins.gradle.shadow)
     alias(buildDeps.plugins.gradle.toolchain.switches)
-    alias(buildDeps.plugins.java.gradle.plugin)
     alias(buildDeps.plugins.kotlin.jvm)
     alias(buildDeps.plugins.kotlin.plugin.samwithreceiver)
     alias(buildDeps.plugins.kotlin.plugin.serialization)
@@ -73,10 +72,6 @@ kotlin {
 }
 
 gradlePlugin {
-    compatibility {
-        minimumGradleVersion = "8.0"
-    }
-
     website = "https://github.com/TheMrMilchmann/gradle-curseforge-publish"
     vcsUrl = "https://github.com/TheMrMilchmann/gradle-curseforge-publish.git"
 
@@ -221,6 +216,12 @@ configurations {
 
 dependencies {
     compileOnlyApi(kotlin("stdlib"))
+    compileOnlyApi(libs.gradle.api) {
+        capabilities {
+            // https://github.com/gradle/gradle/issues/29483
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
 
     implementation(buildDeps.kotlinx.serialization.json) {
         exclude(group = "org.jetbrains.kotlin")

@@ -42,6 +42,13 @@ dependencyResolutionManagement {
         mavenCentral()
         gradlePluginPortal()
 
+        // https://github.com/gradle/gradle/issues/29483
+        maven(url = "https://repo.gradle.org/gradle/libs-releases/") {
+            mavenContent {
+                includeGroup("org.gradle.experimental")
+            }
+        }
+
         maven {
             name = "FabricMC"
             url = uri("https://maven.fabricmc.net")

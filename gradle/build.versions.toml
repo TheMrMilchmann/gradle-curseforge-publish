@@ -10,7 +10,6 @@ ktor = "2.3.13"
 junit = "6.0.1"
 moddevgradle = "1.0.19"
 neogradle = "7.0.61"
-nokee-gradle-plugin-dev = "1.6.10"
 plugin-publish = "2.0.0"
 
 
@@ -56,10 +55,6 @@ plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "plugin-publi
 # https://github.com/Goooler/shadow (https://github.com/GradleUp/shadow)
 #gradle-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradle-shadow" }
 gradle-shadow = { id = "com.gradleup.shadow", version.ref = "gradle-shadow" }
-
-# dev.gradleplugins - Nokee Gradle Plugin Development Plugins
-# https://github.com/gradle-plugins/toolbox
-java-gradle-plugin = { id = "dev.gradleplugins.java-gradle-plugin", version.ref = "nokee-gradle-plugin-dev" }
 
 # io.github.themrmilchmann.gradle.toolchainswitches:gradle-toolchain-switches - Gradle Toolchain Switches Plugin
 gradle-toolchain-switches = { id = "io.github.themrmilchmann.toolchain-switches", version.ref = "gradle-toolchain-switches" }
