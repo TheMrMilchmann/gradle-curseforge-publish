@@ -51,15 +51,15 @@ kotlin {
         apiVersion = KotlinVersion.KOTLIN_2_2
         languageVersion = KotlinVersion.KOTLIN_2_2
 
-        jvmTarget = JvmTarget.JVM_17
+        jvmTarget = JvmTarget.JVM_21
 
-        freeCompilerArgs.add("-Xjdk-release=17")
+        freeCompilerArgs.add("-Xjdk-release=21")
     }
 
     target {
         val mainCompilation = compilations.named("main") {
             compileJavaTaskProvider.configure {
-                options.release.set(17)
+                options.release = 21
             }
         }
 
@@ -149,7 +149,7 @@ testing {
 
 tasks {
     withType<JavaCompile>().configureEach {
-        options.release = 17
+        options.release = 21
     }
 
     jar {
@@ -168,7 +168,7 @@ tasks {
 
         @OptIn(ExperimentalToolchainSwitchesApi::class)
         javaLauncher.set(inferLauncher(default = project.javaToolchains.launcherFor {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(21)
         }))
     }
 
