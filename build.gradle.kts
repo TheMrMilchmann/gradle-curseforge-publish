@@ -219,25 +219,6 @@ configurations {
     }
 }
 
-repositories {
-    gradlePluginPortal()
-
-    maven {
-        name = "FabricMC"
-        url = uri("https://maven.fabricmc.net")
-    }
-
-    maven {
-        name = "MinecraftForge"
-        url = uri("https://maven.minecraftforge.net")
-    }
-
-    maven {
-        name = "NeoForged"
-        url = uri("https://maven.neoforged.net/releases")
-    }
-}
-
 dependencies {
     compileOnlyApi(kotlin("stdlib"))
 

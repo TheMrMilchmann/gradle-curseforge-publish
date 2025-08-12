@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 plugins {
-    id("io.github.themrmilchmann.base-conventions")
     `maven-publish`
     signing
 }

@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.maven
+
 /*
  * Copyright (c) 2022-2024 Leon Linhart
  *
@@ -34,6 +36,28 @@ plugins {
 rootProject.name = "gradle-curseforge-publish"
 
 dependencyResolutionManagement {
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+
+        maven {
+            name = "FabricMC"
+            url = uri("https://maven.fabricmc.net")
+        }
+
+        maven {
+            name = "MinecraftForge"
+            url = uri("https://maven.minecraftforge.net")
+        }
+
+        maven {
+            name = "NeoForged"
+            url = uri("https://maven.neoforged.net/releases")
+        }
+    }
+
     versionCatalogs {
         register("buildDeps") {
             from(files("./gradle/build.versions.toml"))
