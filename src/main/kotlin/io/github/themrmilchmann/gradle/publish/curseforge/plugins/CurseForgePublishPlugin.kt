@@ -33,6 +33,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.plugins.*
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.util.GradleVersion
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -52,6 +53,10 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
     }
 
     override fun apply(target: Project): Unit = applyTo(target) {
+        if (GradleVersion.current() < GradleVersion.version("9.0.0")) {
+            throw IllegalStateException("This plugin requires Gradle 9.0.0 or later")
+        }
+
         val cfExtension = extensions.create(
             CurseForgePublishingExtension.NAME,
             CurseForgePublishingExtension::class.java,
