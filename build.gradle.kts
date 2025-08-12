@@ -188,11 +188,6 @@ artifacts {
     archives(tasks.shadowJar)
 }
 
-val emptyJar = tasks.register<Jar>("emptyJar") {
-    destinationDirectory = layout.buildDirectory.dir("emptyJar")
-    archiveBaseName = "io.github.themrmilchmann.curseforge-publish.gradle.plugin"
-}
-
 publishing {
     publications.withType<MavenPublication>().configureEach {
         pom {
