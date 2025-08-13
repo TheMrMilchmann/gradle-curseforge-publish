@@ -52,16 +52,28 @@ dependencyResolutionManagement {
         maven {
             name = "FabricMC"
             url = uri("https://maven.fabricmc.net")
+
+            mavenContent {
+                includeGroupAndSubgroups("net.fabricmc")
+            }
         }
 
         maven {
             name = "MinecraftForge"
             url = uri("https://maven.minecraftforge.net")
+
+            mavenContent {
+                includeGroupAndSubgroups("net.minecraftforge")
+            }
         }
 
         maven {
             name = "NeoForged"
             url = uri("https://maven.neoforged.net/releases")
+
+            mavenContent {
+                includeGroupAndSubgroups("net.neoforged")
+            }
         }
     }
 
