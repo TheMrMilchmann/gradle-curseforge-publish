@@ -26,7 +26,7 @@ jobs:
           java-version: ${{ env.JDK_VERSION }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4
+        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v4
 
       - name: Gradle Assemble
         run: ./gradlew assemble --info -S --show-version
@@ -66,7 +66,7 @@ jobs:
           java-version: ${{ env.JDK_VERSION }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4
+        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v4
 
       - name: Gradle Check
         run: ./gradlew check --info -S --show-version -Ptoolchain.test.version=${{ matrix.jdk }}
@@ -113,7 +113,7 @@ jobs:
           java-version: ${{ env.JDK_VERSION }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4
+        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v4
 
       - name: Gradle Publish
         env:
@@ -173,7 +173,7 @@ jobs:
           echo -e "gradle.publish.key=$GRADLE_PUBLISH_KEY\ngradle.publish.secret=$GRADLE_PUBLISH_SECRET" > ~/.gradle/gradle.properties
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4
+        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v4
 
       - name: Gradle Publish
         env:
