@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.maven
-
 /*
  * Copyright (c) 2022-2024 Leon Linhart
  *
