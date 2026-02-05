@@ -10,7 +10,7 @@ ktor = "2.3.13"
 junit = "6.0.1"
 moddevgradle = "1.0.19"
 neogradle = "7.0.61"
-nokee-gradle-plugin-dev = "1.6.10"
+nokee-gradle-plugin-dev = "1.9.0"
 plugin-publish = "2.0.0"
 
 
