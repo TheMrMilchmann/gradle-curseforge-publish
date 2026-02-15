@@ -13,11 +13,11 @@ public final class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRe
 
 public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler {
 	public abstract fun add (Lio/github/themrmilchmann/gradle/publish/curseforge/RelationType;Ljava/lang/String;)V
-	public abstract fun embeddedLibrary (Ljava/lang/String;)V
-	public abstract fun incompatible (Ljava/lang/String;)V
-	public abstract fun optionalDependency (Ljava/lang/String;)V
-	public abstract fun requiredDependency (Ljava/lang/String;)V
-	public abstract fun tool (Ljava/lang/String;)V
+	public fun embeddedLibrary (Ljava/lang/String;)V
+	public fun incompatible (Ljava/lang/String;)V
+	public fun optionalDependency (Ljava/lang/String;)V
+	public fun requiredDependency (Ljava/lang/String;)V
+	public fun tool (Ljava/lang/String;)V
 }
 
 public final class io/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelationHandler$DefaultImpls {
@@ -42,19 +42,20 @@ public final class io/github/themrmilchmann/gradle/publish/curseforge/ChangelogF
 	public static final field HTML Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
 	public static final field MARKDOWN Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
 	public static final field TEXT Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
 	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ChangelogFormat;
 }
 
 public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication {
-	public abstract fun artifacts (Lorg/gradle/api/Action;)V
-	public abstract fun gameVersion (Ljava/lang/String;Ljava/lang/String;)V
+	public fun artifacts (Lorg/gradle/api/Action;)V
+	public fun gameVersion (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun getArtifacts ()Lio/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifactContainer;
 	public abstract fun getGameVersions ()Lorg/gradle/api/provider/SetProperty;
 	public abstract fun getJavaVersions ()Lorg/gradle/api/provider/SetProperty;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getProjectId ()Lorg/gradle/api/provider/Property;
-	public abstract fun javaVersion (Lorg/gradle/api/JavaVersion;)V
+	public fun javaVersion (Lorg/gradle/api/JavaVersion;)V
 }
 
 public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublication$DefaultImpls {
@@ -64,7 +65,7 @@ public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForge
 }
 
 public abstract interface class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifact : org/gradle/api/Buildable {
-	public abstract fun changelog (Lorg/gradle/api/Action;)V
+	public fun changelog (Lorg/gradle/api/Action;)V
 	public abstract fun from (Ljava/lang/Object;)V
 	public abstract fun getChangelog ()Lio/github/themrmilchmann/gradle/publish/curseforge/Changelog;
 	public abstract fun getDisplayName ()Lorg/gradle/api/provider/Property;
@@ -72,7 +73,7 @@ public abstract interface class io/github/themrmilchmann/gradle/publish/cursefor
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getRelations ()Lio/github/themrmilchmann/gradle/publish/curseforge/ArtifactRelations;
 	public abstract fun getReleaseType ()Lorg/gradle/api/provider/Property;
-	public abstract fun relations (Lorg/gradle/api/Action;)V
+	public fun relations (Lorg/gradle/api/Action;)V
 }
 
 public final class io/github/themrmilchmann/gradle/publish/curseforge/CurseForgePublicationArtifact$DefaultImpls {
@@ -120,6 +121,7 @@ public final class io/github/themrmilchmann/gradle/publish/curseforge/RelationTy
 	public static final field OPTIONAL_DEPENDENCY Lio/github/themrmilchmann/gradle/publish/curseforge/RelationType;
 	public static final field REQUIRED_DEPENDENCY Lio/github/themrmilchmann/gradle/publish/curseforge/RelationType;
 	public static final field TOOL Lio/github/themrmilchmann/gradle/publish/curseforge/RelationType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/RelationType;
 	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/RelationType;
 }
@@ -128,6 +130,7 @@ public final class io/github/themrmilchmann/gradle/publish/curseforge/ReleaseTyp
 	public static final field ALPHA Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
 	public static final field BETA Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
 	public static final field RELEASE Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
 	public static fun values ()[Lio/github/themrmilchmann/gradle/publish/curseforge/ReleaseType;
 }

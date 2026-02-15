@@ -91,6 +91,8 @@ samWithReceiver {
     annotation("org.gradle.api.HasImplicitReceiver")
 }
 
+val tmpPluginMavenRepositoryDirectory = layout.buildDirectory.dir("tmp/tmpPluginMavenRepo")
+
 @Suppress("UnstableApiUsage")
 testing {
     suites {
@@ -115,12 +117,12 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(gradleTestKit())
-                implementation(buildDeps.fabric.loom)
-                implementation(buildDeps.forgegradle)
-                implementation(buildDeps.neogradle) {
+                implementation(libs.fabric.loom)
+                implementation(libs.forgegradle)
+                implementation(libs.neogradle) {
                     exclude(group = "org.codehaus.groovy")
                 }
-                implementation(buildDeps.moddevgradle)
+                implementation(libs.moddevgradle)
             }
 
             targets.configureEach {
@@ -135,12 +137,17 @@ testing {
                 implementation(project())
                 implementation(gradleTestKit())
                 implementation(buildDeps.ktor.server.netty)
-                runtimeOnly(layout.files(tasks.named("pluginUnderTestMetadata")))
             }
 
             targets.configureEach {
                 testTask.configure {
+                    // https://github.com/gradle/gradle/issues/22466
+                    dependsOn(tasks.named("publishAllPublicationsToTmpPluginMavenRepository"))
+
                     shouldRunAfter(test)
+
+                    systemProperty("TMP_PLUGIN_REPO", tmpPluginMavenRepositoryDirectory.get().asFile.absolutePath)
+                    systemProperty("PLUGIN_VERSION", project.version)
                 }
             }
         }
@@ -189,6 +196,13 @@ artifacts {
 }
 
 publishing {
+    // https://github.com/gradle/gradle/issues/22466
+    repositories {
+        maven {
+            url = tmpPluginMavenRepositoryDirectory.get().asFile.toURI()
+            name = "TmpPluginMaven"
+        }
+    }
     publications.withType<MavenPublication>().configureEach {
         pom {
             name = "CurseForge Gradle Publish Plugin"

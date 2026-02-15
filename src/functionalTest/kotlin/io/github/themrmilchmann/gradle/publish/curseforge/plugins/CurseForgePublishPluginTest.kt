@@ -40,7 +40,12 @@ class CurseForgePublishPluginTest : AbstractFunctionalPluginTest() {
             """
             pluginManagement {
                 plugins {
-                    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+                    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+                }
+                
+                repositories {
+                    maven(url = "$pluginRepoUrl")
+                    gradlePluginPortal()
                 }
             }
             
@@ -57,7 +62,7 @@ class CurseForgePublishPluginTest : AbstractFunctionalPluginTest() {
             import io.github.themrmilchmann.gradle.publish.curseforge.*
             
             plugins {
-                id("io.github.themrmilchmann.curseforge-publish")
+                id("io.github.themrmilchmann.curseforge-publish") version "$pluginVersion"
                 java
             }
             
@@ -97,7 +102,6 @@ class CurseForgePublishPluginTest : AbstractFunctionalPluginTest() {
 
         val result = GradleRunner.create()
             .withGradleVersion(gradleVersion.toString())
-            .withPluginClasspath()
             .withProjectDir(projectDir)
             .withArguments("publish", "--info", "--build-cache", "--configuration-cache", "-Dorg.gradle.jvmargs=-Xmx2g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")
             .forwardOutput()

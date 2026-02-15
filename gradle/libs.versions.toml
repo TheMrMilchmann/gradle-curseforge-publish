@@ -1,4 +1,20 @@
 [libraries]
+# net.fabricmc:fabric-loom - Fabric Loom
+# https://github.com/FabricMC/fabric-loom
+fabric-loom = { module = "net.fabricmc:fabric-loom", version = "1.11.7" }
+
+# net.minecraftforge.gradle - ForgeGradle
+# https://github.com/MinecraftForge/ForgeGradle
+forgegradle = { module = "net.minecraftforge.gradle:ForgeGradle", version = "6.0.47" }
+
+# net.neoforged.gradle.userdev - NeoGradle
+# https://github.com/neoforged/NeoGradle
+neogradle = { module = "net.neoforged.gradle:userdev", version = "7.1.20" }
+
+# net.neoforged:moddev-gradle - ModDevGradle
+# https://github.com/neoforged/ModDevGradle
+moddevgradle = { module = "net.neoforged:moddev-gradle", version = "2.0.107" }
+
 # org.gradle - Gradle
 # https://github.com/gradle/gradle
 gradle-api = { module = "org.gradle.experimental:gradle-public-api", version = "9.0.0" }

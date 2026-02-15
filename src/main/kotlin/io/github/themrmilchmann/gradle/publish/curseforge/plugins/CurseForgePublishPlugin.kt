@@ -87,7 +87,6 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
         configurePublishingIntegration(publishToCurseForgeTask)
 
         configureFabricLoomIntegration(cfExtension.publications)
-        configureForgeGradleIntegration(cfExtension.publications)
         configureNeoForgeModDevGradleIntegration(cfExtension.publications)
         configureNeoGradleIntegration(cfExtension.publications)
     }
@@ -128,47 +127,6 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
 
                 artifacts.register("main") {
                     from(tasks.named("remapJar"))
-                }
-            }
-        }
-    }
-
-    private fun Project.configureForgeGradleIntegration(publications: CurseForgePublicationContainer) {
-        val isEnabled = providers.gradleProperty("gradle-curseforge-publish.interop.forge-gradle").map(String::toBoolean).getOrElse(true)
-
-        if (!isEnabled) {
-            LOGGER.debug("ForgeGradle integration is disabled")
-            return
-        }
-
-        LOGGER.debug("ForgeGradle integration is enabled")
-
-        pluginManager.withPlugin("net.minecraftforge.gradle") {
-            LOGGER.debug("ForgeGradle plugin detected")
-
-            val defaultGameVersions: Provider<Set<GameVersion>> = provider {
-                val gameVersions = mutableSetOf<GameVersion>()
-                gameVersions += GameVersion(type = "modloader", version = "forge")
-
-                val mcGameVersion = inferGameVersionFromDependency(
-                    configurations,
-                    JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME,
-                    integration = "ForgeGradle",
-                    group = "net.minecraftforge",
-                    name = "forge",
-                    extractVersion = ::extractMinecraftVersionFromForgeGradleMinecraftDependencyVersion
-                )
-
-                if (mcGameVersion != null) gameVersions += mcGameVersion
-                gameVersions.toSet()
-            }
-
-            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.forge-gradle.publication-name").getOrElse("minecraftForge")
-            publications.register(publicationName) {
-                gameVersions.convention(defaultGameVersions)
-
-                artifacts.register("main") {
-                    from(tasks.named("jar"))
                 }
             }
         }

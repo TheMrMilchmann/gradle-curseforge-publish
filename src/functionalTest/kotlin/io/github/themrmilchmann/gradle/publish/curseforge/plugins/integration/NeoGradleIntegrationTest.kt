@@ -41,10 +41,11 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
 
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
-            return provideGradleVersions().mapNotNull { gradleVersion -> when {
-                gradleVersion >= "8.0" -> "7.0.61"
-                else -> null
-            }?.let { Arguments.of(gradleVersion, it) }}
+            return provideGradleVersions().mapNotNull { gradleVersion ->
+                when {
+                    else -> "7.1.20"
+                }.let { Arguments.of(gradleVersion, it) }
+            }
         }
 
     }
@@ -59,10 +60,11 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
             """
             pluginManagement {
                 plugins {
-                    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+                    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
                 }
             
                 repositories {
+                    maven(url = "$pluginRepoUrl")
                     gradlePluginPortal()
                     maven(url = "https://maven.neoforged.net/releases")
                 }
@@ -81,7 +83,7 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
             import io.github.themrmilchmann.gradle.publish.curseforge.*
             
             plugins {
-                id("io.github.themrmilchmann.curseforge-publish")
+                id("io.github.themrmilchmann.curseforge-publish") version "$pluginVersion"
                 id("net.neoforged.gradle.userdev") version "$forgeGradleVersion"
                 java
             }
@@ -110,7 +112,6 @@ class NeoGradleIntegrationTest : AbstractFunctionalPluginTest() {
 
         val result = GradleRunner.create()
             .withGradleVersion(gradleVersion.toString())
-            .withPluginClasspath()
             .withProjectDir(projectDir)
             .withArguments("publish", "--info", "--build-cache", "-Dorg.gradle.jvmargs=-Xmx3g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")
             .forwardOutput()

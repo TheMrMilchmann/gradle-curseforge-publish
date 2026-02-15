@@ -30,6 +30,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 
 /**
  * Functional tests for the integration with the NeoForge ModDevGradle plugin.
@@ -42,10 +44,11 @@ class NeoForgeModDevGradleIntegrationTest : AbstractFunctionalPluginTest() {
 
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
-            return provideGradleVersions().mapNotNull { gradleVersion -> when {
-                gradleVersion >= "8.8" -> "1.0.19"
-                else -> null
-            }?.let { Arguments.of(gradleVersion, it) }}
+            return provideGradleVersions().mapNotNull { gradleVersion ->
+                when {
+                    else -> "2.0.107"
+                }.let { Arguments.of(gradleVersion, it) }
+            }
         }
 
     }
@@ -53,7 +56,6 @@ class NeoForgeModDevGradleIntegrationTest : AbstractFunctionalPluginTest() {
     @field:TempDir
     lateinit var projectDir: File
 
-    @Disabled // See https://github.com/gradle/gradle/issues/22466
     @ParameterizedTest
     @MethodSource("provideTestArguments")
     fun testIntegration(gradleVersion: CharSequence, modDevGradleVersion: String) {
@@ -61,10 +63,11 @@ class NeoForgeModDevGradleIntegrationTest : AbstractFunctionalPluginTest() {
             """
             pluginManagement {
                 plugins {
-                    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+                    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
                 }
             
                 repositories {
+                    maven(url = "$pluginRepoUrl")
                     gradlePluginPortal()
                     maven(url = "https://maven.neoforged.net/releases")
                 }
@@ -83,7 +86,7 @@ class NeoForgeModDevGradleIntegrationTest : AbstractFunctionalPluginTest() {
             import io.github.themrmilchmann.gradle.publish.curseforge.*
             
             plugins {
-                id("io.github.themrmilchmann.curseforge-publish")
+                id("io.github.themrmilchmann.curseforge-publish") version "$pluginVersion"
                 id("net.neoforged.moddev") version "$modDevGradleVersion"
                 java
             }
@@ -95,7 +98,7 @@ class NeoForgeModDevGradleIntegrationTest : AbstractFunctionalPluginTest() {
             }
             
             neoForge {
-                version.set("21.0.103-beta")
+                version = "21.0.103-beta"
             }
             
             curseforge {
@@ -112,7 +115,6 @@ class NeoForgeModDevGradleIntegrationTest : AbstractFunctionalPluginTest() {
 
         val result = GradleRunner.create()
             .withGradleVersion(gradleVersion.toString())
-            .withPluginClasspath()
             .withProjectDir(projectDir)
             .withArguments("publish", "--info", "-S", "--build-cache", "-Dorg.gradle.jvmargs=-Xmx3g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")
             .forwardOutput()

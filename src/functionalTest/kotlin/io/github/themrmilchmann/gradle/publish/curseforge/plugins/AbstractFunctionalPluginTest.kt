@@ -37,6 +37,9 @@ abstract class AbstractFunctionalPluginTest {
 
         const val PROJECT_ID = "12345"
 
+        val pluginRepoUrl = System.getProperty("TMP_PLUGIN_REPO").replace("\\", "/")
+        val pluginVersion = System.getProperty("PLUGIN_VERSION")
+
         private lateinit var engine: ApplicationEngine
 
         @JvmStatic
@@ -139,6 +142,9 @@ abstract class AbstractFunctionalPluginTest {
             // See https://docs.gradle.org/current/userguide/compatibility.html
             // val javaVersion = JavaVersion.current()
 
+            add("9.3.1")
+            add("9.2.1")
+            add("9.1.0")
             add("9.0.0")
         }.map(::GradleVersion)
 

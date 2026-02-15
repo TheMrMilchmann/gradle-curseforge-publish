@@ -23,17 +23,17 @@ package io.github.themrmilchmann.gradle.publish.curseforge.internal.utils
 
 import org.gradle.api.provider.*
 
-internal fun <T> Property<T>.finalizeAndGet(): T {
+internal fun <T : Any> Property<T>.finalizeAndGet(): T {
     finalizeValue()
     return get()
 }
 
-internal fun <T> SetProperty<T>.finalizeAndGet(): Set<T> {
+internal fun <T : Any> SetProperty<T>.finalizeAndGet(): Set<T> {
     finalizeValue()
     return get()
 }
 
-internal fun <T> Property<T>.finalizeAndGetOrNull(): T? {
+internal fun <T : Any> Property<T>.finalizeAndGetOrNull(): T? {
     finalizeValue()
     return orNull
 }

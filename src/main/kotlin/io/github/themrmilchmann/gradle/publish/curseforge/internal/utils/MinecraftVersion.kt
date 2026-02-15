@@ -37,8 +37,8 @@ internal fun extractMinecraftVersionFromNeoForgeVersion(version: String): Minecr
 }
 
 internal fun parseMinecraftVersion(version: String): MinecraftVersion? {
-    val matchGroups = """^([0-9]+)\.([0-9]+)\.([0-9]+)""".toRegex().matchEntire(version.substringBefore('-'))?.groupValues ?: return null
-    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3])
+    val matchGroups = """^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?""".toRegex().matchEntire(version.substringBefore('-'))?.groupValues ?: return null
+    return MinecraftVersion(one = matchGroups[1], major = matchGroups[2], minor = matchGroups[3].ifBlank { "0" })
 }
 
 // https://help.minecraft.net/hc/en-us/articles/9971900758413-Major-Minor-Versions-in-Minecraft-Java-Edition

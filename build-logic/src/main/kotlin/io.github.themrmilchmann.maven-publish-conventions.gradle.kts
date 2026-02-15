@@ -60,7 +60,8 @@ publishing {
 
 signing {
     // Only require signing when publishing to a non-local maven repository
-    setRequired { gradle.taskGraph.allTasks.any { it is PublishToMavenRepository } }
+    // See build.gradle.kts for info on the workaround TmpPluginMaven (https://github.com/gradle/gradle/issues/22466)
+    setRequired { gradle.taskGraph.allTasks.any { it is PublishToMavenRepository && it.repository.name != "TmpPluginMaven" } }
 
     val signingKey: String? by project
     val signingPassword: String? by project

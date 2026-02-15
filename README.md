@@ -145,19 +145,6 @@ that is targeted during the build.
 | gradle-curseforge-publish.interop.fabric-loom.publication-name | The name for the implicitly created publication | `fabric` |
 
 
-### ForgeGradle
-
-When the [ForgeGradle](https://github.com/MinecraftForge/ForgeGradle) plugin is
-detected, a publication is implicitly created. This publication is preconfigured
-with the MinecraftForge mod loader dependency and a dependency on the Minecraft
-version that is targeted during the build.
-
-| Property                                                        | Description                                     | Default          |
-|-----------------------------------------------------------------|-------------------------------------------------|------------------|
-| gradle-curseforge-publish.interop.forge-gradle                  | Whether the integration is enabled              | `true`           |
-| gradle-curseforge-publish.interop.forge-gradle.publication-name | The name for the implicitly created publication | `minecraftForge` |
-
-
 ### ModDevGradle (NeoForge)
 
 When the [ModDevGradle](https://github.com/neoforged/ModDevGradle) plugin is

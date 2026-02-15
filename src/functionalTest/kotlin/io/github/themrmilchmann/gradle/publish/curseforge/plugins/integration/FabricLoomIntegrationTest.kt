@@ -29,6 +29,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
+import java.nio.file.Path
 
 /**
  * Functional tests for the integration with the Fabric Loom Gradle plugin.
@@ -39,17 +40,10 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
 
     private companion object {
 
-        private const val SENTINEL = "SENTINEL"
-
         @JvmStatic
         private fun provideTestArguments(): List<Arguments> {
-            val javaVersion = System.getProperty("java.version")
-
             return provideGradleVersions().mapNotNull { gradleVersion -> when {
-                javaVersion <= "11" || javaVersion.startsWith("11.") -> SENTINEL
-                gradleVersion >= "8.3" -> "1.5.3"
-                gradleVersion >= "8.1" -> "1.3.9"
-                else -> "1.1.9"
+                else -> "1.11.7"
             }.let { Arguments.of(gradleVersion, it) }}
         }
 
@@ -61,17 +55,15 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
     @ParameterizedTest
     @MethodSource("provideTestArguments")
     fun testIntegration(gradleVersion: CharSequence, loomVersion: String) {
-        // See https://github.com/junit-team/junit5/issues/1477
-        if (loomVersion == SENTINEL) return
-
         File(projectDir, "settings.gradle.kts").writeText(
             """
             pluginManagement {
                 plugins {
-                    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+                    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
                 }
             
                 repositories {
+                    maven(url = "$pluginRepoUrl")
                     gradlePluginPortal()
                     maven(url = "https://maven.fabricmc.net")
                 }
@@ -103,8 +95,8 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
             import io.github.themrmilchmann.gradle.publish.curseforge.*
             
             plugins {
+                id("io.github.themrmilchmann.curseforge-publish") version "$pluginVersion"
                 id("fabric-loom") version "$loomVersion"
-                id("io.github.themrmilchmann.curseforge-publish")
                 java
             }
             
@@ -133,7 +125,6 @@ class FabricLoomIntegrationTest : AbstractFunctionalPluginTest() {
 
         val result = GradleRunner.create()
             .withGradleVersion(gradleVersion.toString())
-            .withPluginClasspath()
             .withProjectDir(projectDir)
             .withArguments("publish", "--info", "--build-cache", "-Dorg.gradle.jvmargs=-Xmx2g", "-Pgradle-curseforge-publish.internal.base-url=http://localhost:8080")
             .forwardOutput()

@@ -61,7 +61,7 @@ class NeoForgeModDevGradleIntegrationTest {
         project.pluginManager.apply("java")
 
         val neoforge = project.extensions.getByType(NeoForgeExtension::class.java)
-        neoforge.version.set("21.0.103-beta")
+        neoforge.version = "21.0.103-beta"
         neoforge.runs {
             create("client") { client() }
             create("server") { server() }
