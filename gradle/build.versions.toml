@@ -4,14 +4,15 @@ gradle-toolchain-switches = "0.3.0"
 gradle-shadow = "8.3.9"
 kotlin = "2.3.10"
 kotlinx-serialization = "1.10.0"
-ktor = "2.3.13"
+ktor = "3.4.0"
 junit = "6.0.3"
 plugin-publish = "2.0.0"
 
 
 [libraries]
 # io.ktor - Ktor
-ktor-client-apache = { module = "io.ktor:ktor-client-apache", version.ref = "ktor" }
+ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
+ktor-client-timeout = { module = "io.ktor:ktor-client-timeout", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }

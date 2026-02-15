@@ -30,7 +30,8 @@ import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model.CFG
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model.CFUploadMetadata
 import io.github.themrmilchmann.gradle.publish.curseforge.internal.api.model.CFUploadResponse
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.java.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -39,8 +40,8 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.cio.*
 import io.ktor.util.reflect.*
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.time.Duration
 
 internal fun CurseForgeApiClient(
     baseUrl: String,
@@ -51,16 +52,17 @@ internal fun CurseForgeApiClient(
 ): CurseForgeApiClient = CurseForgeApiClient(
     baseUrl = baseUrl,
     apiToken = apiToken,
-    httpClient = HttpClient(Apache) {
-        engine {
-            followRedirects = true
-            socketTimeout = 10_000
-            connectTimeout = 10_000
-            connectionRequestTimeout = 20_000
-        }
+    httpClient = HttpClient(Java) {
+        followRedirects = true
 
         install(ContentNegotiation) {
             json(json)
+        }
+
+        install(HttpTimeout) {
+            socketTimeoutMillis = 10_000
+            connectTimeoutMillis = 10_000
+            requestTimeoutMillis = 20_000
         }
     },
     json = json
@@ -74,12 +76,13 @@ internal class CurseForgeApiClient(
 ) : AutoCloseable by httpClient {
 
     @Suppress("UNCHECKED_CAST")
-    private inline fun <reified T : Any> wrap(httpResponse: HttpResponse): CurseForgeApiResponse<T> = when (httpResponse.status.value) {
-        in (200 until 300), in (301 until 400) -> CurseForgeApiResponse.Success(typeInfo<T>(), httpResponse)
-        HttpStatusCode.Unauthorized.value -> CurseForgeApiResponse.Unauthorized(httpResponse) as CurseForgeApiResponse<T>
-        in (500 until 600) -> CurseForgeApiResponse.ServerError(httpResponse) as CurseForgeApiResponse<T>
-        else -> CurseForgeApiResponse.ClientError(httpResponse) as CurseForgeApiResponse<T>
-    }
+    private inline fun <reified T : Any> wrap(httpResponse: HttpResponse): CurseForgeApiResponse<T> =
+        when (httpResponse.status.value) {
+            in (200 until 300), in (301 until 400) -> CurseForgeApiResponse.Success(typeInfo<T>(), httpResponse)
+            HttpStatusCode.Unauthorized.value -> CurseForgeApiResponse.Unauthorized(httpResponse) as CurseForgeApiResponse<T>
+            in (500 until 600) -> CurseForgeApiResponse.ServerError(httpResponse) as CurseForgeApiResponse<T>
+            else -> CurseForgeApiResponse.ClientError(httpResponse) as CurseForgeApiResponse<T>
+        }
 
     suspend fun getGameVersions(): CurseForgeApiResponse<List<CFGameVersion>> {
         val url = URLBuilder(baseUrl).run {

@@ -235,7 +235,7 @@ dependencies {
     implementation(buildDeps.kotlinx.serialization.json) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation(buildDeps.ktor.client.apache) {
+    implementation(buildDeps.ktor.client.java) {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation(buildDeps.ktor.client.content.negotiation) {

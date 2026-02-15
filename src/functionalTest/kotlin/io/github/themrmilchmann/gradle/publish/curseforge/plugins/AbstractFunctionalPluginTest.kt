@@ -40,7 +40,7 @@ abstract class AbstractFunctionalPluginTest {
         val pluginRepoUrl = System.getProperty("TMP_PLUGIN_REPO").replace("\\", "/")
         val pluginVersion = System.getProperty("PLUGIN_VERSION")
 
-        private lateinit var engine: ApplicationEngine
+        private lateinit var engine: EmbeddedServer<NettyApplicationEngine, *>
 
         @JvmStatic
         @BeforeAll
