@@ -164,7 +164,7 @@ tasks {
     }
 
     shadowJar {
-        isEnableRelocation = true
+        enableAutoRelocation = true
         relocationPrefix = "io.github.themrmilchmann.gradle.publish.curseforge.internal.shadow"
 
         archiveClassifier = null as String?
