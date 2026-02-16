@@ -17,4 +17,4 @@ moddevgradle = { module = "net.neoforged:moddev-gradle", version = "2.0.107" }
 
 # org.gradle - Gradle
 # https://github.com/gradle/gradle
-gradle-api = { module = "org.gradle.experimental:gradle-public-api", version = "9.0.0" }
+gradle-api = { module = "org.gradle.experimental:gradle-public-api", version = "9.3.1" }
