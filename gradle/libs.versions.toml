@@ -1,7 +1,7 @@
 [libraries]
 # net.fabricmc:fabric-loom - Fabric Loom
 # https://github.com/FabricMC/fabric-loom
-fabric-loom = { module = "net.fabricmc:fabric-loom", version = "1.11.7" }
+fabric-loom = { module = "net.fabricmc:fabric-loom", version = "1.15.4" }
 
 # net.minecraftforge.gradle - ForgeGradle
 # https://github.com/MinecraftForge/ForgeGradle
