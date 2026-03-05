@@ -6,7 +6,7 @@ kotlin = "2.3.10"
 kotlinx-serialization = "1.10.0"
 ktor = "3.4.1"
 junit = "6.0.3"
-plugin-publish = "2.0.0"
+plugin-publish = "2.1.0"
 
 
 [libraries]
