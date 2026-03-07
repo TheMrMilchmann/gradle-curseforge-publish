@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 import io.github.themrmilchmann.gradle.toolchainswitches.*
+import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -83,6 +84,13 @@ gradlePlugin {
             tags.addAll("curseforge", "minecraft", "publishing")
 
             implementationClass = "io.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
+
+            @Suppress("UnstableApiUsage")
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }
