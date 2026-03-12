@@ -24,14 +24,11 @@ package io.github.themrmilchmann.gradle.publish.curseforge.plugins.integration
 import io.github.themrmilchmann.gradle.publish.curseforge.plugins.AbstractFunctionalPluginTest
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 
 /**
  * Functional tests for the integration with the NeoForge ModDevGradle plugin.
