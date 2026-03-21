@@ -5,7 +5,7 @@ fabric-loom = { module = "net.fabricmc:fabric-loom", version = "1.11.7" }
 
 # net.minecraftforge.gradle - ForgeGradle
 # https://github.com/MinecraftForge/ForgeGradle
-forgegradle = { module = "net.minecraftforge.gradle:ForgeGradle", version = "6.0.47" }
+forgegradle = { module = "net.minecraftforge.gradle:ForgeGradle", version = "6.0.51" }
 
 # net.neoforged.gradle.userdev - NeoGradle
 # https://github.com/neoforged/NeoGradle
