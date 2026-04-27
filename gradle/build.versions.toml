@@ -4,7 +4,7 @@ gradle-toolchain-switches = "0.3.0"
 gradle-shadow = "9.4.1"
 kotlin = "2.3.21"
 kotlinx-serialization = "1.11.0"
-ktor = "3.4.2"
+ktor = "3.4.3"
 junit = "6.0.3"
 plugin-publish = "2.1.1"
 
