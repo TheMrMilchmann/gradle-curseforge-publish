@@ -9,7 +9,7 @@ forgegradle = { module = "net.minecraftforge.gradle:ForgeGradle", version = "6.0
 
 # net.neoforged.gradle.userdev - NeoGradle
 # https://github.com/neoforged/NeoGradle
-neogradle = { module = "net.neoforged.gradle:userdev", version = "7.1.20" }
+neogradle = { module = "net.neoforged.gradle:userdev", version = "7.1.27" }
 
 # net.neoforged:moddev-gradle - ModDevGradle
 # https://github.com/neoforged/ModDevGradle
