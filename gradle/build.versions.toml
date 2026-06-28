@@ -1,7 +1,7 @@
 [versions]
 binary-compatibility-validator = "0.18.1"
 gradle-toolchain-switches = "0.3.0"
-gradle-shadow = "9.4.2"
+gradle-shadow = "9.4.3"
 kotlin = "2.4.0"
 kotlinx-serialization = "1.11.0"
 ktor = "3.5.0"
