@@ -33,6 +33,7 @@ import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.*
 import javax.inject.Inject
+import kotlin.math.log
 
 /**
  * Publishes a [CurseForgePublication] to CurseForge.
@@ -84,7 +85,17 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
                     return@mapNotNull null
                 }
 
-                val version = recognizedGameVersions.find { it.gameVersionTypeID == dependency.id && it.slug == gameVersion.version }
+                var version = recognizedGameVersions.find { it.gameVersionTypeID == dependency.id && it.slug == gameVersion.version }
+                if (version == null && gameVersion.version.endsWith("-0")) {
+                    /*
+                     * CurseForge fiddled with the format when Minecraft changed their versioning scheme. To work around
+                     * this, we do a second, relaxed check without a trailing "-0"
+                     */
+                    val relaxedGameVersion = gameVersion.version.removeSuffix("-0")
+                    logger.info("Falling back to relaxed lookup to find game version for type '{}' @ '{}', available: {}", gameVersion.type, relaxedGameVersion, recognizedGameVersions.filter { it.gameVersionTypeID == dependency.id })
+                    version = recognizedGameVersions.find { it.gameVersionTypeID == dependency.id && it.slug == relaxedGameVersion }
+                }
+
                 if (version == null) {
                     logger.warn("Could not find game version for type '{}' @ '{}', available: {}", gameVersion.type, gameVersion.version, recognizedGameVersions.filter { it.gameVersionTypeID == dependency.id })
                     return@mapNotNull null
