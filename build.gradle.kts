@@ -85,7 +85,6 @@ gradlePlugin {
 
             implementationClass = "io.github.themrmilchmann.gradle.publish.curseforge.plugins.CurseForgePublishPlugin"
 
-            @Suppress("UnstableApiUsage")
             compatibility {
                 features {
                     configurationCache = true
