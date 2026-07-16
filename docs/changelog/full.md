@@ -1,3 +1,18 @@
+### 0.10.0
+
+_Released 2026 Jul 16_
+
+### Improvements
+
+- Improved plugin game version lookup strategy to more reliable support new Minecraft versioning schemes.
+- Introduced the concept of environments now required by the CurseForge Upload API.
+  - The `environments` property of a `CurseForgePublication` can now be used to specify the environments the project is
+    applicable to.
+  - By default, a project is applicable to client and server environments.
+
+
+---
+
 ### 0.9.0
 
 _Released 2026 Feb 16_
