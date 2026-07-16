@@ -57,6 +57,15 @@ public interface CurseForgePublication {
     public val projectId: Property<String>
 
     /**
+     * The environments for which the publication is relevant.
+     *
+     * Defaults to [client][Environment.Client] and [server][Environment.Server].
+     *
+     * @since   0.10.0
+     */
+    public val environments: SetProperty<Environment>
+
+    /**
      * The supported [game versions][GameVersion].
      *
      * @since   0.5.0

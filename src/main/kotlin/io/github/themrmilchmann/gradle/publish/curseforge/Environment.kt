@@ -19,29 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.themrmilchmann.gradle.publish.curseforge.internal.publication
+package io.github.themrmilchmann.gradle.publish.curseforge
 
-import io.github.themrmilchmann.gradle.publish.curseforge.*
-import io.github.themrmilchmann.gradle.publish.curseforge.internal.DefaultCurseForgePublicationArtifactContainer
-import org.gradle.api.*
-import org.gradle.api.model.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
-import javax.inject.*
-
-internal open class DefaultCurseForgePublication @Inject constructor(
-    override val name: String,
-    objects: ObjectFactory
-) : CurseForgePublicationInternal {
-
-    override val projectId: Property<String> = objects.property(String::class.java)
-
-    override val artifacts: CurseForgePublicationArtifactContainer = objects.newInstance(DefaultCurseForgePublicationArtifactContainer::class.java)
-
-    override val environments: SetProperty<Environment> = objects.setProperty(Environment::class.java)
-        .convention(setOf(Environment.Client, Environment.Server))
-
-    override val gameVersions = objects.setProperty(GameVersion::class.java)
-    override val javaVersions = objects.setProperty(JavaVersion::class.java)
-
+/**
+ * An environment.
+ *
+ * @since   0.10.0
+ *
+ * @author  Leon Linhart
+ */
+public enum class Environment(internal val slug: String) {
+    Client("client"),
+    Server("server")
 }

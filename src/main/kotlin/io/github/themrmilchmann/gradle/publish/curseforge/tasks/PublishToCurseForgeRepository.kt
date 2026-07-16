@@ -77,7 +77,10 @@ public open class PublishToCurseForgeRepository @Inject internal constructor(
             val recognizedGameDependencies = cfApiClient.getGameVersionTypes().unwrap()
             val recognizedGameVersions: List<CFGameVersion> = cfApiClient.getGameVersions().unwrap()
 
-            val gameVersions = publication.gameVersions.finalizeAndGet() + publication.javaVersions.finalizeAndGet().map { GameVersion(type = "java", version = "java-${it.majorVersion}") }
+            val gameVersions = publication.gameVersions.finalizeAndGet() +
+                    publication.javaVersions.finalizeAndGet().map { GameVersion(type = "java", version = "java-${it.majorVersion}") } +
+                    publication.environments.finalizeAndGet().map { GameVersion(type = "environment", version = it.slug) }
+
             val gameVersionIDs = gameVersions.mapNotNull { gameVersion ->
                 val dependency = recognizedGameDependencies.find { it.slug == gameVersion.type }
                 if (dependency == null) {
