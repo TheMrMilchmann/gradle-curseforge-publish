@@ -121,13 +121,18 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 gameVersions.toSet()
             }
 
-            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.fabric-loom.publication-name").getOrElse("fabric")
-            publications.register(publicationName) {
-                gameVersions.convention(defaultGameVersions)
+            val jarTask = tasks.findByName("remapJar") ?: tasks.findByName("jar")
+            if (jarTask != null) {
+                val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.fabric-loom.publication-name").getOrElse("fabric")
+                publications.register(publicationName) {
+                    gameVersions.convention(defaultGameVersions)
 
-                artifacts.register("main") {
-                    from(tasks.named("remapJar"))
+                    artifacts.register("main") {
+                        from(jarTask)
+                    }
                 }
+            } else {
+                logger.warn("Fabric Loom interop could not find 'jar' task for default publication")
             }
         }
     }
@@ -164,13 +169,18 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 gameVersions.toSet()
             }
 
-            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.neoforged.publication-name").getOrElse("neoForge")
-            publications.register(publicationName) {
-                gameVersions.convention(defaultGameVersions)
+            val jarTask = tasks.findByName("jar")
+            if (jarTask != null) {
+                val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.neoforged.publication-name").getOrElse("neoForge")
+                publications.register(publicationName) {
+                    gameVersions.convention(defaultGameVersions)
 
-                artifacts.register("main") {
-                    from(tasks.named("jar"))
+                    artifacts.register("main") {
+                        from(jarTask)
+                    }
                 }
+            } else {
+                logger.warn("NeoForge interop could not find 'jar' task for default publication")
             }
         }
     }
@@ -205,13 +215,18 @@ public class CurseForgePublishPlugin @Inject private constructor() : Plugin<Proj
                 gameVersions.toSet()
             }
 
-            val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.neogradle.publication-name").getOrElse("neoForge")
-            publications.register(publicationName) {
-                gameVersions.convention(defaultGameVersions)
+            val jarTask = tasks.findByName("jar")
+            if (jarTask != null) {
+                val publicationName = providers.gradleProperty("gradle-curseforge-publish.interop.neogradle.publication-name").getOrElse("neoForge")
+                publications.register(publicationName) {
+                    gameVersions.convention(defaultGameVersions)
 
-                artifacts.register("main") {
-                    from(tasks.named("jar"))
+                    artifacts.register("main") {
+                        from(tasks.named("jar"))
+                    }
                 }
+            } else {
+                logger.warn("NeoGradle interop could not find 'jar' task for default publication")
             }
         }
     }

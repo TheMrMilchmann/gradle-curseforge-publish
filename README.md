@@ -134,10 +134,10 @@ disable integrations.
 
 ### FabricLoom
 
-When the [Fabric Loom](https://github.com/FabricMC/fabric-loom) plugin is
-detected, a publication is implicitly created. This publication is preconfigured
-with the Fabric mod loader dependency and a dependency on the Minecraft version
-that is targeted during the build.
+When the [Fabric Loom](https://github.com/FabricMC/fabric-loom) plugin and a
+bundling task (`remapJar` or a `jar`) is detected, a publication is implicitly
+created. This publication is preconfigured with the Fabric mod loader dependency
+and a dependency on the Minecraft version that is targeted during the build.
 
 | Property                                                       | Description                                     | Default  |
 |----------------------------------------------------------------|-------------------------------------------------|----------|
@@ -147,10 +147,10 @@ that is targeted during the build.
 
 ### ModDevGradle (NeoForge)
 
-When the [ModDevGradle](https://github.com/neoforged/ModDevGradle) plugin is
-detected, a publication is implicitly created. This publication is preconfigured
-with the NeoForge mod loader dependency and a dependency on the Minecraft
-version that is targeted during the build.
+When the [ModDevGradle](https://github.com/neoforged/ModDevGradle) plugin and a
+bundling task (`jar`) is detected, a publication is implicitly created. This
+publication is preconfigured with the NeoForge mod loader dependency and a
+dependency on the Minecraft version that is targeted during the build.
 
 | Property                                                     | Description                                     | Default    |
 |--------------------------------------------------------------|-------------------------------------------------|------------|
@@ -160,10 +160,10 @@ version that is targeted during the build.
 
 ### NeoGradle (NeoForge)
 
-When the [NeoGradle](https://github.com/neoforged/NeoGradle) plugin is detected,
-a publication is implicitly created. This publication is preconfigured with the
-NeoForge mod loader dependency and a dependency on the Minecraft version that is
-targeted during the build.
+When the [NeoGradle](https://github.com/neoforged/NeoGradle) plugin and a
+bundling task (`jar`) is detected, a publication is implicitly created. This
+publication is preconfigured with the NeoForge mod loader dependency and a
+dependency on the Minecraft version that is targeted during the build.
 
 | Property                                                     | Description                                     | Default    |
 |--------------------------------------------------------------|-------------------------------------------------|------------|
